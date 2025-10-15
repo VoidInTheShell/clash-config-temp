@@ -213,8 +213,8 @@ dns:
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
     'geosite:geolocation-!cn':
-      - 'tls://8.8.8.8:853#FINAL'
-      - 'tls://1.0.0.1:853#FINAL'
+      - 'tls://8.8.8.8:853#GlobalSite'
+      - 'tls://1.0.0.1:853#GlobalSite'
     'rule-set:GFW':
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
