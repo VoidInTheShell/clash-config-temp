@@ -5,6 +5,13 @@
         - DIRECT
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
+    - name: GlobalSite
+      type: select
+      proxies:
+        - PROXY
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
     - name: 流媒体
       type: select
       proxies:
@@ -306,8 +313,8 @@ dns:
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
     'geosite:geolocation-!cn':
-      - 'tls://8.8.8.8:853#FINAL'
-      - 'tls://1.0.0.1:853#FINAL'
+      - 'tls://8.8.8.8:853#GlobalSite'
+      - 'tls://1.0.0.1:853#GlobalSite'
     'rule-set:GFW':
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
@@ -320,6 +327,8 @@ rules:
   - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
   - PROCESS-NAME,Proxifier,PROXY
   - DOMAIN-SUFFIX,ipleak.net,PROXY
+  - DOMAIN-SUFFIX,browserleaks.com,PROXY
+  - DOMAIN-SUFFIX,www.browserscan.net,PROXY
   # User
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
@@ -372,12 +381,6 @@ rules:
   - RULE-SET,Nintendo,PROXY
   # EPIC Set
   - RULE-SET,EPIC,DIRECT,no-resolve
-#--------------------------------------------------------------------------------------#
-  # Global CDN
-  - RULE-SET,geoip_cloudfront,CDN,no-resolve
-  - GEOIP,FASTLY,CDN,no-resolve
-  - RULE-SET,cf_ip,CDN,no-resolve
-  - RULE-SET,AKAMAI,CDN,no-resolve
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
@@ -438,13 +441,19 @@ rules:
   # Global
   # GFWList
   - RULE-SET,GFW,PROXY
-  - RULE-SET,Proxy,PROXY
-  - RULE-SET,geolocation-!cn,FINAL
   # Global Domain
   - DOMAIN-SUFFIX,imap.gmail.com,PROXY
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
   # Local Area Network
   - GEOIP,PRIVATE,DIRECT,no-resolve
+  - RULE-SET,geolocation-!cn,GlobalSite
+#--------------------------------------------------------------------------------------#
+  # Global CDN
+  - RULE-SET,geoip_cloudfront,CDN,no-resolve
+  - RULE-SET,CloudFlare,CDN,no-resolve
+  - GEOIP,FASTLY,CDN,no-resolve
+  - RULE-SET,cf_ip,CDN,no-resolve
+  - RULE-SET,AKAMAI,CDN,no-resolve
 #--------------------------------------------------------------------------------------#
   # FINAL
   - MATCH,FINAL
