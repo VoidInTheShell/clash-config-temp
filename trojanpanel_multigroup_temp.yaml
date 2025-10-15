@@ -327,7 +327,6 @@ rules:
   - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
   - DOMAIN-KEYWORD,autocad,DIRECT
   - DOMAIN-KEYWORD,koishi,DIRECT
-  - DOMAIN,speed.cloudflare.com,DIRECT
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
   - DOMAIN-SUFFIX,httpbin.org,DIRECT
 #--------------------------------------------------------------------------------------#
