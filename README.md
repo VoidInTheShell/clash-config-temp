@@ -1,0 +1,2 @@
+# 自用Mihomo配置文件
+ShellCrash搭配覆写使用：shellcrash_override.yaml
