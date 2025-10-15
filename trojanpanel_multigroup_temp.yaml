@@ -1,0 +1,840 @@
+    - name: FINAL
+      type: select
+      proxies:
+        - PROXY
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+    - name: 流媒体
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - DIRECT
+    - name: AI
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+    - name: MicrosoftBing
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - DIRECT
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+    - name: CDN
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - DIRECT
+    - name: 海淘购物
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - DIRECT
+    - name: 哔哩哔哩
+      type: select
+      proxies:
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+    - name: Apple
+      type: select
+      proxies:
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+    - name: Google
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+    - name: TikTok
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - PROXY
+#--------------------------------------------------------------------------------------#
+#-------------------------------WrittenByLiebesleid------------------------------------#
+#--------------------------------------------------------------------------------------#
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+routing-mark: 7894
+mode: Rule
+ipv6: false
+allow-lan: true
+log-level: info
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: strict
+global-client-fingerprint: chrome
+#--------------------------------------------------------------------------------------#
+external-controller: 0.0.0.0:7788
+secret: "123456"
+external-ui: WebUI/ZashBoard
+external-ui-url: "https://gh-proxy.com/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+external-controller-cors:
+  allow-origins:
+    - "*"
+  allow-private-network: true
+#--------------------------------------------------------------------------------------#
+tun:
+  enable: true
+  stack: mixed
+  device: Meta
+  auto-route: true
+  strict-route: true
+  auto-detect-interface: true
+  auto-redirct: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+    - any:853
+    - tls://any:853
+    - tcp://any:853
+#--------------------------------------------------------------------------------------#
+geodata-mode: true
+geox-url:
+  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+  store-fake-ip: true
+#--------------------------------------------------------------------------------------#
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - 'Mijia Cloud'
+    - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'ruleset:cn_domain,private_domain'
+    - 'geosite:connectivity-check,private'
+    - 'ruleset:fakeip-filter-dustinwin'
+    - '*.lan'
+    - '*.local'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.home.arpa'
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'time.*.edu.cn'
+    - 'time.*.apple.com'
+    - 'time-ios.apple.com'
+    - 'time1.*.com'
+    - 'time2.*.com'
+    - 'time3.*.com'
+    - 'time4.*.com'
+    - 'time5.*.com'
+    - 'time6.*.com'
+    - 'time7.*.com'
+    - 'ntp.*.com'
+    - 'ntp1.*.com'
+    - 'ntp2.*.com'
+    - 'ntp3.*.com'
+    - 'ntp4.*.com'
+    - 'ntp5.*.com'
+    - 'ntp6.*.com'
+    - 'ntp7.*.com'
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - '+.pool.ntp.org'
+    - 'time1.cloud.tencent.com'
+    - 'music.163.com'
+    - '*.music.163.com'
+    - '*.126.net'
+    - 'musicapi.taihe.com'
+    - 'music.taihe.com'
+    - 'songsearch.kugou.com'
+    - 'trackercdn.kugou.com'
+    - '*.kuwo.cn'
+    - 'api-jooxtt.sanook.com'
+    - 'api.joox.com'
+    - 'joox.com'
+    - 'y.qq.com'
+    - '*.y.qq.com'
+    - 'streamoc.music.tc.qq.com'
+    - 'mobileoc.music.tc.qq.com'
+    - 'isure.stream.qqmusic.qq.com'
+    - 'dl.stream.qqmusic.qq.com'
+    - 'aqqmusic.tc.qq.com'
+    - 'amobile.music.tc.qq.com'
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - 'music.migu.cn'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+    - 'localhost.ptlogin2.qq.com'
+    - 'localhost.sec.qq.com'
+    - '+.qq.com'
+    - '+.tencent.com'
+    - '+.steamcontent.com'
+    - '+.srv.nintendo.net'
+    - '*.n.n.srv.nintendo.net'
+    - '+.cdn.nintendo.net'
+    - '+.stun.playstation.net'
+    - 'xbox.*.*.microsoft.com'
+    - '*.*.xboxlive.com'
+    - 'xbox.*.microsoft.com'
+    - 'xnotify.xboxlive.com'
+    - '+.battlenet.com.cn'
+    - '+.wotgame.cn'
+    - '+.wggames.cn'
+    - '+.wowsgame.cn'
+    - '+.wargaming.net'
+    - 'proxy.golang.org'
+    - 'stun.*.*'
+    - 'stun.*.*.*'
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+    - 'heartbeat.belkin.com'
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - 'mesu.apple.com'
+    - 'swscan.apple.com'
+    - 'swquery.apple.com'
+    - 'swdownload.apple.com'
+    - 'swcdn.apple.com'
+    - 'swdist.apple.com'
+    - 'lens.l.google.com'
+    - 'stun.l.google.com'
+    - 'na.b.g-tun.com'
+    - '+.nflxvideo.net'
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - 'ff.dorado.sdo.com'
+    - '*.mcdn.bilivideo.cn'
+    - '+.media.dssott.com'
+    - 'shark007.net'
+    - '+.market.xiaomi.com'
+    - '+.cmbchina.com'
+    - '+.cmbimg.com'
+    - 'adguardteam.github.io'
+    - 'adrules.top'
+    - 'anti-ad.net'
+    - 'local.adguard.org'
+    - 'static.adtidy.org'
+    - '+.sandai.net'
+    - '+.n0808.com'
+    - '+.3gppnetwork.org'
+    - '+.uu.163.com'
+    - 'ps.res.netease.com'
+    - '+.oray.com'
+    - '+.orayimg.com'
+  default-nameserver:
+    - 'tls://223.5.5.5:853'
+    - '8.8.8.8'
+    - '119.29.29.29'
+    - 'tls://1.1.1.1:853'
+  nameserver:
+    - 'tls://8.8.8.8:853#FINAL'
+    - 'tls://1.1.1.1:853#FINAL'
+  direct-nameserver:
+    - 'tls://223.6.6.6:853'
+    - 'tls://223.5.5.5:853'
+    - 'tls://dot.pub:853'
+    - 'https://doh.pub/dns-query'
+  proxy-server-nameserver:
+    - '1.1.1.1'
+    - '8.8.8.8'
+    - 'tls://1.1.1.1:853'
+    - 'tls://8.8.8.8:853'
+  nameserver-policy:
+    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
+    'geoip:cn':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
+    'rule-set:CloudFlare,AKAMAI':
+      - 'tls://8.8.8.8:853#CDN'
+      - 'tls://1.0.0.1:853#CDN'
+    'geoip:fastly,cloudflare':
+      - 'tls://8.8.8.8:853#CDN'
+      - 'tls://1.0.0.1:853#CDN'
+    'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
+      - 'tls://8.8.8.8:853#AI'
+      - 'tls://1.0.0.1:853#AI'
+    'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
+      - 'tls://8.8.8.8:853#海淘购物'
+      - 'tls://1.0.0.1:853#海淘购物'
+    'geoip:cloudfront':
+      - 'tls://8.8.8.8:853#海淘购物'
+      - 'tls://1.0.0.1:853#海淘购物'
+    'geoip:telegram':
+      - 'tls://8.8.8.8:853#PROXY'
+      - 'tls://1.0.0.1:853#PROXY'
+    'geosite:geolocation-!cn':
+      - 'tls://8.8.8.8:853#FINAL'
+      - 'tls://1.0.0.1:853#FINAL'
+    'rule-set:GFW':
+      - 'tls://8.8.8.8:853#PROXY'
+      - 'tls://1.0.0.1:853#PROXY'
+    'rule-set:BiliBili':
+      - 'tls://8.8.8.8:853#哔哩哔哩'
+      - 'tls://223.5.5.5:853'
+#--------------------------------------------------------------------------------------#
+rules:
+  # Custom
+  - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
+  - PROCESS-NAME,Proxifier,PROXY
+  - DOMAIN-SUFFIX,ipleak.net,PROXY
+  # User
+  - DOMAIN-SUFFIX,uegov.org,DIRECT
+  - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
+  - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
+  - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
+  - DOMAIN-KEYWORD,autocad,DIRECT
+  - DOMAIN-KEYWORD,koishi,DIRECT
+  - DOMAIN,speed.cloudflare.com,DIRECT
+  - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
+  - DOMAIN-SUFFIX,httpbin.org,DIRECT
+#--------------------------------------------------------------------------------------#
+  # Block
+  - RULE-SET,CNHTTPDNS,REJECT,no-resolve
+  - RULE-SET,PCDN,REJECT,no-resolve
+  - RULE-SET,Reject,REJECT,no-resolve
+  # ADBlock
+  - RULE-SET,ADS1,REJECT
+  - RULE-SET,ADS2,REJECT,no-resolve
+  - RULE-SET,category-ads-all,REJECT,no-resolve
+  - DOMAIN,youxi.xunlei.com,REJECT
+  # SpaceDesk
+  - DOMAIN-KEYWORD,vrdesktop,REJECT
+#--------------------------------------------------------------------------------------#
+  # PROXY CIDR
+  - RULE-SET,Telegram,PROXY
+  - RULE-SET,TGcidr,PROXY,no-resolve
+#--------------------------------------------------------------------------------------#
+  # CN IP DIRECT
+  - RULE-SET,cn_ip,DIRECT,no-resolve
+  # Direct DOMAIN & China Services
+  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
+  - RULE-SET,blackmatrix7_direct,DIRECT
+  - RULE-SET,private_domain,DIRECT
+  - RULE-SET,cn_domain,DIRECT
+  - RULE-SET,UnionPay,DIRECT
+  - RULE-SET,ShiJiChaoXing,DIRECT
+  - RULE-SET,JingDong,DIRECT
+  - RULE-SET,AliPay,DIRECT
+  - RULE-SET,Alibaba,DIRECT,no-resolve
+  - RULE-SET,NetEase,DIRECT,no-resolve
+  - RULE-SET,Tencent,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,httpbin.org,DIRECT
+  - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+#--------------------------------------------------------------------------------------#
+  # Games
+  # GameDownload
+  - RULE-SET,GameDownloadCN,DIRECT,no-resolve
+  # Steam
+  - RULE-SET,SteamCN,DIRECT,no-resolve
+  # Nintendo
+  - RULE-SET,Nintendo,PROXY
+  # EPIC Set
+  - RULE-SET,EPIC,DIRECT,no-resolve
+#--------------------------------------------------------------------------------------#
+  # Global CDN
+  - RULE-SET,geoip_cloudfront,CDN,no-resolve
+  - GEOIP,FASTLY,CDN,no-resolve
+  - RULE-SET,cf_ip,CDN,no-resolve
+  - RULE-SET,AKAMAI,CDN,no-resolve
+#--------------------------------------------------------------------------------------#
+  # Services
+  # BiliBili
+  - RULE-SET,BiliBili,哔哩哔哩
+  # Shopping
+  - RULE-SET,eBay,海淘购物
+  - RULE-SET,Amazon,海淘购物
+  - RULE-SET,AmazonIP,海淘购物,no-resolve
+  - RULE-SET,AmazonCN,海淘购物
+  - RULE-SET,AmazonTrust,海淘购物
+  # AI
+  - RULE-SET,category-ai-!cn,AI
+  - RULE-SET,OpenAI,AI
+  - RULE-SET,Twitter,AI
+  - RULE-SET,Claude,AI
+  - RULE-SET,Gemini,AI
+  # Google
+  - RULE-SET,Google,Google
+  - GEOIP,GOOGLE,Google,no-resolve
+  # Bing
+  - DOMAIN-KEYWORD,bing,MicrosoftBing
+  # Microsoft
+  - RULE-SET,Microsoft,MicrosoftBing
+  # Notion
+  - DOMAIN,http-inputs-notion.splunkcloud.com,PROXY
+  - RULE-SET,Notion,PROXY
+  # TikTok Set
+  - RULE-SET,TikTok,TikTok
+  # Streaming
+  - DOMAIN-SUFFIX,hanime1.me,流媒体
+  - GEOIP,NETFLIX,流媒体,no-resolve
+  - RULE-SET,Netflix,流媒体
+  - RULE-SET,Bahamut,流媒体
+  - RULE-SET,Streaming,流媒体
+  - DOMAIN,open.spotify.com,流媒体
+  - DOMAIN-SUFFIX,spotify.com,流媒体
+  - DOMAIN-SUFFIX,spotifycdn.com,流媒体
+  - DOMAIN-SUFFIX,branch.io,流媒体
+  - RULE-SET,Spotify,流媒体
+  # AKSpeedy-DOMAIN
+  - DOMAIN-KEYWORD,akspeedy,DIRECT
+  - DOMAIN,turing.captcha.qcloud.com,DIRECT
+  - DOMAIN,turing.captcha.gtimg.com,DIRECT
+  - DOMAIN,sensorsdata.web.bigdata.fulu.com,DIRECT
+  # CNMedia
+  - DOMAIN-KEYWORD,douyin,DIRECT
+  - DOMAIN-KEYWORD,youku,DIRECT
+  - DOMAIN-KEYWORD,iqiyi,DIRECT
+  # Apple Set
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Icloud,Apple
+  - RULE-SET,AppleID,Apple
+  - RULE-SET,AppleStore,Apple
+  - RULE-SET,AppleHardware,Apple
+  - RULE-SET,AppleFirmware,Apple
+  - RULE-SET,AppleDaily,Apple
+#--------------------------------------------------------------------------------------#
+  # Global
+  # GFWList
+  - RULE-SET,GFW,PROXY
+  - RULE-SET,Proxy,PROXY
+  - RULE-SET,geolocation-!cn,FINAL
+  # Global Domain
+  - DOMAIN-SUFFIX,imap.gmail.com,PROXY
+  - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
+  # Local Area Network
+  - GEOIP,PRIVATE,DIRECT,no-resolve
+#--------------------------------------------------------------------------------------#
+  # FINAL
+  - MATCH,FINAL
+#--------------------------------------------------------------------------------------#
+rule-providers:
+  fakeip-filter-dustinwin:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs
+    path: ./RuleSet/fakeip_dustinwin.mrs
+  blackmatrix7_direct:
+    type: http
+    format: yaml
+    behavior: domain
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
+    path: ./RuleSet/blackmatrix7_direct.yaml
+    interval: 86400
+  cf_ip:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs
+    path: ./RuleSet/cf_ip.mrs
+    interval: 86400
+  geoip_cloudfront:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cloudfront.mrs
+    path: ./RuleSet/geoip_cloudfront.mrs
+    interval: 86400
+  cn_ip:
+    type: http
+    format: mrs
+    behavior: ipcidr
+    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs
+    path: ./RuleSet/cn_ip.mrs
+    interval: 86400
+  cn_domain:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs
+    path: ./RuleSet/cn_domain.mrs
+    interval: 86400
+  Tencent:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Tencent.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Tencent/Tencent.yaml
+    interval: 86400
+  NetEase:
+    type: http
+    behavior: classical
+    path: ./RuleSet/NetEase.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/NetEase/NetEase.yaml
+    interval: 86400
+  Alibaba:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Alibaba.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Alibaba/Alibaba_Classical.yaml
+    interval: 86400
+  AliPay:
+    type: http
+    behavior: domain
+    path: ./RuleSet/AliPay.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AliPay/AliPay.yaml
+    interval: 86400
+  JingDong:
+    type: http
+    behavior: domain
+    path: ./RuleSet/JingDong.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/JingDong/JingDong.yaml
+    interval: 86400
+  ShiJiChaoXing:
+    type: http
+    behavior: domain
+    path: ./RuleSet/ShiJiChaoXing.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml
+    interval: 86400
+  UnionPay:
+    type: http
+    behavior: domain
+    path: ./RuleSet/UnionPay.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml
+  category-ads-all:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs
+    path: ./RuleSet/category-ads-all.mrs
+    interval: 86400
+  private_domain:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs
+    path: ./RuleSet/private_domain.mrs
+    interval: 86400
+  ADS1:
+    type: http
+    behavior: domain
+    url: https://cdn.jsdelivr.net/gh/snapei/clash-pro-rules@release/reject.txt
+    path: ./RuleSet/ADS1.yaml
+    interval: 86400
+  ADS2:
+    type: http
+    behavior: classical
+    path: ./RuleSet/ADS2.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml
+    interval: 86400
+  CNHTTPDNS:
+    type: http
+    behavior: classical
+    path: ./RuleSet/CNHTTPDNS.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml
+    interval: 86400
+  eBay:
+    type: http
+    behavior: classical
+    path: ./RuleSet/eBay.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml
+    interval: 86400
+  Gemini:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Gemini.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml
+    interval: 86400
+  Claude:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Claude.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Claude/Claude.yaml
+    interval: 86400
+  Twitter:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Twitter.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Twitter/Twitter.yaml
+    interval: 86400
+  OpenAI:
+    type: http
+    behavior: classical
+    path: ./RuleSet/OpenAI.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/OpenAI/OpenAI.list
+    interval: 86400
+  category-ai-!cn:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
+    path: ./ruleset/category-ai-!cn.mrs
+    interval: 86400
+  PCDN:
+    type: http
+    behavior: domain
+    url: 'https://gh-proxy.com/https://raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
+    path: ./RuleSet/pcdn.yaml
+    interval: 86400
+  Reject:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt'
+    path: ./RuleSet/reject.yaml
+    interval: 86400
+  GFW:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt'
+    path: ./RuleSet/gfw.yaml
+    interval: 86400
+  geolocation-!cn:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs
+    path: ./RuleSet/geolocation-!cn.mrs
+    interval: 86400
+  Greatfire:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt'
+    path: ./RuleSet/greatfire.yaml
+    interval: 86400
+  Proxy:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt'
+    path: ./RuleSet/Proxy.yaml
+    interval: 86400
+  Direct:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt'
+    path: ./ruleset/direct.yaml
+    interval: 86400
+  Private:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt'
+    path: ./RuleSet/private.yaml
+    interval: 86400
+  China:
+    type: http
+    behavior: domain
+    path: ./RuleSet/China.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China_Domain.yaml
+    interval: 86400
+  CNcidr:
+    type: http
+    behavior: ipcidr
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt'
+    path: ./RuleSet/cncidr.yaml
+    interval: 86400
+  TGcidr:
+    type: http
+    behavior: ipcidr
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt'
+    path: ./RuleSet/telegramcidr.yaml
+    interval: 86400
+  Amazon:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Amazon.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml
+    interval: 86400
+  AmazonIP:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonIP_Classical.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP_Classical.yaml
+    interval: 86400
+  AmazonTrust:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonTrust.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml
+    interval: 86400
+  AmazonCN:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonCN.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonCN/AmazonCN.yaml
+    interval: 86400
+  CloudFlare:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Cloudflare.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflare/Cloudflare.yaml
+    interval: 86400
+  AKAMAI:
+    type: http
+    behavior: classical
+    path: ./RuleSet/akamai.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Akamai/Akamai.yaml
+    interval: 86400
+  EPIC:
+    type: http
+    behavior: classical
+    path: ./RuleSet/EPIC.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Epic/Epic.yaml
+    interval: 86400
+  Google:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Google.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
+    interval: 86400
+  BiliBili:
+    type: http
+    behavior: classical
+    path: ./RuleSet/bilibili.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml
+    interval: 86400
+  TikTok:
+    type: http
+    behavior: classical
+    path: ./RuleSet/tiktok.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
+    interval: 86400
+  Apple:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Apple_Classical.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple_Classical.yaml
+    interval: 86400
+  Icloud:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt'
+    path: ./RuleSet/icloud.yaml
+    interval: 86400
+  AppleStore:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AppStore.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml
+    interval: 86400
+  AppleDaily:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AppleDaily.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDaily/AppleDaily.yaml
+    interval: 86400
+  AppleID:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AppleID.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml
+    interval: 86400
+  AppleFirmware:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AppleFirmware.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleFirmware/AppleFirmware.yaml
+    interval: 86400
+  AppleHardware:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AppleHardware.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleHardware/AppleHardware.yaml
+    interval: 86400
+  Microsoft:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Microsoft.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml
+    interval: 86400
+  Nintendo:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Nintendo.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Nintendo/Nintendo.yaml
+    interval: 86400
+  Notion:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Notion.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Notion/Notion.yaml
+    interval: 86400
+  Ubisoft:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Ubisoft.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Ubisoft/Ubisoft.yaml
+    interval: 86400
+  SteamCN:
+    type: http
+    behavior: classical
+    path: ./RuleSet/SteamCN.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml
+    interval: 86400
+  GameDownloadCN:
+    type: http
+    behavior: classical
+    path: ./RuleSet/GameDownloadCN.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/GameDownloadCN/GameDownloadCN.yaml
+    interval: 86400
+  Telegram:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Telegram.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml
+    interval: 86400
+  Spotify:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Spotify.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Spotify/Spotify.yaml
+    interval: 86400
+  Netflix:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Netflix.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix.yaml
+    interval: 86400
+  Bahamut:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Bahamut.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bahamut/Bahamut.yaml
+    interval: 86400
+  Streaming:
+    type: http
+    behavior: domain
+    path: ./RuleSet/Streaming.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GlobalMedia/GlobalMedia_Domain.yaml
+    interval: 86400
+#--------------------------------------------------------------------------------------#
