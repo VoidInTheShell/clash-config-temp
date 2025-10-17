@@ -379,18 +379,26 @@ rules:
   # Services
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
-  # Shopping
-  - RULE-SET,eBay,海淘购物
-  - RULE-SET,Amazon,海淘购物
-  - RULE-SET,AmazonIP,海淘购物,no-resolve
-  - RULE-SET,AmazonCN,海淘购物
-  - RULE-SET,AmazonTrust,海淘购物
   # AI
   - RULE-SET,category-ai-!cn,AI
   - RULE-SET,OpenAI,AI
   - RULE-SET,Twitter,AI
   - RULE-SET,Claude,AI
   - RULE-SET,Gemini,AI
+  # Apple Set
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Icloud,Apple
+  - RULE-SET,AppleID,Apple
+  - RULE-SET,AppleStore,Apple
+  - RULE-SET,AppleHardware,Apple
+  - RULE-SET,AppleFirmware,Apple
+  - RULE-SET,AppleDaily,Apple
+  # Shopping
+  - RULE-SET,eBay,海淘购物
+  - RULE-SET,Amazon,海淘购物
+  - RULE-SET,AmazonIP,海淘购物,no-resolve
+  - RULE-SET,AmazonCN,海淘购物
+  - RULE-SET,AmazonTrust,海淘购物
   # Google
   - RULE-SET,Google,Google
   - GEOIP,GOOGLE,Google,no-resolve
@@ -412,14 +420,6 @@ rules:
   - DOMAIN-KEYWORD,douyin,DIRECT
   - DOMAIN-KEYWORD,youku,DIRECT
   - DOMAIN-KEYWORD,iqiyi,DIRECT
-  # Apple Set
-  - RULE-SET,Apple,Apple
-  - RULE-SET,Icloud,Apple
-  - RULE-SET,AppleID,Apple
-  - RULE-SET,AppleStore,Apple
-  - RULE-SET,AppleHardware,Apple
-  - RULE-SET,AppleFirmware,Apple
-  - RULE-SET,AppleDaily,Apple
   # Streaming
   - DOMAIN-SUFFIX,hanime1.me,流媒体
   - RULE-SET,Netflix,流媒体
