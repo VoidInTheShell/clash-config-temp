@@ -11,10 +11,12 @@
 
 # 快速配置
 ## Mihomo
-1. 在设置中关闭**接管DNS设置**、**接管域名嗅探设置**，如图
-   <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/37250a9d-12df-4968-a3dd-f67a2936e000" />
+1. 在设置中关闭**接管DNS设置**、**接管域名嗅探设置**
 2. 按下图配置虚拟网卡：
+   
    <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/afa65f1b-99be-498d-ae60-6d1e20ce76ad" />
+
+
 3. 在**订阅管理** 中填入如下链接导入配置文件
 ```
 https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_mihomo.yaml
