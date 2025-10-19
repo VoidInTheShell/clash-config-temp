@@ -20,5 +20,5 @@ export url='https://fastly.jsdelivr.net/gh/juewuy/ShellCrash@master' && wget -q 
 修改完成后上传至设备的/tmp目录下
 同时执行以下命令下载覆写文件并应用：
 ```
-
+curl -fsSL https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/shellcrash_override.yaml -o /etc/ShellCrash/yamls/user.yaml
 ```
