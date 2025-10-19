@@ -661,7 +661,7 @@ proxy-groups:
     interval: 3600
     tolerance: 50
     lazy: false
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York|🇸🇬|新加坡|狮城|SG|Singapore)"
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York|🇸🇬|新加坡|狮城|SG|Singapore|家宽|AI|ChatGPT)"
     icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/ai_backup.png"
 
   # --- 特殊策略：流媒体解锁 ---
@@ -749,7 +749,6 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'ruleset:cn_domain,private_domain'
     - 'geosite:connectivity-check,private'
     - 'ruleset:fakeip-filter-dustinwin'
     - '*.lan'
@@ -892,6 +891,14 @@ dns:
       - 'tls://223.6.6.6:853'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+    'geosite:steam,category-games':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
+    'rule-set:SteamCN,GameDownloadCN,EPIC':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
     'geoip:cn':
       - 'tls://223.6.6.6:853'
       - 'tls://223.5.5.5:853'
@@ -905,6 +912,9 @@ dns:
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
       - 'tls://8.8.8.8:853#AI'
       - 'tls://1.0.0.1:853#AI'
+    'geoip:google':
+      - 'tls://8.8.8.8:853#Google'
+      - 'tls://1.0.0.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
       - 'tls://8.8.8.8:853#海淘购物'
       - 'tls://1.0.0.1:853#海淘购物'
@@ -924,11 +934,10 @@ dns:
       - 'tls://8.8.8.8:853#哔哩哔哩'
       - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
-
-# ========================================
-# 📌 分流规则配置
-# ========================================
-
+routing:
+  domainStrategy: AsIs
+  domainMatcher: hybrid
+#--------------------------------------------------------------------------------------#
 rules:
   # Custom
   - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
@@ -947,37 +956,19 @@ rules:
   - DOMAIN-SUFFIX,httpbin.org,DIRECT
 #--------------------------------------------------------------------------------------#
   # Block
-  - RULE-SET,CNHTTPDNS,REJECT,no-resolve
-  - RULE-SET,PCDN,REJECT,no-resolve
-  - RULE-SET,Reject,REJECT,no-resolve
+  - RULE-SET,CNHTTPDNS,REJECT
+  - RULE-SET,PCDN,REJECT
+  - RULE-SET,Reject,REJECT
   # ADBlock
   - RULE-SET,ADS1,REJECT
-  - RULE-SET,ADS2,REJECT,no-resolve
-  - RULE-SET,category-ads-all,REJECT,no-resolve
+  - RULE-SET,ADS2,REJECT
+  - RULE-SET,category-ads-all,REJECT
   - DOMAIN,youxi.xunlei.com,REJECT
   # SpaceDesk
   - DOMAIN-KEYWORD,vrdesktop,REJECT
 #--------------------------------------------------------------------------------------#
   # PROXY CIDR
   - RULE-SET,Telegram,PROXY
-  - RULE-SET,TGcidr,PROXY,no-resolve
-#--------------------------------------------------------------------------------------#
-  # CN IP DIRECT
-  - RULE-SET,cn_ip,DIRECT,no-resolve
-  # Direct DOMAIN & China Services
-  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
-  - RULE-SET,blackmatrix7_direct,DIRECT
-  - RULE-SET,private_domain,DIRECT
-  - RULE-SET,cn_domain,DIRECT
-  - RULE-SET,UnionPay,DIRECT
-  - RULE-SET,ShiJiChaoXing,DIRECT
-  - RULE-SET,JingDong,DIRECT
-  - RULE-SET,AliPay,DIRECT
-  - RULE-SET,Alibaba,DIRECT,no-resolve
-  - RULE-SET,NetEase,DIRECT,no-resolve
-  - RULE-SET,Tencent,DIRECT,no-resolve
-  - DOMAIN-SUFFIX,httpbin.org,DIRECT
-  - DOMAIN-SUFFIX,ghproxy.com,DIRECT
 #--------------------------------------------------------------------------------------#
   # Games
   # GameDownload
@@ -988,22 +979,33 @@ rules:
   - RULE-SET,Nintendo,PROXY
   # EPIC Set
   - RULE-SET,EPIC,DIRECT,no-resolve
+  # China Games
+  - GEOSITE,steam,DIRECT
+  - GEOSITE,category-games,DIRECT
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
-  # Shopping
-  - RULE-SET,eBay,海淘购物
-  - RULE-SET,Amazon,海淘购物
-  - RULE-SET,AmazonIP,海淘购物,no-resolve
-  - RULE-SET,AmazonCN,海淘购物
-  - RULE-SET,AmazonTrust,海淘购物
   # AI
   - RULE-SET,category-ai-!cn,AI
   - RULE-SET,OpenAI,AI
   - RULE-SET,Twitter,AI
   - RULE-SET,Claude,AI
   - RULE-SET,Gemini,AI
+  # Apple Set
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Icloud,Apple
+  - RULE-SET,AppleID,Apple
+  - RULE-SET,AppleStore,Apple
+  - RULE-SET,AppleHardware,Apple
+  - RULE-SET,AppleFirmware,Apple
+  - RULE-SET,AppleDaily,Apple
+  # Shopping
+  - RULE-SET,eBay,海淘购物
+  - RULE-SET,Amazon,海淘购物
+  - RULE-SET,AmazonIP,海淘购物,no-resolve
+  - RULE-SET,AmazonCN,海淘购物
+  - RULE-SET,AmazonTrust,海淘购物
   # Google
   - RULE-SET,Google,Google
   - GEOIP,GOOGLE,Google,no-resolve
@@ -1016,17 +1018,6 @@ rules:
   - RULE-SET,Notion,PROXY
   # TikTok Set
   - RULE-SET,TikTok,TikTok
-  # Streaming
-  - DOMAIN-SUFFIX,hanime1.me,流媒体
-  - GEOIP,NETFLIX,流媒体,no-resolve
-  - RULE-SET,Netflix,流媒体
-  - RULE-SET,Bahamut,流媒体
-  - RULE-SET,Streaming,流媒体
-  - DOMAIN,open.spotify.com,流媒体
-  - DOMAIN-SUFFIX,spotify.com,流媒体
-  - DOMAIN-SUFFIX,spotifycdn.com,流媒体
-  - DOMAIN-SUFFIX,branch.io,流媒体
-  - RULE-SET,Spotify,流媒体
   # AKSpeedy-DOMAIN
   - DOMAIN-KEYWORD,akspeedy,DIRECT
   - DOMAIN,turing.captcha.qcloud.com,DIRECT
@@ -1036,14 +1027,17 @@ rules:
   - DOMAIN-KEYWORD,douyin,DIRECT
   - DOMAIN-KEYWORD,youku,DIRECT
   - DOMAIN-KEYWORD,iqiyi,DIRECT
-  # Apple Set
-  - RULE-SET,Apple,Apple
-  - RULE-SET,Icloud,Apple
-  - RULE-SET,AppleID,Apple
-  - RULE-SET,AppleStore,Apple
-  - RULE-SET,AppleHardware,Apple
-  - RULE-SET,AppleFirmware,Apple
-  - RULE-SET,AppleDaily,Apple
+  # Streaming
+  - DOMAIN-SUFFIX,hanime1.me,流媒体
+  - RULE-SET,Netflix,流媒体
+  - GEOIP,NETFLIX,流媒体,no-resolve
+  - RULE-SET,Bahamut,流媒体
+  - RULE-SET,Streaming,流媒体
+  - DOMAIN,open.spotify.com,流媒体
+  - DOMAIN-SUFFIX,spotify.com,流媒体
+  - DOMAIN-SUFFIX,spotifycdn.com,流媒体
+  - DOMAIN-SUFFIX,branch.io,流媒体
+  - RULE-SET,Spotify,流媒体
 #--------------------------------------------------------------------------------------#
   # Global
   # GFWList
@@ -1051,16 +1045,37 @@ rules:
   # Global Domain
   - DOMAIN-SUFFIX,imap.gmail.com,PROXY
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
-  # Local Area Network
-  - GEOIP,PRIVATE,DIRECT,no-resolve
-  - RULE-SET,geolocation-!cn,GlobalSite
 #--------------------------------------------------------------------------------------#
   # Global CDN
   - RULE-SET,geoip_cloudfront,CDN,no-resolve
   - RULE-SET,CloudFlare,CDN,no-resolve
-  - GEOIP,FASTLY,CDN,no-resolve
-  - RULE-SET,cf_ip,CDN,no-resolve
   - RULE-SET,AKAMAI,CDN,no-resolve
+  - GEOIP,FASTLY,CDN,no-resolve
+#--------------------------------------------------------------------------------------#
+  # GlobalSites
+  - RULE-SET,geolocation-!cn,GlobalSite
+#--------------------------------------------------------------------------------------#
+  # Direct DOMAIN & China Services
+  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
+  - RULE-SET,UnionPay,DIRECT
+  - RULE-SET,ShiJiChaoXing,DIRECT
+  - RULE-SET,JingDong,DIRECT
+  - RULE-SET,AliPay,DIRECT
+  - RULE-SET,Alibaba,DIRECT,no-resolve
+  - RULE-SET,NetEase,DIRECT,no-resolve
+  - RULE-SET,Tencent,DIRECT,no-resolve
+  - RULE-SET,cn_domain,DIRECT
+  - RULE-SET,blackmatrix7_direct,DIRECT
+  - RULE-SET,private_domain,DIRECT
+  - DOMAIN-SUFFIX,httpbin.org,DIRECT
+  - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+#--------------------------------------------------------------------------------------#
+  # GEOIP RULESET
+  - RULE-SET,TGcidr,PROXY,no-resolve
+  - RULE-SET,geoip_cloudfront,CDN,no-resolve
+  - RULE-SET,cf_ip,CDN,no-resolve
+  - RULE-SET,cn_ip,DIRECT,no-resolve
+  - GEOIP,PRIVATE,DIRECT,no-resolve
 #--------------------------------------------------------------------------------------#
   # FINAL
   - MATCH,FINAL
