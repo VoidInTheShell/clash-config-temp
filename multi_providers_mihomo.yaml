@@ -559,8 +559,8 @@ proxy-groups:
   # --- 3️⃣ 自建手选 ---
   - name: 自建手选
     type: select
-    use: *a2  # 替换为你的自建节点订阅组名称
-    include-all: true
+    use: *a2
+    include-all: false
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
 
   # --- 4️⃣ 负载均衡（按地区分类）---
