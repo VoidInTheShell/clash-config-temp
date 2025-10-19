@@ -302,6 +302,12 @@ dns:
       - 'tls://223.6.6.6:853'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+    'rule-set:CloudFlare,AKAMAI':
+      - 'tls://8.8.8.8:853#CDN'
+      - 'tls://1.0.0.1:853#CDN'
+    'geoip:fastly,cloudflare':
+      - 'tls://8.8.8.8:853#CDN'
+      - 'tls://1.0.0.1:853#CDN'
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
       - 'tls://8.8.8.8:853#AI'
       - 'tls://1.0.0.1:853#AI'
