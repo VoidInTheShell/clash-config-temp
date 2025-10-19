@@ -15,7 +15,7 @@
 ```
 export url='https://fastly.jsdelivr.net/gh/juewuy/ShellCrash@master' && wget -q --no-check-certificate -O /tmp/install.sh $url/install.sh  && sh /tmp/install.sh && source /etc/profile &> /dev/null
 ```
-安装完成后进入菜单-内核功能设置，确保"防火墙运行模式"为混合、DNS运行模式为"fake-ip"、"只代理常用端口"为关闭
+安装完成后进入菜单-内核功能设置，确保**防火墙运行模式为混合**、**DNS运行模式为fake-ip**、**只代理常用端口为关闭**
 然后下载multi_providers_shellcrash.yaml，按需修改配置
 修改完成后上传至设备的/tmp目录下
 同时执行以下命令下载覆写文件并应用：
