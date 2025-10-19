@@ -8,6 +8,7 @@
   - 开箱即用，分流完善，逻辑清晰，配置方便
   - 同时启用负载均衡+自动测速+故障转移+地区分类策略组，适配多种不同场景需求
   - 适配MihomoPC+ShellCrash+ClashMi客户端，覆盖Windows、Linux（OpenWRT）、Android平台设备
+**更多详情和节点选择策略请查看wiki页面**
 
 # 快速配置
 ## Mihomo
@@ -21,6 +22,7 @@
 ```
 https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_mihomo.yaml
 ```
+4. 编辑配置文件，按提示填入订阅链接
 ## ShellCrash
 安装ShellCrash：
 ```
