@@ -28,13 +28,13 @@ dy: &dy
     #   padding: true  # 增加随机数据，防探测（推荐开）
     #   protocol: smux # 或 smux4
 
-u: &u     # 所有订阅组引用
+u: &a1     # 所有订阅组引用
   - 1.p1
   - 2.p2
   - 3.p3
   - 4.p4
 
-u_s: &u_s # 请在下方填入你的自建节点代理提供者名称，默认为1.p1
+u_s: &a2 # 自建节点订阅组引用
   - 1.p1
 
 # ========================================
@@ -42,6 +42,8 @@ u_s: &u_s # 请在下方填入你的自建节点代理提供者名称，默认�
 # ========================================
 
 # 代理提供者链接配置，在"url:"后填入你的订阅链接
+# 共提供4个代理提供者位置，可根据需要增减，复制粘贴模板后更名即可
+# 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
 proxy-providers:
   1.p1:
     url: ""
@@ -109,7 +111,7 @@ pg: &pg
 # 负载均衡模板
 rtt-lb: &rtt-lb
   type: load-balance
-  use: *u
+  use: *a1
   lazy: true
   interval: 600
   strategy: round-robin
@@ -120,7 +122,7 @@ rtt-lb: &rtt-lb
 # 自动测速模板
 auto-test: &auto-test
   type: url-test
-  use: *u
+  use: *a1
   lazy: true
   interval: 600
   tolerance: 100
@@ -129,7 +131,7 @@ auto-test: &auto-test
 # 故障转移模板
 fallback: &fallback
   type: fallback
-  use: *u
+  use: *a1
   lazy: true
   interval: 900
   max-failed-times: 3
@@ -484,7 +486,7 @@ proxy-groups:
 
   - name: 自动选择
     type: url-test
-    use: *u
+    use: *a1
     url: https://cp.cloudflare.com/generate_204
     include-all: false
     tolerance: 50
@@ -503,7 +505,7 @@ proxy-groups:
   # --- 1️⃣ 全部手选 ---
   - name: 全部手选
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png"
@@ -521,35 +523,35 @@ proxy-groups:
 
   - name: 手选-US
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
 
   - name: 手选-HK
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
 
   - name: 手选-SG
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
 
   - name: 手选-JP
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
 
   - name: 手选-其他
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png"
@@ -557,7 +559,7 @@ proxy-groups:
   # --- 3️⃣ 自建手选 ---
   - name: 自建手选
     type: select
-    use: *u_s  # 替换为你的自建节点订阅组名称
+    use: *a2  # 替换为你的自建节点订阅组名称
     include-all: true
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
 
@@ -642,7 +644,7 @@ proxy-groups:
   # --- 7️⃣ 特殊策略：AI 专用 ---
   - name: AI稳定
     type: fallback
-    use: *u
+    use: *a1
     url: https://cp.cloudflare.com/generate_204
     interval: 7200
     max-failed-times: 1
@@ -654,7 +656,7 @@ proxy-groups:
 
   - name: AI优选
     type: url-test
-    use: *u
+    use: *a1
     url: https://cp.cloudflare.com/generate_204
     interval: 3600
     tolerance: 50
@@ -665,7 +667,7 @@ proxy-groups:
   # --- 特殊策略：流媒体解锁 ---
   - name: 流媒体解锁
     type: select
-    use: *u
+    use: *a1
     include-all: true
     filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Disney|HBO)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"

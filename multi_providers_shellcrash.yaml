@@ -5,10 +5,17 @@
 #--------------------------------------------------------------------------------------#
 
 # ========================================
-# 📌 模板定义
+# 📌 用户配置区
 # ========================================
-# 订阅提供者引用模板
-dy: &dy
+
+# 代理提供者链接配置，在"url:"后填入你的订阅链接
+# 共提供4个代理提供者位置，可根据需要增减，复制粘贴模板后更名即可
+# 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
+
+proxy-providers:
+  1.p1:
+    url: ""
+    path: ./proxy_provider/p1.yaml 
     type: http
     udp: true
     interval: 86400
@@ -18,123 +25,69 @@ dy: &dy
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5 # 秒
+      timeout: 5
       lazy: true
       expected-status: "204"
       method: HEAD
-# ⚠️ smux 多路复用：部分机场不支持，如连接失败请注释本段
-    # smux: # smux（连接复用，提升多路复用效率，减少握手）
-    #   enabled: true  # 开启 smux 多路复用
-    #   padding: true  # 增加随机数据，防探测（推荐开）
-    #   protocol: smux # 或 smux4
-
-u: &u     # 所有订阅组引用
-  - 1.p1
-  - 2.p2
-  - 3.p3
-  - 4.p4
-
-u_s: &u_s # 请在下方填入你的自建节点代理提供者名称，默认为1.p1
-  - 1.p1
-
-# ========================================
-# 📌 用户配置区
-# ========================================
-
-# 代理提供者链接配置，在"url:"后填入你的订阅链接
-proxy-providers:
-  1.p1:
-    url: ""
-    path: ./proxy_provider/p1.yaml 
-    <<: *dy
     override:
       additional-prefix: "p1 »"
 
   2.p2:
     url: ""
     path: ./proxy_provider/p2.yaml
-    <<: *dy
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
     override:
       additional-prefix: "p2 »"
 
   3.p3: 
     url: ""
     path: ./proxy_provider/p3.yaml 
-    <<: *dy
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
     override:
       additional-prefix: "p3 »"
 
   4.p4: 
     url: ""
     path: ./proxy_provider/p4.yaml 
-    <<: *dy
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
     override:
       additional-prefix: "p4 »"
-
-# AI 稳定节点定义，手动选择你的AI稳定节点
-# 请替换为你客户端显示的实际节点名称（包括前缀）
-# 示例："1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
-# 语法为：机场 » 节点名称，中间用竖线 | 分隔多个节点，也可以使用自建节点
-aift: &aift
-  "(?i)(1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01)"
-
-# ========================================
-# 📌 模板定义区
-# ========================================
-
-# 通用引用模板
-pg: &pg
-  type: select
-  proxies:
-    - 自动选择
-    - 全部手选
-    - 地区手选
-    - 自建手选
-    - 负载均衡-US
-    - 负载均衡-HK
-    - 负载均衡-SG
-    - 负载均衡-JP
-    - 负载均衡-其他
-    - 自动测速-US
-    - 自动测速-HK
-    - 自动测速-SG
-    - 自动测速-JP
-    - 自动测速-其他
-    - 故障转移-US
-    - 故障转移-HK
-    - 故障转移-SG
-    - 故障转移-JP
-    - 故障转移-其他
-
-# 负载均衡模板
-rtt-lb: &rtt-lb
-  type: load-balance
-  use: *u
-  lazy: true
-  interval: 600
-  strategy: round-robin
-  max-failed-times: 3
-  tolerance: 100
-  url: https://cp.cloudflare.com/generate_204
-
-# 自动测速模板
-auto-test: &auto-test
-  type: url-test
-  use: *u
-  lazy: true
-  interval: 600
-  tolerance: 100
-  url: https://cp.cloudflare.com/generate_204
-
-# 故障转移模板
-fallback: &fallback
-  type: fallback
-  use: *u
-  lazy: true
-  interval: 900
-  max-failed-times: 3
-  tolerance: 100
-  url: https://cp.cloudflare.com/generate_204
 
 # ========================================
 # 🎯 代理组配置
@@ -147,7 +100,7 @@ proxy-groups:
   # ========================================
 
   # --- 主代理组 ---
-  # 推荐优先选择延迟最低的节点，默认为自动选择
+  # 优先选择延迟最低的节点
   - name: PROXY
     type: select
     proxies:
@@ -179,8 +132,8 @@ proxy-groups:
     type: select
     proxies:
       - PROXY
-      - DIRECT
       - 自动选择
+      - DIRECT
       - 全部手选
       - 地区手选
       - 自建手选
@@ -200,31 +153,6 @@ proxy-groups:
       - 故障转移-JP
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
-
-  # # --- 在大陆正常运营的全球服务 ---
-  # - name: GlobalLegal
-  #   type: select
-  #   proxies:
-  #     - DIRECT
-  #     - 全部手选
-  #     - 地区手选
-  #     - 自建手选
-  #     - 负载均衡-US
-  #     - 负载均衡-HK
-  #     - 负载均衡-SG
-  #     - 负载均衡-JP
-  #     - 负载均衡-其他
-  #     - 自动测速-US
-  #     - 自动测速-HK
-  #     - 自动测速-SG
-  #     - 自动测速-JP
-  #     - 自动测速-其他
-  #     - 故障转移-US
-  #     - 故障转移-HK
-  #     - 故障转移-SG
-  #     - 故障转移-JP
-  #     - 故障转移-其他
-  #   icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png"
 
   # --- 地区解锁流媒体 ---
   # 优先使用流媒体解锁节点
@@ -246,12 +174,6 @@ proxy-groups:
       - 故障转移-JP
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
-
-  # # --- 非地区解锁流媒体 ---
-  # - name: 非地区解锁流媒体
-  #   type: select
-  #   <<: *pg
-  #   icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png"
 
   # --- AI 服务 ---
   # 优先使用AI专用节点
@@ -484,7 +406,11 @@ proxy-groups:
 
   - name: 自动选择
     type: url-test
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     url: https://cp.cloudflare.com/generate_204
     include-all: false
     tolerance: 50
@@ -503,7 +429,11 @@ proxy-groups:
   # --- 1️⃣ 全部手选 ---
   - name: 全部手选
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png"
@@ -521,35 +451,55 @@ proxy-groups:
 
   - name: 手选-US
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
 
   - name: 手选-HK
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
 
   - name: 手选-SG
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
 
   - name: 手选-JP
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
-    filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
 
   - name: 手选-其他
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png"
@@ -557,104 +507,266 @@ proxy-groups:
   # --- 3️⃣ 自建手选 ---
   - name: 自建手选
     type: select
-    use: *u_s  # 替换为你的自建节点订阅组名称
-    include-all: true
+    use:
+      - 1.p1
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
 
   # --- 4️⃣ 负载均衡（按地区分类）---
   - name: 负载均衡-US
-    <<: *rtt-lb
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-HK
-    <<: *rtt-lb
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-SG
-    <<: *rtt-lb
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-JP
-    <<: *rtt-lb
-    filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-其他
-    <<: *rtt-lb
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|狮城|SG|Singapore|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   # --- 5️⃣ 自动测速（按地区分类）---
   - name: 自动测速-US
-    <<: *auto-test
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-HK
-    <<: *auto-test
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-SG
-    <<: *auto-test
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-JP
-    <<: *auto-test
-    filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-其他
-    <<: *auto-test
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   # --- 6️⃣ 故障转移（按地区分类）---
   - name: 故障转移-US
-    <<: *fallback
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-HK
-    <<: *fallback
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-SG
-    <<: *fallback
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-JP
-    <<: *fallback
-    filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-其他
-    <<: *fallback
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   # --- 7️⃣ 特殊策略：AI 专用 ---
+# 手动选择你的AI稳定节点
+# 请替换为你客户端显示的实际节点名称（包括前缀）
+# 示例："1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
+# 语法为：订阅名 » 节点名称，中间用竖线 | 分隔多个节点，也可以使用自建节点
   - name: AI稳定
     type: fallback
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     url: https://cp.cloudflare.com/generate_204
     interval: 7200
     max-failed-times: 1
     tolerance: 100
     lazy: true
-    # 请替换为你客户端显示的实际节点名称（包括前缀）
-    filter: *aift
+    # 请替换为你客户端显示的实际节点名称（包括订阅名前缀）
+    filter: "1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
     icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/ai.png"
 
   - name: AI优选
     type: url-test
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     url: https://cp.cloudflare.com/generate_204
     interval: 3600
     tolerance: 50
@@ -665,7 +777,11 @@ proxy-groups:
   # --- 特殊策略：流媒体解锁 ---
   - name: 流媒体解锁
     type: select
-    use: *u
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
     include-all: true
     filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Disney|HBO)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
