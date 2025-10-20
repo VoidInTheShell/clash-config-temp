@@ -47,7 +47,6 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'ruleset:cn_domain,private_domain'
     - 'geosite:connectivity-check,private'
     - 'ruleset:fakeip-filter-dustinwin'
     - '*.lan'
@@ -190,6 +189,14 @@ dns:
       - 'tls://223.6.6.6:853'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+    'geosite:steam,category-games':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
+    'rule-set:SteamCN,GameDownloadCN,EPIC':
+      - 'tls://223.6.6.6:853'
+      - 'tls://223.5.5.5:853'
+      - 'tls://dot.pub:853'
     'geoip:cn':
       - 'tls://223.6.6.6:853'
       - 'tls://223.5.5.5:853'
@@ -203,6 +210,9 @@ dns:
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
       - 'tls://8.8.8.8:853#AI'
       - 'tls://1.0.0.1:853#AI'
+    'geoip:google':
+      - 'tls://8.8.8.8:853#Google'
+      - 'tls://1.0.0.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
       - 'tls://8.8.8.8:853#海淘购物'
       - 'tls://1.0.0.1:853#海淘购物'
@@ -221,3 +231,8 @@ dns:
     'rule-set:BiliBili':
       - 'tls://8.8.8.8:853#哔哩哔哩'
       - 'tls://223.5.5.5:853'
+#--------------------------------------------------------------------------------------#
+routing:
+  domainStrategy: AsIs
+  domainMatcher: hybrid
+#--------------------------------------------------------------------------------------#

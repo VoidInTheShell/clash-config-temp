@@ -1,81 +1,796 @@
+#--------------------------------------------------------------------------------------#
+#-----------------------------WrittenByVoidInTheShell----------------------------------#
+#--------------------------------------------------------------------------------------#
+#-------------------------------Multi-Providers-Ver------------------------------------#
+#--------------------------------------------------------------------------------------#
 
-    - name: FINAL
-      type: select
-      proxies:
-        - PROXY
-        - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-    - name: GlobalSite
-      type: select
-      proxies:
-        - PROXY
-        - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-    - name: 流媒体
-      type: select
-      proxies:
-        - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - DIRECT
-    - name: AI
-      type: select
-      proxies:
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
-    - name: MicrosoftBing
-      type: select
-      proxies:
-        - US1-纽约-稳定纯净-日用
-        - DIRECT
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
-    - name: CDN
-      type: select
-      proxies:
-        - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - DIRECT
-    - name: 海淘购物
-      type: select
-      proxies:
-        - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - DIRECT
-    - name: 哔哩哔哩
-      type: select
-      proxies:
-        - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
-    - name: Apple
-      type: select
-      proxies:
-        - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
-    - name: Google
-      type: select
-      proxies:
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
-    - name: TikTok
-      type: select
-      proxies:
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
-        - PROXY
+# ========================================
+# 📌 用户配置区
+# ========================================
+
+# 代理提供者链接配置，在"url:"后填入你的订阅链接
+# 共提供4个代理提供者位置，可根据需要增减，复制粘贴模板后更名即可
+# 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
+
+proxy-providers:
+  1.p1:
+    url: ""
+    path: ./proxy_provider/p1.yaml 
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
+    override:
+      additional-prefix: "p1 »"
+
+  2.p2:
+    url: ""
+    path: ./proxy_provider/p2.yaml
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
+    override:
+      additional-prefix: "p2 »"
+
+  3.p3: 
+    url: ""
+    path: ./proxy_provider/p3.yaml 
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
+    override:
+      additional-prefix: "p3 »"
+
+  4.p4: 
+    url: ""
+    path: ./proxy_provider/p4.yaml 
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    lazy: true
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      timeout: 5
+      lazy: true
+      expected-status: "204"
+      method: HEAD
+    override:
+      additional-prefix: "p4 »"
+
+# ========================================
+# 🎯 代理组配置
+# ========================================
+
+proxy-groups:
+
+  # ========================================
+  # 📂 分流类型代理组（用于区分不同服务）
+  # ========================================
+
+  # --- 主代理组 ---
+  # 优先选择延迟最低的节点
+  - name: PROXY
+    type: select
+    proxies:
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+      - DIRECT
+    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
+
+  # --- 非大陆站点 ---
+  # 跟随主代理组
+  - name: GlobalSite
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - DIRECT
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
+
+  # --- 地区解锁流媒体 ---
+  # 优先使用流媒体解锁节点
+  - name: 流媒体
+    type: select
+    proxies:
+      - 流媒体解锁
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
+
+  # --- AI 服务 ---
+  # 优先使用AI专用节点
+  - name: AI
+    type: select
+    proxies:
+      - AI优选
+      - AI稳定
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
+
+  # --- 微软必应 ---
+  # 默认直连
+  - name: MicrosoftBing
+    type: select
+    proxies:
+      - DIRECT
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bing.png"
+
+  # --- CDN 服务 ---
+  # 默认直连
+  - name: CDN
+    type: select
+    proxies:
+      - DIRECT
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
+
+  # --- 海淘购物 ---
+  # 默认跟随主代理组
+  - name: 海淘购物
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - DIRECT
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
+
+  # --- 哔哩哔哩 ---
+  # 默认直连，需要解锁时推荐切换负载均衡
+  - name: 哔哩哔哩
+    type: select
+    proxies:
+      - DIRECT
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-HK
+      - 自动测速-HK
+      - 故障转移-HK
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
+
+  # --- Apple ---
+  # 默认直连
+  - name: Apple
+    type: select
+    proxies:
+      - DIRECT
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
+
+  # --- Google ---
+  # 默认跟随主代理组
+  - name: Google
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
+
+  # --- TikTok ---
+  # 默认跟随主代理组，推荐负载均衡
+  - name: TikTok
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 自动测速-US
+      - 自动测速-SG
+      - 自动测速-JP
+      - 故障转移-US
+      - 故障转移-SG
+      - 故障转移-JP
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
+
+  # --- 漏网之鱼 ---
+  # 默认跟随主代理组
+  - name: FINAL
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+      - DIRECT
+    icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
+
+  # ========================================
+  # ⚙️ 策略类型代理组（用于自动化选择节点）
+  # ========================================
+
+  - name: 自动选择
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    url: https://cp.cloudflare.com/generate_204
+    include-all: false
+    tolerance: 50
+    interval: 1800 #安卓可用1800，也就是半小时
+    lazy: false
+    health-check:
+      enable: true
+      interval: 900
+      url: https://cp.cloudflare.com/generate_204
+      method: HEAD
+      timeout: 5
+      expected-status: '204'
+    filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
+
+  # --- 1️⃣ 全部手选 ---
+  - name: 全部手选
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png"
+
+  # --- 2️⃣ 地区手选 ---
+  - name: 地区手选
+    type: select
+    proxies:
+      - 手选-US
+      - 手选-HK
+      - 手选-SG
+      - 手选-JP
+      - 手选-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/World_Map.png"
+
+  - name: 手选-US
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
+
+  - name: 手选-HK
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
+
+  - name: 手选-SG
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
+
+  - name: 手选-JP
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
+
+  - name: 手选-其他
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png"
+
+  # --- 3️⃣ 自建手选 ---
+  - name: 自建手选
+    type: select
+    use:
+      - 1.p1
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
+
+  # --- 4️⃣ 负载均衡（按地区分类）---
+  - name: 负载均衡-US
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  - name: 负载均衡-HK
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  - name: 负载均衡-SG
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  - name: 负载均衡-JP
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  - name: 负载均衡-其他
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|狮城|SG|Singapore|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  # --- 5️⃣ 自动测速（按地区分类）---
+  - name: 自动测速-US
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  - name: 自动测速-HK
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  - name: 自动测速-SG
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  - name: 自动测速-JP
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  - name: 自动测速-其他
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 600
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  # --- 6️⃣ 故障转移（按地区分类）---
+  - name: 故障转移-US
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  - name: 故障转移-HK
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  - name: 故障转移-SG
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  - name: 故障转移-JP
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  - name: 故障转移-其他
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: true
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  # --- 7️⃣ 特殊策略：AI 专用 ---
+# 手动选择你的AI稳定节点
+# 请替换为你客户端显示的实际节点名称（包括前缀）
+# 示例："1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
+# 语法为：订阅名 » 节点名称，中间用竖线 | 分隔多个节点，也可以使用自建节点
+  - name: AI稳定
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    url: https://cp.cloudflare.com/generate_204
+    interval: 7200
+    max-failed-times: 1
+    tolerance: 100
+    lazy: true
+    # 请替换为你客户端显示的实际节点名称（包括订阅名前缀）
+    filter: "1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
+    icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/ai.png"
+
+  - name: AI优选
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    url: https://cp.cloudflare.com/generate_204
+    interval: 3600
+    tolerance: 50
+    lazy: false
+    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York|🇸🇬|新加坡|狮城|SG|Singapore)"
+    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/ai_backup.png"
+
+  # --- 特殊策略：流媒体解锁 ---
+  - name: 流媒体解锁
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: true
+    filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Disney|HBO)"
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
 #--------------------------------------------------------------------------------------#
-#-------------------------------WrittenByLiebesleid------------------------------------#
-#--------------------------------------------------------------------------------------#
+
+# ========================================
+# 📌 全局内核配置
+# ========================================
+
 mixed-port: 7890
 redir-port: 7891
 tproxy-port: 1536
@@ -446,6 +1161,7 @@ rules:
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
 #--------------------------------------------------------------------------------------#
   # Global CDN
+  - RULE-SET,geoip_cloudfront,CDN,no-resolve
   - RULE-SET,CloudFlare,CDN,no-resolve
   - RULE-SET,AKAMAI,CDN,no-resolve
   - GEOIP,FASTLY,CDN,no-resolve
