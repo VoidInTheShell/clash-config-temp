@@ -1,3 +1,4 @@
+ipv6: false
 tcp-concurrent: true
 geodata-mode: true
 geox-url:
@@ -5,24 +6,23 @@ geox-url:
   geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
   mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
 geodata-loader: memconservative
-# 'memconservative' 适用于较低内存占用，保证系统性能
 geo-auto-update: true
 geo-update-interval: 48
-tun:
-  enable: true
-  stack: system
-  device: utun
-  auto-route: false
-  strict-route: true
-  auto-redirct: true
-  auto-detect-interface: false
-  dns-hijack:
-    - any:53
-    - tcp://any:53
-    - any:853
-    - tls://any:853
-    - tcp://any:853
-  experimental: {ignore-resolve-fail: true, interface-name: en0}
+# tun:
+#   enable: true
+#   stack: system
+#   device: utun
+#   auto-route: false
+#   strict-route: true
+#   auto-redirct: true
+#   auto-detect-interface: false
+#   dns-hijack:
+#     - any:53
+#     - tcp://any:53
+#     - any:853
+#     - tls://any:853
+#     - tcp://any:853
+#   experimental: {ignore-resolve-fail: true, interface-name: en0}
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -211,6 +211,7 @@ dns:
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
       - 'tls://8.8.8.8:853#AI'
       - 'tls://1.0.0.1:853#AI'
+      - 'tls://1.1.1.1:853#AI'
     'geoip:google':
       - 'tls://8.8.8.8:853#Google'
       - 'tls://1.0.0.1:853#Google'
