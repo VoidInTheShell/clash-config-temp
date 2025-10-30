@@ -176,10 +176,9 @@ dns:
     - 'tls://1.1.1.1:853#FINAL'
   direct-nameserver:
     - '119.29.29.29'
-    - 'tls://223.6.6.6:853'
-    - 'tls://223.5.5.5:853'
-    - 'tls://dot.pub:853'
-    - 'https://doh.pub/dns-query'
+    - '223.5.5.5'
+    - '223.6.6.6'
+    - 'system'
   proxy-server-nameserver:
     - '1.1.1.1'
     - '8.8.8.8'
@@ -199,9 +198,9 @@ dns:
     #   - 'tls://223.5.5.5:853'
     #   - 'tls://dot.pub:853'
     'geoip:cn':
-      - 'tls://223.6.6.6:853'
-      - 'tls://223.5.5.5:853'
-      - 'tls://dot.pub:853'
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - 'system'
     'rule-set:CloudFlare,AKAMAI':
       - 'tls://8.8.8.8:853#CDN'
       - 'tls://1.0.0.1:853#CDN'
@@ -224,9 +223,9 @@ dns:
     'geoip:telegram':
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
-    'geosite:geolocation-!cn':
-      - 'tls://8.8.8.8:853#GlobalSite'
-      - 'tls://1.0.0.1:853#GlobalSite'
+    # 'geosite:geolocation-!cn':
+    #   - 'tls://8.8.8.8:853#GlobalSite'
+    #   - 'tls://1.0.0.1:853#GlobalSite'
     'rule-set:GFW':
       - 'tls://8.8.8.8:853#PROXY'
       - 'tls://1.0.0.1:853#PROXY'
