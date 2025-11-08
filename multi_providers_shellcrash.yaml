@@ -227,7 +227,7 @@ proxy-groups:
       - 故障转移-SG
       - 故障转移-JP
       - 故障转移-其他
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bing.png"
+    icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
 
   # --- CDN 服务 ---
   # 默认直连
