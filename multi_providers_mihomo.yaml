@@ -44,14 +44,14 @@ u_s: &a2 # 自建节点订阅组引用
 # 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
 proxy-providers:
   1.p1:
-    url: ""
+    url: "https://portal.uegov.org/api/auth/subscribe/QjBfT0ZLR0VQUTNGTXZtazRTR3ZNMFRzTzVDci1DdHBfeXRoWU1oU01rc0l6aVFY"
     path: ./proxy_provider/p1.yaml 
     <<: *dy
     override:
       additional-prefix: "p1 »"
 
   2.p2:
-    url: ""
+    url: "https://dsub.douyincdns.top:8888/api/v1/client/subscribe?token=25a74c51cf2dd387e6df2fc107f2e8f7"
     path: ./proxy_provider/p2.yaml
     <<: *dy
     override:
@@ -722,6 +722,7 @@ geox-url:
   geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
   geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
   mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
 #--------------------------------------------------------------------------------------#
 profile:
   store-selected: true
