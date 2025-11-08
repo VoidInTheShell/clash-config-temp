@@ -20,13 +20,11 @@ proxy-providers:
     udp: true
     interval: 86400
     proxy: DIRECT
-    lazy: true
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 5
-      lazy: true
       expected-status: "204"
       method: HEAD
     override:
@@ -39,13 +37,11 @@ proxy-providers:
     udp: true
     interval: 86400
     proxy: DIRECT
-    lazy: true
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 5
-      lazy: true
       expected-status: "204"
       method: HEAD
     override:
@@ -58,13 +54,11 @@ proxy-providers:
     udp: true
     interval: 86400
     proxy: DIRECT
-    lazy: true
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 5
-      lazy: true
       expected-status: "204"
       method: HEAD
     override:
@@ -77,13 +71,11 @@ proxy-providers:
     udp: true
     interval: 86400
     proxy: DIRECT
-    lazy: true
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 5
-      lazy: true
       expected-status: "204"
       method: HEAD
     override:
@@ -519,7 +511,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     strategy: round-robin
     max-failed-times: 3
@@ -535,7 +527,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     strategy: round-robin
     max-failed-times: 3
@@ -551,7 +543,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     strategy: round-robin
     max-failed-times: 3
@@ -567,7 +559,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     strategy: round-robin
     max-failed-times: 3
@@ -583,7 +575,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     strategy: round-robin
     max-failed-times: 3
@@ -600,7 +592,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -614,7 +606,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -628,7 +620,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -642,7 +634,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -656,7 +648,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 600
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -671,7 +663,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 900
     max-failed-times: 3
     tolerance: 100
@@ -686,7 +678,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 900
     max-failed-times: 3
     tolerance: 100
@@ -701,7 +693,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 900
     max-failed-times: 3
     tolerance: 100
@@ -716,7 +708,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 900
     max-failed-times: 3
     tolerance: 100
@@ -731,7 +723,7 @@ proxy-groups:
       - 2.p2
       - 3.p3
       - 4.p4
-    lazy: true
+    lazy: false
     interval: 900
     max-failed-times: 3
     tolerance: 100
@@ -755,7 +747,7 @@ proxy-groups:
     interval: 7200
     max-failed-times: 1
     tolerance: 100
-    lazy: true
+    lazy: false
     # 请替换为你客户端显示的实际节点名称（包括订阅名前缀）
     filter: "1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
     icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/ai.png"
