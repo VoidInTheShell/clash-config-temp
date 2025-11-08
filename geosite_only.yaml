@@ -1,0 +1,479 @@
+proxies:
+    - name: US1-纽约-稳定纯净-日用
+      type: hysteria2
+      server: us1.blog.uegov.dpdns.org
+      port: 443
+      up: 1000
+      down: 1000
+      password: B0_OFKGEPQ3FMvmk4SGvM0TsO5Cr-Ctp_ythYMhSMksIziQX
+      obfs: salamander
+      obfs-password: uegov
+      sni: us1.blog.uegov.dpdns.org
+    - name: US2-纽约-稳定纯净-游戏
+      type: hysteria2
+      server: us2.blog.uegov.dpdns.org
+      port: 443
+      up: 1000
+      down: 1000
+      password: B0_OFKGEPQ3FMvmk4SGvM0TsO5Cr-Ctp_ythYMhSMksIziQX
+      obfs: salamander
+      obfs-password: uegov
+      sni: us2.blog.uegov.dpdns.org
+    - name: JP1
+      type: vless
+      server: jp1.blog.sacbridge.dpdns.org
+      port: 443
+      uuid: fc5a6ba4-08cf-5b73-b267-99165774d26a
+      network: tcp
+      tls: true
+      udp: true
+      flow: xtls-rprx-vision
+      client-fingerprint: firefox
+      servername: jp1.blog.sacbridge.dpdns.org
+proxy-groups:
+    - name: PROXY
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+    - name: FINAL
+      type: select
+      proxies:
+        - PROXY
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+    - name: GlobalSite
+      type: select
+      proxies:
+        - PROXY
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+    - name: 流媒体
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - DIRECT
+    - name: AI
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+    - name: MicrosoftBing
+      type: select
+      proxies:
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - PROXY
+    - name: CDN
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - DIRECT
+    - name: 海淘购物
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - DIRECT
+    - name: 哔哩哔哩
+      type: select
+      proxies:
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - PROXY
+    - name: Apple
+      type: select
+      proxies:
+        - DIRECT
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - PROXY
+    - name: Google
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+    - name: TikTok
+      type: select
+      proxies:
+        - US1-纽约-稳定纯净-日用
+        - US2-纽约-稳定纯净-游戏
+        - JP1
+        - PROXY
+#--------------------------------------------------------------------------------------#
+#-------------------------------WrittenByLiebesleid------------------------------------#
+#--------------------------------------------------------------------------------------#
+mixed-port: 7890
+routing-mark: 1
+mode: Rule
+ipv6: false
+allow-lan: true
+log-level: info
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: strict
+global-client-fingerprint: chrome
+#--------------------------------------------------------------------------------------#
+external-controller: 0.0.0.0:7788
+secret: "123456"
+external-ui: WebUI/ZashBoard
+external-ui-url: "https://gh-proxy.com/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+external-controller-cors:
+  allow-origins:
+    - "*"
+  allow-private-network: true
+#--------------------------------------------------------------------------------------#
+tun:
+  enable: true
+  stack: mixed
+  device: Meta
+  auto-route: true
+  strict-route: true
+  auto-detect-interface: true
+  auto-redirct: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+    - any:853
+    - tls://any:853
+    - tcp://any:853
+#--------------------------------------------------------------------------------------#
+geodata-mode: true
+geox-url:
+  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+  store-fake-ip: true
+#--------------------------------------------------------------------------------------#
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - 'Mijia Cloud'
+    - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'geosite:connectivity-check,private'
+    - 'ruleset:fakeip-filter-dustinwin'
+  default-nameserver:
+    - '1.1.1.1'
+    - '119.29.29.29'
+  nameserver:
+    - 'tls://8.8.8.8:853#PROXY'
+    - 'tls://1.1.1.1:853#PROXY'
+  direct-nameserver:
+    - 'tls://223.6.6.6:853'
+    - 'tls://223.5.5.5:853'
+    - 'https://doh.pub/dns-query'
+  proxy-server-nameserver:
+    - '1.1.1.1'
+    - '8.8.8.8'
+    - 'tls://1.1.1.1:853'
+    - 'tls://8.8.8.8:853'
+  nameserver-policy:
+    'geosite:category-games':
+      - 'system'
+      - 'tls://223.6.6.6:853&ecs=110.72.0.0/14&ecs-override=true'
+      - 'tls://223.5.5.5:853&ecs=110.72.0.0/14&ecs-override=true'
+      - 'https://dot.pub/dns-query&ecs=110.72.0.0/14&ecs-override=true'
+    'geosite:china-list,cn,private':
+      - 'system'
+      - 'tls://223.6.6.6:853&ecs=110.72.0.0/14&ecs-override=true'
+      - 'tls://223.5.5.5:853&ecs=110.72.0.0/14&ecs-override=true'
+      - 'https://dot.pub/dns-query&ecs=110.72.0.0/14&ecs-override=true'
+    'rule-set:category-ai-!cn':
+      - 'tls://8.8.8.8:853#AI'
+      - 'tls://1.0.0.1:853#AI'
+    'geoip:google':
+      - 'tls://8.8.8.8:853#Google'
+      - 'tls://1.0.0.1:853#Google'
+    'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
+      - 'tls://8.8.8.8:853#海淘购物'
+      - 'tls://1.0.0.1:853#海淘购物'
+    'geoip:cloudfront':
+      - 'tls://8.8.8.8:853#海淘购物'
+      - 'tls://1.0.0.1:853#海淘购物'
+    'geoip:telegram':
+      - 'tls://8.8.8.8:853#PROXY'
+      - 'tls://1.0.0.1:853#PROXY'
+    'rule-set:GFW':
+      - 'tls://8.8.8.8:853#PROXY'
+      - 'tls://1.0.0.1:853#PROXY'
+    'rule-set:BiliBili':
+      - 'tls://8.8.8.8:853#哔哩哔哩'
+      - 'tls://223.5.5.5:853'
+#--------------------------------------------------------------------------------------#
+routing:
+  domainStrategy: AsIs
+  domainMatcher: hybrid
+#--------------------------------------------------------------------------------------#
+rules:
+  # Custom
+  - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
+  - PROCESS-NAME,Proxifier,PROXY
+  - DOMAIN-SUFFIX,ipleak.net,PROXY
+  - DOMAIN-SUFFIX,browserleaks.com,PROXY
+  - DOMAIN-SUFFIX,www.browserscan.net,PROXY
+  # User
+  - DOMAIN-SUFFIX,uegov.org,DIRECT
+  - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
+  - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
+  - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
+  - DOMAIN-KEYWORD,autocad,DIRECT
+  - DOMAIN-KEYWORD,koishi,DIRECT
+  - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
+  - DOMAIN-SUFFIX,httpbin.org,DIRECT
+#--------------------------------------------------------------------------------------#
+  # Block
+  - RULE-SET,CNHTTPDNS,REJECT
+  - RULE-SET,PCDN,REJECT
+  - RULE-SET,Reject,REJECT
+  # ADBlock
+  - RULE-SET,ADS1,REJECT
+  - RULE-SET,ADS2,REJECT
+  - GEOSITE,category-ads-all,REJECT
+  - DOMAIN,youxi.xunlei.com,REJECT
+  # SpaceDesk
+  - DOMAIN-KEYWORD,vrdesktop,REJECT
+#--------------------------------------------------------------------------------------#
+  # Games
+  # China Games
+  - GEOSITE,category-games,DIRECT
+#--------------------------------------------------------------------------------------#
+  # DOMAIN Services
+  # BiliBili
+  - RULE-SET,BiliBili,哔哩哔哩
+  # AI
+  - RULE-SET,category-ai-!cn,AI
+  # Apple Set
+  - GEOSITE,apple-cn,DIRECT
+  # Bing
+  - DOMAIN-KEYWORD,bing,MicrosoftBing
+  # # Notion
+  # - DOMAIN,http-inputs-notion.splunkcloud.com,PROXY
+  # - RULE-SET,Notion,PROXY
+  # AKSpeedy-DOMAIN
+  - DOMAIN-KEYWORD,akspeedy,DIRECT
+  - DOMAIN,turing.captcha.qcloud.com,DIRECT
+  - DOMAIN,turing.captcha.gtimg.com,DIRECT
+  - DOMAIN,sensorsdata.web.bigdata.fulu.com,DIRECT
+  # CNMedia
+  - DOMAIN-KEYWORD,douyin,DIRECT
+  - DOMAIN-KEYWORD,youku,DIRECT
+  - DOMAIN-KEYWORD,iqiyi,DIRECT
+  # Streaming
+  - DOMAIN-SUFFIX,hanime1.me,流媒体
+  # - RULE-SET,Netflix,流媒体
+  - GEOIP,NETFLIX,流媒体,no-resolve
+  # - RULE-SET,Bahamut,流媒体
+  # - RULE-SET,Streaming,流媒体
+  # - DOMAIN,open.spotify.com,流媒体
+  # - DOMAIN-SUFFIX,spotify.com,流媒体
+  # - DOMAIN-SUFFIX,spotifycdn.com,流媒体
+  # - DOMAIN-SUFFIX,branch.io,流媒体
+  # - RULE-SET,Spotify,流媒体
+#--------------------------------------------------------------------------------------#
+  # Direct DOMAIN & China Services
+  - GEOSITE,geolocation-!cn@cn,DIRECT
+  - GEOSITE,china-list,DIRECT
+  - GEOSITE,private,DIRECT
+  # - RULE-SET,cn_domain,DIRECT
+  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
+  # - RULE-SET,UnionPay,DIRECT
+  # - RULE-SET,ShiJiChaoXing,DIRECT
+  # - RULE-SET,JingDong,DIRECT
+  # - RULE-SET,AliPay,DIRECT
+  # - RULE-SET,Alibaba,DIRECT,no-resolve
+  # - RULE-SET,NetEase,DIRECT,no-resolve
+  # - RULE-SET,Tencent,DIRECT,no-resolve
+  # - RULE-SET,blackmatrix7_direct,DIRECT
+  # - RULE-SET,private_domain,DIRECT
+  # - DOMAIN-SUFFIX,httpbin.org,DIRECT
+  # - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+#--------------------------------------------------------------------------------------#
+  # GlobalSites
+  - RULE-SET,geolocation-!cn,GlobalSite
+#--------------------------------------------------------------------------------------#
+  # Global
+  # GFWList
+  - RULE-SET,GFW,PROXY
+  - GEOSITE,geolocation-cn@!cn,PROXY
+  # Global Domain
+  - DOMAIN-SUFFIX,imap.gmail.com,PROXY
+  - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
+#--------------------------------------------------------------------------------------#
+  # CLASSICAL SERVICES
+  # TikTok Set
+  - RULE-SET,TikTok,TikTok
+  # Shopping
+  - RULE-SET,eBay,海淘购物
+  - RULE-SET,Amazon,海淘购物
+  - RULE-SET,AmazonIP,海淘购物
+  - RULE-SET,AmazonCN,海淘购物
+  - RULE-SET,AmazonTrust,海淘购物
+  # Microsoft
+  - RULE-SET,Microsoft,MicrosoftBing
+  # GOOGLE
+  - RULE-SET,Google,Google,no-resolve
+#--------------------------------------------------------------------------------------#
+  # GEOIP RULESET
+  - GEOIP,telegram,PROXY,no-resolve
+  - GEOIP,cn,DIRECT,no-resolve
+  - GEOIP,PRIVATE,DIRECT,no-resolve
+  # Global CDN
+  - GEOIP,cloudfront,CDN
+  - GEOIP,cloudflare,CDN
+  - GEOIP,FASTLY,CDN
+  # Google Services
+  - GEOIP,google,Google
+#--------------------------------------------------------------------------------------#
+  # FINAL
+  - MATCH,FINAL
+#--------------------------------------------------------------------------------------#
+rule-providers:
+  fakeip-filter-dustinwin:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs
+    path: ./RuleSet/fakeip_dustinwin.mrs
+    interval: 86400
+  CNHTTPDNS:
+    type: http
+    behavior: classical
+    path: ./RuleSet/CNHTTPDNS.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml
+    interval: 86400
+  PCDN:
+    type: http
+    behavior: domain
+    url: 'https://gh-proxy.com/https://raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
+    path: ./RuleSet/pcdn.yaml
+    interval: 86400
+  Reject:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt'
+    path: ./RuleSet/reject.yaml
+    interval: 86400
+  ADS1:
+    type: http
+    behavior: domain
+    url: https://cdn.jsdelivr.net/gh/snapei/clash-pro-rules@release/reject.txt
+    path: ./RuleSet/ADS1.yaml
+    interval: 86400
+  ADS2:
+    type: http
+    behavior: classical
+    path: ./RuleSet/ADS2.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml
+    interval: 86400
+  GFW:
+    type: http
+    behavior: domain
+    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt'
+    path: ./RuleSet/gfw.yaml
+    interval: 86400
+  category-ai-!cn:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
+    path: ./ruleset/category-ai-!cn.mrs
+    interval: 86400
+  BiliBili:
+    type: http
+    behavior: classical
+    path: ./RuleSet/bilibili.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml
+    interval: 86400
+  TikTok:
+    type: http
+    behavior: classical
+    path: ./RuleSet/tiktok.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
+    interval: 86400
+  eBay:
+    type: http
+    behavior: classical
+    path: ./RuleSet/eBay.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml
+    interval: 86400
+  Amazon:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Amazon.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml
+    interval: 86400
+  AmazonIP:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonIP_Classical.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP_Classical.yaml
+    interval: 86400
+  AmazonTrust:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonTrust.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml
+    interval: 86400
+  AmazonCN:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AmazonCN.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonCN/AmazonCN.yaml
+    interval: 86400
+  Microsoft:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Microsoft.yaml
+    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml
+    interval: 86400
+  Google:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Google.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
+    interval: 86400
