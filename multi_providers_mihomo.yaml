@@ -13,13 +13,11 @@ dy: &dy
     udp: true
     interval: 86400
     proxy: DIRECT
-    lazy: true
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 5 # 秒
-      lazy: true
       expected-status: "204"
       method: HEAD
 # ⚠️ smux 多路复用：部分机场不支持，如连接失败请注释本段
@@ -112,30 +110,29 @@ pg: &pg
 rtt-lb: &rtt-lb
   type: load-balance
   use: *a1
-  lazy: true
+  lazy: false
   interval: 600
   strategy: round-robin
   max-failed-times: 3
-  tolerance: 100
+  tolerance: 80
   url: https://cp.cloudflare.com/generate_204
 
 # 自动测速模板
 auto-test: &auto-test
   type: url-test
   use: *a1
-  lazy: true
-  interval: 600
-  tolerance: 100
+  lazy: false
+  interval: 1800
+  tolerance: 50
   url: https://cp.cloudflare.com/generate_204
 
 # 故障转移模板
 fallback: &fallback
   type: fallback
   use: *a1
-  lazy: true
-  interval: 900
+  lazy: false
+  interval: 60
   max-failed-times: 3
-  tolerance: 100
   url: https://cp.cloudflare.com/generate_204
 
 # ========================================
@@ -494,7 +491,7 @@ proxy-groups:
     lazy: false
     health-check:
       enable: true
-      interval: 900
+      interval: 1800
       url: https://cp.cloudflare.com/generate_204
       method: HEAD
       timeout: 5
