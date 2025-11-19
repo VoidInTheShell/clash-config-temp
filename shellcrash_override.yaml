@@ -1,28 +1,15 @@
-tcp-concurrent: true
+#--------------------------------------------------------------------------------------#
 geodata-mode: true
 geox-url:
   geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
   geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
   mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
-geodata-loader: memconservative
-# 'memconservative' 适用于较低内存占用，保证系统性能
-geo-auto-update: true
-geo-update-interval: 48
-tun:
-  enable: true
-  stack: system
-  device: utun
-  auto-route: false
-  strict-route: true
-  auto-redirct: true
-  auto-detect-interface: false
-  dns-hijack:
-    - any:53
-    - tcp://any:53
-    - any:853
-    - tls://any:853
-    - tcp://any:853
-  experimental: {ignore-resolve-fail: true, interface-name: en0}
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+  store-fake-ip: true
+#--------------------------------------------------------------------------------------#
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -38,6 +25,7 @@ sniffer:
   skip-domain:
     - 'Mijia Cloud'
     - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
 dns:
   enable: true
   listen: 0.0.0.0:1053
@@ -168,14 +156,15 @@ dns:
     - '+.orayimg.com'
   default-nameserver:
     - 'tls://223.5.5.5:853'
-    - '8.8.8.8'
+    - '8.8.4.4'
     - '119.29.29.29'
     - 'tls://1.1.1.1:853'
   nameserver:
-    - 'tls://8.8.8.8:853#FINAL'
-    - 'tls://1.1.1.1:853#FINAL'
+    - 'tls://8.8.4.4:853#PROXY'
+    - 'tls://1.1.1.1:853#PROXY'
   direct-nameserver:
-    - 'tls://223.6.6.6:853'
+    - '208.67.222.222'
+    - '223.5.5.5'
     - 'tls://223.5.5.5:853'
     - 'tls://dot.pub:853'
     - 'https://doh.pub/dns-query'
@@ -183,53 +172,61 @@ dns:
     - '1.1.1.1'
     - '8.8.8.8'
     - 'tls://1.1.1.1:853'
-    - 'tls://8.8.8.8:853'
+    - 'tls://8.8.4.4:853'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'geosite:steam,category-games':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'rule-set:SteamCN,GameDownloadCN,EPIC':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'geoip:cn':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'rule-set:CloudFlare,AKAMAI':
-      - 'tls://8.8.8.8:853#CDN'
-      - 'tls://1.0.0.1:853#CDN'
+      - 'tls://8.8.4.4:853#CDN'
+      - 'tls://1.1.1.1:853#CDN'
     'geoip:fastly,cloudflare':
-      - 'tls://8.8.8.8:853#CDN'
-      - 'tls://1.0.0.1:853#CDN'
+      - 'tls://8.8.4.4:853#CDN'
+      - 'tls://1.1.1.1:853#CDN'
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
-      - 'tls://8.8.8.8:853#AI'
-      - 'tls://1.0.0.1:853#AI'
+      - 'tls://8.8.4.4:853#AI'
+      - 'tls://1.1.1.1:853#AI'
     'geoip:google':
-      - 'tls://8.8.8.8:853#Google'
-      - 'tls://1.0.0.1:853#Google'
+      - 'tls://8.8.4.4:853#Google'
+      - 'tls://1.1.1.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
-      - 'tls://8.8.8.8:853#海淘购物'
-      - 'tls://1.0.0.1:853#海淘购物'
+      - 'tls://8.8.4.4:853#海淘购物'
+      - 'tls://1.1.1.1:853#海淘购物'
     'geoip:cloudfront':
-      - 'tls://8.8.8.8:853#海淘购物'
-      - 'tls://1.0.0.1:853#海淘购物'
+      - 'tls://8.8.4.4:853#海淘购物'
+      - 'tls://1.1.1.1:853#海淘购物'
     'geoip:telegram':
-      - 'tls://8.8.8.8:853#PROXY'
-      - 'tls://1.0.0.1:853#PROXY'
+      - 'tls://8.8.4.4:853#PROXY'
+      - 'tls://1.1.1.1:853#PROXY'
     'geosite:geolocation-!cn':
-      - 'tls://8.8.8.8:853#GlobalSite'
-      - 'tls://1.0.0.1:853#GlobalSite'
+      - 'tls://8.8.4.4:853#GlobalSite'
+      - 'tls://1.1.1.1:853#GlobalSite'
     'rule-set:GFW':
-      - 'tls://8.8.8.8:853#PROXY'
-      - 'tls://1.0.0.1:853#PROXY'
+      - 'tls://8.8.4.4:853#PROXY'
+      - 'tls://1.1.1.1:853#PROXY'
     'rule-set:BiliBili':
-      - 'tls://8.8.8.8:853#哔哩哔哩'
+      - 'tls://8.8.4.4:853#哔哩哔哩'
       - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
 routing:
