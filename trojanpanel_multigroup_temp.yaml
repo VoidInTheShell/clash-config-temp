@@ -1,4 +1,4 @@
-
+      icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
     - name: FINAL
       type: select
       proxies:
@@ -6,6 +6,7 @@
         - DIRECT
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
+      icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
     - name: GlobalSite
       type: select
       proxies:
@@ -13,6 +14,7 @@
         - DIRECT
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
     - name: 流媒体
       type: select
       proxies:
@@ -20,12 +22,14 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - DIRECT
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
     - name: AI
       type: select
       proxies:
+        - PROXY
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
-        - PROXY
+      icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
     - name: MicrosoftBing
       type: select
       proxies:
@@ -33,6 +37,7 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - PROXY
+      icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
     - name: CDN
       type: select
       proxies:
@@ -40,6 +45,7 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - DIRECT
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
     - name: 海淘购物
       type: select
       proxies:
@@ -47,6 +53,7 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - DIRECT
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
     - name: 哔哩哔哩
       type: select
       proxies:
@@ -54,6 +61,7 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - PROXY
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
     - name: Apple
       type: select
       proxies:
@@ -61,18 +69,21 @@
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - PROXY
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
     - name: Google
       type: select
       proxies:
         - PROXY
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
     - name: TikTok
       type: select
       proxies:
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - PROXY
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
 #--------------------------------------------------------------------------------------#
 #-------------------------------WrittenByLiebesleid------------------------------------#
 #--------------------------------------------------------------------------------------#
@@ -118,6 +129,7 @@ geox-url:
   geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
   geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
   mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
 #--------------------------------------------------------------------------------------#
 profile:
   store-selected: true
@@ -269,14 +281,15 @@ dns:
     - '+.orayimg.com'
   default-nameserver:
     - 'tls://223.5.5.5:853'
-    - '8.8.8.8'
+    - '8.8.4.4'
     - '119.29.29.29'
     - 'tls://1.1.1.1:853'
   nameserver:
-    - 'tls://8.8.8.8:853#FINAL'
-    - 'tls://1.1.1.1:853#FINAL'
+    - 'tls://8.8.4.4:853#PROXY'
+    - 'tls://1.1.1.1:853#PROXY'
   direct-nameserver:
-    - 'tls://223.6.6.6:853'
+    - '208.67.222.222'
+    - '223.5.5.5'
     - 'tls://223.5.5.5:853'
     - 'tls://dot.pub:853'
     - 'https://doh.pub/dns-query'
@@ -284,53 +297,61 @@ dns:
     - '1.1.1.1'
     - '8.8.8.8'
     - 'tls://1.1.1.1:853'
-    - 'tls://8.8.8.8:853'
+    - 'tls://8.8.4.4:853'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'geosite:steam,category-games':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'rule-set:SteamCN,GameDownloadCN,EPIC':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'geoip:cn':
-      - 'tls://223.6.6.6:853'
+      - '208.67.222.222'
+      - '223.5.5.5'
       - 'tls://223.5.5.5:853'
       - 'tls://dot.pub:853'
+      - 'https://doh.pub/dns-query'
     'rule-set:CloudFlare,AKAMAI':
-      - 'tls://8.8.8.8:853#CDN'
-      - 'tls://1.0.0.1:853#CDN'
+      - 'tls://8.8.4.4:853#CDN'
+      - 'tls://1.1.1.1:853#CDN'
     'geoip:fastly,cloudflare':
-      - 'tls://8.8.8.8:853#CDN'
-      - 'tls://1.0.0.1:853#CDN'
+      - 'tls://8.8.4.4:853#CDN'
+      - 'tls://1.1.1.1:853#CDN'
     'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
-      - 'tls://8.8.8.8:853#AI'
-      - 'tls://1.0.0.1:853#AI'
+      - 'tls://8.8.4.4:853#AI'
+      - 'tls://1.1.1.1:853#AI'
     'geoip:google':
-      - 'tls://8.8.8.8:853#Google'
-      - 'tls://1.0.0.1:853#Google'
+      - 'tls://8.8.4.4:853#Google'
+      - 'tls://1.1.1.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
-      - 'tls://8.8.8.8:853#海淘购物'
-      - 'tls://1.0.0.1:853#海淘购物'
+      - 'tls://8.8.4.4:853#海淘购物'
+      - 'tls://1.1.1.1:853#海淘购物'
     'geoip:cloudfront':
-      - 'tls://8.8.8.8:853#海淘购物'
-      - 'tls://1.0.0.1:853#海淘购物'
+      - 'tls://8.8.4.4:853#海淘购物'
+      - 'tls://1.1.1.1:853#海淘购物'
     'geoip:telegram':
-      - 'tls://8.8.8.8:853#PROXY'
-      - 'tls://1.0.0.1:853#PROXY'
+      - 'tls://8.8.4.4:853#PROXY'
+      - 'tls://1.1.1.1:853#PROXY'
     'geosite:geolocation-!cn':
-      - 'tls://8.8.8.8:853#GlobalSite'
-      - 'tls://1.0.0.1:853#GlobalSite'
+      - 'tls://8.8.4.4:853#GlobalSite'
+      - 'tls://1.1.1.1:853#GlobalSite'
     'rule-set:GFW':
-      - 'tls://8.8.8.8:853#PROXY'
-      - 'tls://1.0.0.1:853#PROXY'
+      - 'tls://8.8.4.4:853#PROXY'
+      - 'tls://1.1.1.1:853#PROXY'
     'rule-set:BiliBili':
-      - 'tls://8.8.8.8:853#哔哩哔哩'
+      - 'tls://8.8.4.4:853#哔哩哔哩'
       - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
 routing:
@@ -343,7 +364,7 @@ rules:
   - PROCESS-NAME,Proxifier,PROXY
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
-  - DOMAIN-SUFFIX,www.browserscan.net,PROXY
+  - DOMAIN-SUFFIX,browserscan.net,PROXY
   # User
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
