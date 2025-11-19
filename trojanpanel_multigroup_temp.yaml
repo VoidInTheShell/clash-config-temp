@@ -29,8 +29,8 @@
     - name: MicrosoftBing
       type: select
       proxies:
-        - US1-纽约-稳定纯净-日用
         - DIRECT
+        - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
         - PROXY
     - name: CDN
@@ -64,9 +64,9 @@
     - name: Google
       type: select
       proxies:
+        - PROXY
         - US1-纽约-稳定纯净-日用
         - US2-纽约-稳定纯净-游戏
-        - PROXY
     - name: TikTok
       type: select
       proxies:
