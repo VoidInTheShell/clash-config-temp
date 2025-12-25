@@ -37,7 +37,7 @@ dns:
   fake-ip-filter:
     - 'geosite:connectivity-check,private'
     - 'ruleset:fakeip-filter-dustinwin'
-    - 'ruleset:Tencent,NetEase
+    - 'ruleset:Tencent,NetEase'
     - '*.lan'
     - '*.local'
     - '*.example'
