@@ -44,14 +44,14 @@ u_s: &a2 # 自建节点订阅组引用
 # 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
 proxy-providers:
   1.p1:
-    url: "https://portal.uegov.org/api/auth/subscribe/QjBfT0ZLR0VQUTNGTXZtazRTR3ZNMFRzTzVDci1DdHBfeXRoWU1oU01rc0l6aVFY"
+    url: ""
     path: ./proxy_provider/p1.yaml 
     <<: *dy
     override:
       additional-prefix: "p1 »"
 
   2.p2:
-    url: "https://dsub.douyincdns.top:8888/api/v1/client/subscribe?token=25a74c51cf2dd387e6df2fc107f2e8f7"
+    url: ""
     path: ./proxy_provider/p2.yaml
     <<: *dy
     override:
@@ -725,13 +725,6 @@ geox-url:
   mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
   asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
 #--------------------------------------------------------------------------------------#
-geodata-mode: true
-geox-url:
-  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
-  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
-  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
-  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
-#--------------------------------------------------------------------------------------#
 profile:
   store-selected: true
   store-fake-ip: true
@@ -882,7 +875,6 @@ dns:
     - '+.oray.com'
     - '+.orayimg.com'
   default-nameserver:
-    # - 'tls://223.5.5.5:853'
     - '8.8.4.4'
     - '119.29.29.29'
     - '223.5.5.5'
@@ -895,8 +887,6 @@ dns:
     - '208.67.222.222'
     - '223.5.5.5'
     - '119.29.29.29'
-    # - 'tls://223.5.5.5:853'
-    # - 'tls://dot.pub:853'
     - 'https://doh.pub/dns-query'
   proxy-server-nameserver:
     - '1.1.1.1'
@@ -908,29 +898,21 @@ dns:
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'geosite:steam,category-games':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'rule-set:SteamCN,GameDownloadCN,EPIC':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'geoip:cn':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'rule-set:CloudFlare,AKAMAI':
       - 'tls://8.8.4.4:853#CDN'
@@ -963,7 +945,6 @@ dns:
       - 'tls://8.8.4.4:853#哔哩哔哩'
       - '119.29.29.29'
       - '223.5.5.5'
-      # - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
 routing:
   domainStrategy: AsIs
@@ -975,7 +956,7 @@ rules:
   - PROCESS-NAME,Proxifier,PROXY
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
-  - DOMAIN-SUFFIX,www.browserscan.net,PROXY
+  - DOMAIN-SUFFIX,browserscan.net,PROXY
   # User
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
@@ -1078,7 +1059,6 @@ rules:
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
 #--------------------------------------------------------------------------------------#
   # Global CDN
-  - RULE-SET,geoip_cloudfront,CDN,no-resolve
   - RULE-SET,CloudFlare,CDN,no-resolve
   - RULE-SET,AKAMAI,CDN,no-resolve
   - GEOIP,FASTLY,CDN,no-resolve
