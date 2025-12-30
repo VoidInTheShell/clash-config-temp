@@ -4,84 +4,106 @@
       proxies:
         - PROXY
         - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
       icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
     - name: GlobalSite
       type: select
       proxies:
         - PROXY
         - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
     - name: 流媒体
       type: select
       proxies:
         - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - DIRECT
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
     - name: AI
       type: select
       proxies:
         - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
       icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
     - name: MicrosoftBing
       type: select
       proxies:
         - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - PROXY
       icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
     - name: CDN
       type: select
       proxies:
         - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - DIRECT
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
     - name: 海淘购物
       type: select
       proxies:
         - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - DIRECT
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
     - name: 哔哩哔哩
       type: select
       proxies:
         - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - PROXY
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
     - name: Apple
       type: select
       proxies:
         - DIRECT
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - PROXY
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
     - name: Google
       type: select
       proxies:
         - PROXY
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
     - name: TikTok
       type: select
       proxies:
-        - US1-纽约-稳定纯净-日用
-        - US2-纽约-稳定纯净-游戏
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
         - PROXY
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
 #--------------------------------------------------------------------------------------#
