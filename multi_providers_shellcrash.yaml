@@ -792,7 +792,7 @@ mixed-port: 7890
 redir-port: 7891
 tproxy-port: 1536
 routing-mark: 7894
-mode: Rule
+mode: rule
 ipv6: false
 allow-lan: true
 log-level: info
@@ -817,7 +817,7 @@ tun:
   auto-route: true
   strict-route: true
   auto-detect-interface: true
-  auto-redirct: true
+  auto-redirect: true
   dns-hijack:
     - any:53
     - tcp://any:53
@@ -861,9 +861,11 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'geosite:connectivity-check,private'
-    - 'ruleset:fakeip-filter-dustinwin'
-    - 'ruleset:Tencent,NetEase'
+    - 'geosite:connectivity-check'
+    - 'geosite:private'
+    - 'rule-set:fakeip-filter-dustinwin'
+    - 'rule-set:NetEase'
+    - 'rule-set:Tencent'
     - '*.lan'
     - '*.local'
     - '*.example'
@@ -982,7 +984,6 @@ dns:
     - '+.oray.com'
     - '+.orayimg.com'
   default-nameserver:
-    # - 'tls://223.5.5.5:853'
     - '8.8.4.4'
     - '119.29.29.29'
     - '223.5.5.5'
@@ -995,8 +996,6 @@ dns:
     - '208.67.222.222'
     - '223.5.5.5'
     - '119.29.29.29'
-    # - 'tls://223.5.5.5:853'
-    # - 'tls://dot.pub:853'
     - 'https://doh.pub/dns-query'
   proxy-server-nameserver:
     - '1.1.1.1'
@@ -1008,54 +1007,24 @@ dns:
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
-    'geosite:category-games':
+    'geosite:category-games@cn':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
-      - 'https://doh.pub/dns-query'
-    'rule-set:SteamCN,GameDownloadCN,EPIC':
-      - '208.67.222.222'
-      - '223.5.5.5'
-      - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
-      - 'https://doh.pub/dns-query'
-    'geoip:cn':
-      - '208.67.222.222'
-      - '223.5.5.5'
-      - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'rule-set:CloudFlare,AKAMAI':
       - 'tls://8.8.4.4:853#CDN'
       - 'tls://1.1.1.1:853#CDN'
-    'geoip:fastly,cloudflare':
-      - 'tls://8.8.4.4:853#CDN'
-      - 'tls://1.1.1.1:853#CDN'
-    'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
+    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - 'tls://8.8.4.4:853#AI'
       - 'tls://1.1.1.1:853#AI'
-    'geoip:google':
+    'rule-set:Gemini,Google':
       - 'tls://8.8.4.4:853#Google'
       - 'tls://1.1.1.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
       - 'tls://8.8.4.4:853#海淘购物'
       - 'tls://1.1.1.1:853#海淘购物'
-    'geoip:cloudfront':
-      - 'tls://8.8.4.4:853#海淘购物'
-      - 'tls://1.1.1.1:853#海淘购物'
-    'geoip:telegram':
-      - 'tls://8.8.4.4:853#PROXY'
-      - 'tls://1.1.1.1:853#PROXY'
-    'geosite:geolocation-!cn':
-      - 'tls://8.8.4.4:853#GlobalSite'
-      - 'tls://1.1.1.1:853#GlobalSite'
     'rule-set:GFW':
       - 'tls://8.8.4.4:853#PROXY'
       - 'tls://1.1.1.1:853#PROXY'
@@ -1063,7 +1032,6 @@ dns:
       - 'tls://8.8.4.4:853#哔哩哔哩'
       - '119.29.29.29'
       - '223.5.5.5'
-      # - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
 routing:
   domainStrategy: AsIs
@@ -1075,7 +1043,7 @@ rules:
   - PROCESS-NAME,Proxifier,PROXY
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
-  - DOMAIN-SUFFIX,www.browserscan.net,PROXY
+  - DOMAIN-SUFFIX,browserscan.net,PROXY
   # User
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
@@ -1084,7 +1052,6 @@ rules:
   - DOMAIN-KEYWORD,autocad,DIRECT
   - DOMAIN-KEYWORD,koishi,DIRECT
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
-  - DOMAIN-SUFFIX,httpbin.org,DIRECT
 #--------------------------------------------------------------------------------------#
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
@@ -1112,7 +1079,7 @@ rules:
   # EPIC Set
   - RULE-SET,EPIC,DIRECT,no-resolve
   # China Games
-  - GEOSITE,category-games,DIRECT
+  - GEOSITE,category-games@cn,DIRECT
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
@@ -1178,7 +1145,6 @@ rules:
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
 #--------------------------------------------------------------------------------------#
   # Global CDN
-  - RULE-SET,geoip_cloudfront,CDN,no-resolve
   - RULE-SET,CloudFlare,CDN,no-resolve
   - RULE-SET,AKAMAI,CDN,no-resolve
   - GEOIP,FASTLY,CDN,no-resolve
@@ -1221,7 +1187,7 @@ rule-providers:
   blackmatrix7_direct:
     type: http
     format: yaml
-    behavior: domain
+    behavior: classical
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
     path: ./RuleSet/blackmatrix7_direct.yaml
     interval: 86400
@@ -1257,7 +1223,7 @@ rule-providers:
     type: http
     behavior: classical
     path: ./RuleSet/Tencent.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Tencent/Tencent.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Tencent/Tencent_Classical.yaml
     interval: 86400
   NetEase:
     type: http
@@ -1273,25 +1239,25 @@ rule-providers:
     interval: 86400
   AliPay:
     type: http
-    behavior: domain
+    behavior: classical
     path: ./RuleSet/AliPay.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AliPay/AliPay.yaml
     interval: 86400
   JingDong:
     type: http
-    behavior: domain
+    behavior: classical
     path: ./RuleSet/JingDong.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/JingDong/JingDong.yaml
     interval: 86400
   ShiJiChaoXing:
     type: http
-    behavior: domain
+    behavior: classical
     path: ./RuleSet/ShiJiChaoXing.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml
     interval: 86400
   UnionPay:
     type: http
-    behavior: domain
+    behavior: classical
     path: ./RuleSet/UnionPay.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml
   category-ads-all:
@@ -1361,7 +1327,7 @@ rule-providers:
     format: mrs
     behavior: domain
     url: https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
-    path: ./ruleset/category-ai-!cn.mrs
+    path: ./RuleSet/category-ai-!cn.mrs
     interval: 86400
   PCDN:
     type: http
@@ -1404,7 +1370,7 @@ rule-providers:
     type: http
     behavior: domain
     url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt'
-    path: ./ruleset/direct.yaml
+    path: ./RuleSet/direct.yaml
     interval: 86400
   Private:
     type: http

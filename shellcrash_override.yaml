@@ -38,8 +38,8 @@ dns:
     - 'geosite:connectivity-check'
     - 'geosite:private'
     - 'rule-set:fakeip-filter-dustinwin'
-    - 'rule-set:Tencent'
     - 'rule-set:NetEase'
+    - 'rule-set:Tencent'
     - '*.lan'
     - '*.local'
     - '*.example'
@@ -182,17 +182,7 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - 'https://doh.pub/dns-query'
-    'geosite:category-games':
-      - '208.67.222.222'
-      - '223.5.5.5'
-      - '119.29.29.29'
-      - 'https://doh.pub/dns-query'
-    'rule-set:SteamCN,GameDownloadCN,EPIC':
-      - '208.67.222.222'
-      - '223.5.5.5'
-      - '119.29.29.29'
-      - 'https://doh.pub/dns-query'
-    'geoip:cn':
+    'geosite:category-games@cn':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
@@ -200,27 +190,15 @@ dns:
     'rule-set:CloudFlare,AKAMAI':
       - 'tls://8.8.4.4:853#CDN'
       - 'tls://1.1.1.1:853#CDN'
-    'geoip:fastly,cloudflare':
-      - 'tls://8.8.4.4:853#CDN'
-      - 'tls://1.1.1.1:853#CDN'
-    'rule-set:category-ai-!cn,Gemini,Google,Twitter,OpenAI,Claude':
+    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - 'tls://8.8.4.4:853#AI'
       - 'tls://1.1.1.1:853#AI'
-    'geoip:google':
+    'rule-set:Gemini,Google':
       - 'tls://8.8.4.4:853#Google'
       - 'tls://1.1.1.1:853#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
       - 'tls://8.8.4.4:853#海淘购物'
       - 'tls://1.1.1.1:853#海淘购物'
-    'geoip:cloudfront':
-      - 'tls://8.8.4.4:853#海淘购物'
-      - 'tls://1.1.1.1:853#海淘购物'
-    'geoip:telegram':
-      - 'tls://8.8.4.4:853#PROXY'
-      - 'tls://1.1.1.1:853#PROXY'
-    'geosite:geolocation-!cn':
-      - 'tls://8.8.4.4:853#GlobalSite'
-      - 'tls://1.1.1.1:853#GlobalSite'
     'rule-set:GFW':
       - 'tls://8.8.4.4:853#PROXY'
       - 'tls://1.1.1.1:853#PROXY'
