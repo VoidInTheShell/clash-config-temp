@@ -119,11 +119,13 @@ proxy-groups:
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
 
   # --- 主代理组 ---
@@ -139,16 +141,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
 
@@ -167,16 +172,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
 
@@ -194,11 +202,13 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
 
@@ -222,11 +232,13 @@ proxy-groups:
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
 
@@ -250,11 +262,13 @@ proxy-groups:
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
 
@@ -273,16 +287,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
 
@@ -301,16 +318,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
 
@@ -324,8 +344,11 @@ proxy-groups:
       - 地区手选
       - 自建手选
       - 负载均衡-HK
+      - 负载均衡-TW
       - 自动测速-HK
+      - 自动测速-TW
       - 故障转移-HK
+      - 故障转移-TW
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
 
   # --- Apple ---
@@ -369,16 +392,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
 
@@ -395,12 +421,15 @@ proxy-groups:
       - 负载均衡-US
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 自动测速-US
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 故障转移-US
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
 
   # --- 漏网之鱼 ---
@@ -417,16 +446,19 @@ proxy-groups:
       - 负载均衡-HK
       - 负载均衡-SG
       - 负载均衡-JP
+      - 负载均衡-TW
       - 负载均衡-其他
       - 自动测速-US
       - 自动测速-HK
       - 自动测速-SG
       - 自动测速-JP
+      - 自动测速-TW
       - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
+      - 故障转移-TW
       - 故障转移-其他
       - CAMPUS
     icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
@@ -551,7 +583,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     strategy: round-robin
     max-failed-times: 3
     tolerance: 100
@@ -567,12 +599,28 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     strategy: round-robin
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+
+  - name: 负载均衡-TW
+    type: load-balance
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: false
+    interval: 60
+    strategy: round-robin
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(TW|台湾|tai\\s?wan)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-SG
@@ -583,7 +631,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     strategy: round-robin
     max-failed-times: 3
     tolerance: 100
@@ -599,7 +647,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     strategy: round-robin
     max-failed-times: 3
     tolerance: 100
@@ -615,7 +663,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     strategy: round-robin
     max-failed-times: 3
     tolerance: 100
@@ -632,7 +680,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
@@ -646,10 +694,24 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+
+  - name: 自动测速-TW
+    type: url-test
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: false
+    interval: 60
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(TW|台湾|tai\\s?wan)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-SG
@@ -660,7 +722,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
@@ -674,7 +736,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
@@ -688,10 +750,10 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 60
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    filter: "(?i)^((?!(TW|台湾|tai\\s?wan|🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local|UA3F)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   # --- 6️⃣ 故障转移（按地区分类）---
@@ -723,6 +785,21 @@ proxy-groups:
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+
+  - name: 故障转移-TW
+    type: fallback
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    lazy: false
+    interval: 900
+    max-failed-times: 3
+    tolerance: 100
+    url: https://cp.cloudflare.com/generate_204
+    filter: "(?i)(TW|台湾|tai\\s?wan)"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-SG
@@ -1045,7 +1122,7 @@ dns:
       # - 'tls://223.5.5.5:853'
       # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
-    'geosite:steam,category-games':
+    'geosite:category-games':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
@@ -1137,16 +1214,16 @@ rules:
 #--------------------------------------------------------------------------------------#
   # Games
   # GameDownload
-  - RULE-SET,GameDownloadCN,CAMPUS,no-resolve
+  - RULE-SET,GameDownloadCN,DIRECT,no-resolve
   # Steam
-  - RULE-SET,SteamCN,CAMPUS,no-resolve
+  - RULE-SET,SteamCN,DIRECT,no-resolve
+  - GEOSITE,steam,PROXY
   # Nintendo
   - RULE-SET,Nintendo,PROXY
   # EPIC Set
-  - RULE-SET,EPIC,CAMPUS,no-resolve
+  - RULE-SET,EPIC,DIRECT,no-resolve
   # China Games
-  - GEOSITE,steam,CAMPUS
-  - GEOSITE,category-games,CAMPUS
+  - GEOSITE,category-games,DIRECT
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili

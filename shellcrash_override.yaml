@@ -156,7 +156,6 @@ dns:
     - '+.oray.com'
     - '+.orayimg.com'
   default-nameserver:
-    # - 'tls://223.5.5.5:853'
     - '8.8.4.4'
     - '119.29.29.29'
     - '223.5.5.5'
@@ -169,8 +168,6 @@ dns:
     - '208.67.222.222'
     - '223.5.5.5'
     - '119.29.29.29'
-    # - 'tls://223.5.5.5:853'
-    # - 'tls://dot.pub:853'
     - 'https://doh.pub/dns-query'
   proxy-server-nameserver:
     - '1.1.1.1'
@@ -182,29 +179,21 @@ dns:
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
-    'geosite:steam,category-games':
+    'geosite:category-games':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'rule-set:SteamCN,GameDownloadCN,EPIC':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'geoip:cn':
       - '208.67.222.222'
       - '223.5.5.5'
       - '119.29.29.29'
-      # - 'tls://223.5.5.5:853'
-      # - 'tls://dot.pub:853'
       - 'https://doh.pub/dns-query'
     'rule-set:CloudFlare,AKAMAI':
       - 'tls://8.8.4.4:853#CDN'
@@ -237,7 +226,6 @@ dns:
       - 'tls://8.8.4.4:853#哔哩哔哩'
       - '119.29.29.29'
       - '223.5.5.5'
-      # - 'tls://223.5.5.5:853'
 #--------------------------------------------------------------------------------------#
 routing:
   domainStrategy: AsIs
