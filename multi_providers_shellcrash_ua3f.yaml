@@ -90,7 +90,7 @@ proxies:
       type: socks5
       server: 127.0.0.1
       url: http://connectivitycheck.platform.hicloud.com/generate_204
-      udp: true
+      udp: false
       port: 1080
 
 proxy-groups:
