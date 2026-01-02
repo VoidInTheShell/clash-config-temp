@@ -35,9 +35,11 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'geosite:connectivity-check,private'
-    - 'ruleset:fakeip-filter-dustinwin'
-    - 'ruleset:Tencent,NetEase'
+    - 'geosite:connectivity-check'
+    - 'geosite:private'
+    - 'rule-set:fakeip-filter-dustinwin'
+    - 'rule-set:Tencent'
+    - 'rule-set:NetEase'
     - '*.lan'
     - '*.local'
     - '*.example'
