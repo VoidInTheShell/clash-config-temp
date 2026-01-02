@@ -1156,13 +1156,13 @@ rules:
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
   - DOMAIN-SUFFIX,browserscan.net,PROXY
   # User
-  - DOMAIN-SUFFIX,uegov.org,DIRECT
-  - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
-  - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
-  - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
-  - DOMAIN-KEYWORD,autocad,DIRECT
-  - DOMAIN-KEYWORD,koishi,DIRECT
-  - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
+  - DOMAIN-SUFFIX,uegov.org,CAMPUS
+  - DOMAIN-SUFFIX,uegov.us.kg,CAMPUS
+  - DOMAIN-SUFFIX,uegov.dpdns.org,CAMPUS
+  - DOMAIN-SUFFIX,sacbridge.dpdns.org,CAMPUS
+  - DOMAIN-KEYWORD,autocad,CAMPUS
+  - DOMAIN-KEYWORD,koishi,CAMPUS
+  - DOMAIN-SUFFIX,test-ipv6.com,CAMPUS
 #--------------------------------------------------------------------------------------#
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
@@ -1181,16 +1181,16 @@ rules:
 #--------------------------------------------------------------------------------------#
   # Games
   # GameDownload
-  - RULE-SET,GameDownloadCN,DIRECT,no-resolve
+  - RULE-SET,GameDownloadCN,CAMPUS,no-resolve
   # Steam
-  - RULE-SET,SteamCN,DIRECT,no-resolve
+  - RULE-SET,SteamCN,CAMPUS,no-resolve
   - GEOSITE,steam,PROXY
   # Nintendo
   - RULE-SET,Nintendo,PROXY
   # EPIC Set
-  - RULE-SET,EPIC,DIRECT,no-resolve
+  - RULE-SET,EPIC,CAMPUS,no-resolve
   # China Games
-  - GEOSITE,category-games@cn,DIRECT
+  - GEOSITE,category-games@cn,CAMPUS
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
@@ -1228,14 +1228,14 @@ rules:
   # TikTok Set
   - RULE-SET,TikTok,TikTok
   # AKSpeedy-DOMAIN
-  - DOMAIN-KEYWORD,akspeedy,DIRECT
-  - DOMAIN,turing.captcha.qcloud.com,DIRECT
-  - DOMAIN,turing.captcha.gtimg.com,DIRECT
-  - DOMAIN,sensorsdata.web.bigdata.fulu.com,DIRECT
+  - DOMAIN-KEYWORD,akspeedy,CAMPUS
+  - DOMAIN,turing.captcha.qcloud.com,CAMPUS
+  - DOMAIN,turing.captcha.gtimg.com,CAMPUS
+  - DOMAIN,sensorsdata.web.bigdata.fulu.com,CAMPUS
   # CNMedia
-  - DOMAIN-KEYWORD,douyin,DIRECT
-  - DOMAIN-KEYWORD,youku,DIRECT
-  - DOMAIN-KEYWORD,iqiyi,DIRECT
+  - DOMAIN-KEYWORD,douyin,CAMPUS
+  - DOMAIN-KEYWORD,youku,CAMPUS
+  - DOMAIN-KEYWORD,iqiyi,CAMPUS
   # Streaming
   - DOMAIN-SUFFIX,hanime1.me,流媒体
   - RULE-SET,Netflix,流媒体
@@ -1263,27 +1263,27 @@ rules:
   # GlobalSites
   - RULE-SET,geolocation-!cn,GlobalSite
 #--------------------------------------------------------------------------------------#
-  # Direct DOMAIN & China Services
-  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
-  - RULE-SET,UnionPay,DIRECT
-  - RULE-SET,ShiJiChaoXing,DIRECT
-  - RULE-SET,JingDong,DIRECT
-  - RULE-SET,AliPay,DIRECT
-  - RULE-SET,Alibaba,DIRECT,no-resolve
-  - RULE-SET,NetEase,DIRECT,no-resolve
-  - RULE-SET,Tencent,DIRECT,no-resolve
-  - RULE-SET,cn_domain,DIRECT
-  - RULE-SET,blackmatrix7_direct,DIRECT
-  - RULE-SET,private_domain,DIRECT
-  - DOMAIN-SUFFIX,httpbin.org,DIRECT
-  - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+  # CAMPUS DOMAIN & China Services
+  - DOMAIN-SUFFIX,ua.233996.xyz,CAMPUS
+  - RULE-SET,UnionPay,CAMPUS
+  - RULE-SET,ShiJiChaoXing,CAMPUS
+  - RULE-SET,JingDong,CAMPUS
+  - RULE-SET,AliPay,CAMPUS
+  - RULE-SET,Alibaba,CAMPUS,no-resolve
+  - RULE-SET,NetEase,CAMPUS,no-resolve
+  - RULE-SET,Tencent,CAMPUS,no-resolve
+  - RULE-SET,cn_domain,CAMPUS
+  - RULE-SET,blackmatrix7_direct,CAMPUS
+  - RULE-SET,private_domain,CAMPUS
+  - DOMAIN-SUFFIX,httpbin.org,CAMPUS
+  - DOMAIN-SUFFIX,ghproxy.com,CAMPUS
 #--------------------------------------------------------------------------------------#
   # GEOIP RULESET
   - RULE-SET,TGcidr,PROXY,no-resolve
   - RULE-SET,geoip_cloudfront,CDN,no-resolve
   - RULE-SET,cf_ip,CDN,no-resolve
-  - RULE-SET,cn_ip,DIRECT,no-resolve
-  - GEOIP,PRIVATE,DIRECT,no-resolve
+  - RULE-SET,cn_ip,CAMPUS,no-resolve
+  - GEOIP,PRIVATE,CAMPUS,no-resolve
 #--------------------------------------------------------------------------------------#
   # FINAL
   - MATCH,FINAL
