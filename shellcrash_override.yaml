@@ -187,9 +187,6 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - 'https://doh.pub/dns-query'
-    'rule-set:CloudFlare,AKAMAI':
-      - 'tls://8.8.4.4:853#CDN'
-      - 'tls://1.1.1.1:853#CDN'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - 'tls://8.8.4.4:853#AI'
       - 'tls://1.1.1.1:853#AI'

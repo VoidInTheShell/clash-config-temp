@@ -334,9 +334,6 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - 'https://doh.pub/dns-query'
-    'rule-set:CloudFlare,AKAMAI':
-      - 'tls://8.8.4.4:853#CDN'
-      - 'tls://1.1.1.1:853#CDN'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - 'tls://8.8.4.4:853#AI'
       - 'tls://1.1.1.1:853#AI'
@@ -446,6 +443,11 @@ rules:
   - DOMAIN-KEYWORD,douyin,DIRECT
   - DOMAIN-KEYWORD,youku,DIRECT
   - DOMAIN-KEYWORD,iqiyi,DIRECT
+  #--------------------------------------------------------------------------------------#
+  # Global CDN
+  - RULE-SET,CloudFlare,CDN,no-resolve
+  - RULE-SET,AKAMAI,CDN,no-resolve
+  - GEOIP,FASTLY,CDN,no-resolve
   # Streaming
   - DOMAIN-SUFFIX,hanime1.me,流媒体
   - RULE-SET,Netflix,流媒体
@@ -464,11 +466,6 @@ rules:
   # Global Domain
   - DOMAIN-SUFFIX,imap.gmail.com,PROXY
   - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
-#--------------------------------------------------------------------------------------#
-  # Global CDN
-  - RULE-SET,CloudFlare,CDN,no-resolve
-  - RULE-SET,AKAMAI,CDN,no-resolve
-  - GEOIP,FASTLY,CDN,no-resolve
 #--------------------------------------------------------------------------------------#
   # GlobalSites
   - RULE-SET,geolocation-!cn,GlobalSite
