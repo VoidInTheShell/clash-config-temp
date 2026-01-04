@@ -396,6 +396,7 @@ rules:
   - RULE-SET,Nintendo,PROXY
   # EPIC Set
   - RULE-SET,EPIC,DIRECT,no-resolve
+  - DOMAIN-KEYWORD,epicgames,CAMPUS
   # China Games
   - GEOSITE,category-games@cn,DIRECT
 #--------------------------------------------------------------------------------------#
