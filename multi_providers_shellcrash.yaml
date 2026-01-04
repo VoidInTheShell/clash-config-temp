@@ -377,10 +377,11 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
 
   # --- TikTok ---
-  # 默认跟随主代理组，推荐负载均衡
+  # 默认直连，推荐负载均衡
   - name: TikTok
     type: select
     proxies:
+      - DIRECT
       - PROXY
       - 自动选择
       - 全部手选
