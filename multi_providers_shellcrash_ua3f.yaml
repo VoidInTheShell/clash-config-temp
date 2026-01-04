@@ -188,13 +188,44 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
 
+  # --- 漏网之鱼 ---
+  # 默认跟随主代理组
+  - name: FINAL
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-TW
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-TW
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-TW
+      - 故障转移-其他
+      - CAMPUS
+    icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
+
   # --- 地区解锁流媒体 ---
   # 优先使用流媒体解锁节点
   - name: 流媒体
     type: select
     proxies:
-      - 流媒体解锁
       - PROXY
+      - 流媒体解锁
       - 全部手选
       - 地区手选
       - 自建手选
@@ -431,37 +462,6 @@ proxy-groups:
       - 故障转移-JP
       - 故障转移-TW
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
-
-  # --- 漏网之鱼 ---
-  # 默认跟随主代理组
-  - name: FINAL
-    type: select
-    proxies:
-      - PROXY
-      - 自动选择
-      - 全部手选
-      - 地区手选
-      - 自建手选
-      - 负载均衡-US
-      - 负载均衡-HK
-      - 负载均衡-SG
-      - 负载均衡-JP
-      - 负载均衡-TW
-      - 负载均衡-其他
-      - 自动测速-US
-      - 自动测速-HK
-      - 自动测速-SG
-      - 自动测速-JP
-      - 自动测速-TW
-      - 自动测速-其他
-      - 故障转移-US
-      - 故障转移-HK
-      - 故障转移-SG
-      - 故障转移-JP
-      - 故障转移-TW
-      - 故障转移-其他
-      - CAMPUS
-    icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
 
   # ========================================
   # ⚙️ 策略类型代理组（用于自动化选择节点）
