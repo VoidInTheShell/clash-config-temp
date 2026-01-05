@@ -2,7 +2,7 @@
 ################################################################################
 # Script Name: optimize_fd_limits.sh
 # Description: 固化优化 Mihomo/ShellCrash 文件描述符限制配置
-# Author: Claude Code
+# Author: VoidInTheShell
 # Date: 2026-01-06
 # Version: 1.0
 #
