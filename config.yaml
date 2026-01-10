@@ -14,7 +14,7 @@
 
 proxy-providers:
   1.p1:
-    url: ""
+    url: "https://portal.uegov.org/api/auth/subscribe/eklTU1BCd1IxNElnX1d5QzZwSmdFWTlvQ09yLTlyWFJFMjVyQ3c2Z1QyVjl4OTYx"
     path: ./proxy_provider/p1.yaml 
     type: http
     udp: true

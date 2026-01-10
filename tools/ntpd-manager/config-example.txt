@@ -1,0 +1,193 @@
+# NTP重定向配置示例
+# 本文件展示成功配置后的UCI配置格式
+
+#==============================================================================
+# /etc/config/system 配置示例
+#==============================================================================
+
+# NTP服务器配置（重定向模式）
+config timeserver 'ntp'
+	option enabled '1'                    # 启用NTP客户端
+	option enable_server '1'              # 启用NTP服务器模式
+	option redirect_enabled '1'           # 启用重定向模式（新增）
+	option redirect_port '1123'           # 自定义监听端口（新增）
+	option interface 'lan'                # 绑定到LAN接口
+	option use_dhcp '1'                   # 使用DHCP获取NTP服务器
+	list server '203.107.6.88'            # 阿里云NTP
+	list server 'ntp.aliyun.com'          # 阿里云NTP
+	list server 'time1.cloud.tencent.com' # 腾讯云NTP
+	list server 'pool.ntp.org'            # NTP Pool
+
+# 说明:
+# - redirect_enabled: 1表示启用重定向，0表示禁用（使用默认123端口）
+# - redirect_port: ntpd实际监听的端口，建议使用1123或其他非标准端口
+# - interface: ntpd绑定的网络接口，通常是'lan'
+
+
+#==============================================================================
+# /etc/config/firewall 配置示例
+#==============================================================================
+
+# NTP DNAT重定向规则
+config redirect
+	option name 'NTP-Redirect-1123'       # 规则名称
+	option src 'lan'                      # 源zone（LAN）
+	option proto 'udp'                    # 协议（UDP）
+	option src_dport '123'                # 源端口（标准NTP端口）
+	option dest_ip '10.0.1.1'             # 目标IP（路由器LAN IP）
+	option dest_port '1123'               # 目标端口（ntpd实际监听端口）
+	option target 'DNAT'                  # 动作（目标NAT）
+	option enabled '1'                    # 启用规则
+
+# 说明:
+# - src: 源防火墙zone，通常是'lan'
+# - src_dport: 劫持的源端口，固定为123（标准NTP端口）
+# - dest_ip: 路由器的LAN IP地址，根据实际网络配置调整
+# - dest_port: 重定向到的目标端口，与redirect_port保持一致
+# - 此规则会将所有来自LAN的UDP 123流量重定向到路由器的1123端口
+
+
+#==============================================================================
+# iptables规则示例（自动生成）
+#==============================================================================
+
+# 查看iptables NAT规则:
+#   iptables -t nat -nvL PREROUTING
+
+# 预期输出类似:
+# Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
+# pkts bytes target     prot opt in     out     source      destination
+#    5   260 DNAT       udp  --  br-lan *       0.0.0.0/0   0.0.0.0/0   udp dpt:123 to:10.0.1.1:1123
+
+# 说明:
+# - pkts: 匹配的数据包数量
+# - bytes: 匹配的字节数
+# - target: DNAT（目标地址转换）
+# - prot: udp
+# - in: br-lan（入站接口）
+# - dpt:123: 目标端口123
+# - to:10.0.1.1:1123: 重定向到10.0.1.1的1123端口
+
+
+#==============================================================================
+# nftables规则示例（自动生成）
+#==============================================================================
+
+# 查看nftables规则:
+#   nft list ruleset | grep -A 5 "dnat.*123"
+
+# 预期输出类似:
+# type nat hook prerouting priority dstnat; policy accept;
+# iifname "br-lan" udp dport 123 dnat to 10.0.1.1:1123
+
+# 说明:
+# - iifname "br-lan": 入站接口为br-lan
+# - udp dport 123: UDP目标端口123
+# - dnat to 10.0.1.1:1123: 目标NAT到10.0.1.1:1123
+
+
+#==============================================================================
+# ntpd启动参数示例
+#==============================================================================
+
+# 查看ntpd进程:
+#   ps | grep ntpd
+
+# 默认模式（监听123端口）:
+# ntpd -n -N -l -I br-lan -p ntp.aliyun.com -p pool.ntp.org
+
+# 重定向模式（监听1123端口）:
+# ntpd -n -N -l -4 -I br-lan@1123 -p ntp.aliyun.com -p pool.ntp.org
+
+# 参数说明:
+# -n: 不进入后台运行
+# -N: 高优先级
+# -l: 启用NTP服务器模式
+# -4: 仅IPv4
+# -I br-lan@1123: 绑定到br-lan接口的1123端口
+# -p: 上游NTP服务器
+
+
+#==============================================================================
+# 验证命令
+#==============================================================================
+
+# 1. 检查UCI配置
+uci show system.ntp
+uci show firewall | grep NTP-Redirect
+
+# 2. 检查ntpd监听状态
+netstat -tuln | grep ntpd
+ss -tuln | grep ntpd
+
+# 3. 检查防火墙规则
+iptables -t nat -nvL | grep 123
+nft list ruleset | grep 123
+
+# 4. 测试NTP服务
+ntpdate -q localhost -p 1123
+ntpq -p
+
+# 5. 查看系统日志
+logread | grep ntpd
+logread | grep firewall
+
+
+#==============================================================================
+# 故障排除
+#==============================================================================
+
+# 问题：ntpd未在自定义端口监听
+# 解决：
+#   1. 检查ntpd版本是否支持 -I interface@port 语法
+#      ntpd --version  # 需要4.2.8+
+#   2. 查看ntpd日志
+#      logread | grep ntpd
+#   3. 手动测试启动参数
+#      ntpd -n -l -4 -I br-lan@1123 -p ntp.aliyun.com
+
+# 问题：防火墙规则未生效
+# 解决：
+#   1. 重载防火墙
+#      /etc/init.d/firewall reload
+#   2. 检查UCI配置语法
+#      uci show firewall
+#   3. 查看防火墙日志
+#      logread | grep firewall
+
+# 问题：LAN客户端无法同步
+# 解决：
+#   1. 在路由器上抓包
+#      tcpdump -i br-lan udp port 123 -n
+#   2. 检查防火墙计数器
+#      iptables -t nat -nvL | grep 123  # 查看pkts列
+#   3. 测试从客户端连接
+#      ntpdate -d <路由器IP>
+
+
+#==============================================================================
+# 回滚到默认配置
+#==============================================================================
+
+# 手动禁用重定向（保留配置）:
+uci set system.ntp.redirect_enabled='0'
+uci commit system
+/etc/init.d/sysntpd restart
+
+# 完全删除重定向配置:
+uci delete system.ntp.redirect_enabled
+uci delete system.ntp.redirect_port
+uci commit system
+/etc/init.d/sysntpd restart
+
+# 删除防火墙规则:
+# 先查找规则索引
+uci show firewall | grep -n "NTP-Redirect"
+# 然后删除对应索引的规则（假设是redirect[0]）
+uci delete firewall.@redirect[0]
+uci commit firewall
+/etc/init.d/firewall reload
+
+# 恢复原始sysntpd:
+mv /etc/init.d/sysntpd.backup /etc/init.d/sysntpd
+/etc/init.d/sysntpd restart
