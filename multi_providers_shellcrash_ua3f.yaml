@@ -1155,6 +1155,7 @@ rules:
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
   - DOMAIN-SUFFIX,browserscan.net,PROXY
+  - DOMAIN-SUFFIX,bambulab.cn,CAMPUS
   # User
   - DOMAIN-SUFFIX,uegov.org,CAMPUS
   - DOMAIN-SUFFIX,uegov.us.kg,CAMPUS

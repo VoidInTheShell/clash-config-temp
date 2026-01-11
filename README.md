@@ -12,10 +12,12 @@
 # 说明
   - multi_providers_mihomo.yaml：完整Mihomo内核使用
   - multi_providers_shellcrash.yaml：ShellCrash残血Meta内核使用，不包含Mihomo语法
-  - multi_providers_shellcrash_ua3f.yaml：ShellCrash搭配UA3F（SOCKS5）使用
+  - multi_providers_shellcrash_ua3f.yaml：ShellCrash搭配UA3F（HTTP）使用
   - shellcrash_override.yaml：ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
   - trojanpanel_multigroup_temp.yaml：TrojanPanel默认规则模板
-**更多详细说明与分流策略移步[wiki](https://github.com/VoidInTheShell/clash-config-temp/wiki/%E5%A4%9A%E6%9C%BA%E5%9C%BA%E8%AE%A2%E9%98%85%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)**
+  - /tools：shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
+  - /server_config_temp：服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
+  - **更多详细说明与分流策略移步[wiki](https://github.com/VoidInTheShell/clash-config-temp/wiki/%E5%A4%9A%E6%9C%BA%E5%9C%BA%E8%AE%A2%E9%98%85%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)**
 
 # 快速配置
 ## Mihomo
@@ -36,6 +38,11 @@ export url='https://fastly.jsdelivr.net/gh/juewuy/ShellCrash@master' && wget -q 
 ```
 
 重要：安装完成后先不要启动代理，进入菜单-内核功能设置，确保**防火墙运行模式为混合或TPROXY**、**DNS运行模式为fake-ip**、**只代理常用端口为关闭**，然后进入**更新/卸载**菜单中，下载**ClashMeta内核（Mihomo）**、**面板（推荐ZashBoard）**、**更新数据库文件：Mihomo完整版+自定义meta-rules-dat的geosite.dat**
+
+**如果缺失geo规则无法启动，手动下载到/etc/ShellCrash目录中：**
+```
+wget https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb /etc/ShellCrash/GeoLite2-ASN.mmdb && wget https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat /etc/ShellCrash/geoip.dat && wget https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat /etc/ShellCrash/geosite.dat && wget https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb /etc/ShellCrash/Ggeoip.metadb
+```
 
 下载[multi_providers_shellcrash.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash.yaml)，按需添加订阅，修改完成后上传至设备的/tmp目录下
 

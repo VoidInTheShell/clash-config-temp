@@ -936,6 +936,7 @@ rules:
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
   - DOMAIN-SUFFIX,browserscan.net,PROXY
   # User
+  - DOMAIN-SUFFIX,bambulab.cn,DIRECT
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
   - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
