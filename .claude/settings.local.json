@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "mcp__mcp_router__execute-command",
-      "mcp__codex__codex"
-    ]
-  }
-}
