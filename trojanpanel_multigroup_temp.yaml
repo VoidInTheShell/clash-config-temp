@@ -363,7 +363,10 @@ rules:
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
   - DOMAIN-SUFFIX,browserscan.net,PROXY
+  - DOMAIN-SUFFIX,thehelldiversgame.com,PROXY
   # User
+  - DOMAIN-KEYWORD,bambulab,DIRECT
+  - DOMAIN-KEYWORD,makerworld,DIRECT
   - DOMAIN-SUFFIX,bambulab.cn,DIRECT
   - DOMAIN-SUFFIX,uegov.org,DIRECT
   - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
@@ -473,7 +476,7 @@ rules:
   # GlobalSites
   - RULE-SET,geolocation-!cn,GlobalSite
 #--------------------------------------------------------------------------------------#
-  # Direct DOMAIN & China Services
+  # DIRECT DOMAIN & China Services
   - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
   - RULE-SET,UnionPay,DIRECT
   - RULE-SET,ShiJiChaoXing,DIRECT
@@ -487,6 +490,9 @@ rules:
   - RULE-SET,private_domain,DIRECT
   - DOMAIN-SUFFIX,httpbin.org,DIRECT
   - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+  - GEOSITE,kurogames,DIRECT
+  - GEOSITE,tencent-games,DIRECT
+  - GEOSITE,cn,DIRECT
 #--------------------------------------------------------------------------------------#
   # GEOIP RULESET
   - RULE-SET,TGcidr,PROXY,no-resolve

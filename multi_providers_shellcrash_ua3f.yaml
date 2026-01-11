@@ -1155,8 +1155,11 @@ rules:
   - DOMAIN-SUFFIX,ipleak.net,PROXY
   - DOMAIN-SUFFIX,browserleaks.com,PROXY
   - DOMAIN-SUFFIX,browserscan.net,PROXY
-  - DOMAIN-SUFFIX,bambulab.cn,CAMPUS
+  - DOMAIN-SUFFIX,thehelldiversgame.com,PROXY
   # User
+  - DOMAIN-KEYWORD,bambulab,CAMPUS
+  - DOMAIN-KEYWORD,makerworld,CAMPUS
+  - DOMAIN-SUFFIX,bambulab.cn,CAMPUS
   - DOMAIN-SUFFIX,uegov.org,CAMPUS
   - DOMAIN-SUFFIX,uegov.us.kg,CAMPUS
   - DOMAIN-SUFFIX,uegov.dpdns.org,CAMPUS
@@ -1279,6 +1282,9 @@ rules:
   - RULE-SET,private_domain,CAMPUS
   - DOMAIN-SUFFIX,httpbin.org,CAMPUS
   - DOMAIN-SUFFIX,ghproxy.com,CAMPUS
+  - GEOSITE,kurogames,CAMPUS
+  - GEOSITE,tencent-games,CAMPUS
+  - GEOSITE,cn,CAMPUS
 #--------------------------------------------------------------------------------------#
   # GEOIP RULESET
   - RULE-SET,TGcidr,PROXY,no-resolve
