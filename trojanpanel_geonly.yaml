@@ -1,0 +1,350 @@
+      icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
+    - name: FINAL
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US3-LA-流媒体解锁
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
+        - JP-东京-软银-流媒体解锁
+        - DIRECT
+      icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
+    - name: GlobalSite
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US3-LA-流媒体解锁
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
+        - JP-东京-软银-流媒体解锁
+        - DIRECT
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
+    - name: Google
+      type: select
+      proxies:
+        - PROXY
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US3-LA-流媒体解锁
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
+        - JP-东京-软银-流媒体解锁
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
+#--------------------------------------------------------------------------------------#
+#-------------------------------WrittenByLiebesleid------------------------------------#
+#--------------------------------------------------------------------------------------#
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+routing-mark: 7894
+mode: rule
+ipv6: false
+allow-lan: true
+log-level: info
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: strict
+global-client-fingerprint: chrome
+#--------------------------------------------------------------------------------------#
+external-controller: 0.0.0.0:7788
+secret: "123456"
+external-ui: WebUI/ZashBoard
+external-ui-url: "https://gh-proxy.com/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+external-controller-cors:
+  allow-origins:
+    - "*"
+  allow-private-network: true
+#--------------------------------------------------------------------------------------#
+tun:
+  enable: true
+  stack: mixed
+  device: Meta
+  auto-route: true
+  strict-route: true
+  auto-detect-interface: true
+  auto-redirect: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+    - any:853
+    - tls://any:853
+    - tcp://any:853
+#--------------------------------------------------------------------------------------#
+geodata-mode: true
+geox-url:
+  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+  store-fake-ip: true
+#--------------------------------------------------------------------------------------#
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - 'Mijia Cloud'
+    - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'geosite:connectivity-check'
+    - 'geosite:private'
+    - '*.lan'
+    - '*.local'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.home.arpa'
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'time.*.edu.cn'
+    - 'time.*.apple.com'
+    - 'time-ios.apple.com'
+    - 'time1.*.com'
+    - 'time2.*.com'
+    - 'time3.*.com'
+    - 'time4.*.com'
+    - 'time5.*.com'
+    - 'time6.*.com'
+    - 'time7.*.com'
+    - 'ntp.*.com'
+    - 'ntp1.*.com'
+    - 'ntp2.*.com'
+    - 'ntp3.*.com'
+    - 'ntp4.*.com'
+    - 'ntp5.*.com'
+    - 'ntp6.*.com'
+    - 'ntp7.*.com'
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - '+.pool.ntp.org'
+    - 'time1.cloud.tencent.com'
+    - 'music.163.com'
+    - '*.music.163.com'
+    - '*.126.net'
+    - 'musicapi.taihe.com'
+    - 'music.taihe.com'
+    - 'songsearch.kugou.com'
+    - 'trackercdn.kugou.com'
+    - '*.kuwo.cn'
+    - 'api-jooxtt.sanook.com'
+    - 'api.joox.com'
+    - 'joox.com'
+    - 'y.qq.com'
+    - '*.y.qq.com'
+    - 'streamoc.music.tc.qq.com'
+    - 'mobileoc.music.tc.qq.com'
+    - 'isure.stream.qqmusic.qq.com'
+    - 'dl.stream.qqmusic.qq.com'
+    - 'aqqmusic.tc.qq.com'
+    - 'amobile.music.tc.qq.com'
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - 'music.migu.cn'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+    - 'localhost.ptlogin2.qq.com'
+    - 'localhost.sec.qq.com'
+    - '+.qq.com'
+    - '+.tencent.com'
+    - '+.steamcontent.com'
+    - '+.srv.nintendo.net'
+    - '*.n.n.srv.nintendo.net'
+    - '+.cdn.nintendo.net'
+    - '+.stun.playstation.net'
+    - 'xbox.*.*.microsoft.com'
+    - '*.*.xboxlive.com'
+    - 'xbox.*.microsoft.com'
+    - 'xnotify.xboxlive.com'
+    - '+.battlenet.com.cn'
+    - '+.wotgame.cn'
+    - '+.wggames.cn'
+    - '+.wowsgame.cn'
+    - '+.wargaming.net'
+    - 'proxy.golang.org'
+    - 'stun.*.*'
+    - 'stun.*.*.*'
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+    - 'heartbeat.belkin.com'
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - 'mesu.apple.com'
+    - 'swscan.apple.com'
+    - 'swquery.apple.com'
+    - 'swdownload.apple.com'
+    - 'swcdn.apple.com'
+    - 'swdist.apple.com'
+    - 'lens.l.google.com'
+    - 'stun.l.google.com'
+    - 'na.b.g-tun.com'
+    - '+.nflxvideo.net'
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - 'ff.dorado.sdo.com'
+    - '*.mcdn.bilivideo.cn'
+    - '+.media.dssott.com'
+    - 'shark007.net'
+    - '+.market.xiaomi.com'
+    - '+.cmbchina.com'
+    - '+.cmbimg.com'
+    - 'adguardteam.github.io'
+    - 'adrules.top'
+    - 'anti-ad.net'
+    - 'local.adguard.org'
+    - 'static.adtidy.org'
+    - '+.sandai.net'
+    - '+.n0808.com'
+    - '+.3gppnetwork.org'
+    - '+.uu.163.com'
+    - 'ps.res.netease.com'
+    - '+.oray.com'
+    - '+.orayimg.com'
+  default-nameserver:
+    - '8.8.4.4'
+    - '119.29.29.29'
+    - '223.5.5.5'
+    - '1.1.1.1'
+    - 'tls://1.1.1.1:853'
+  nameserver:
+    - 'tls://8.8.4.4:853#PROXY'
+    - 'tls://1.1.1.1:853#PROXY'
+  direct-nameserver:
+    - 'system'
+    - '208.67.222.222'
+    - '223.5.5.5'
+    - '119.29.29.29'
+    - 'https://doh.pub/dns-query'
+  proxy-server-nameserver:
+    - '1.1.1.1'
+    - '8.8.8.8'
+    - 'tls://1.1.1.1:853'
+    - 'tls://8.8.4.4:853'
+  nameserver-policy:
+    'geosite:cn':
+      - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - 'https://doh.pub/dns-query'
+    'geosite:category-games@cn':
+      - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - 'https://doh.pub/dns-query'
+    'geosite:category-ai':
+      - 'tls://8.8.4.4:853#AI'
+      - 'tls://1.1.1.1:853#AI'
+    'geosite:google':
+      - 'tls://8.8.4.4:853#Google'
+      - 'tls://1.1.1.1:853#Google'
+    'geosite:gfw':
+      - 'tls://8.8.4.4:853#PROXY'
+      - 'tls://1.1.1.1:853#PROXY'
+#--------------------------------------------------------------------------------------#
+routing:
+  domainStrategy: AsIs
+  domainMatcher: hybrid
+#--------------------------------------------------------------------------------------#
+rules:
+  # Custom
+  - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
+  - PROCESS-NAME,Proxifier,PROXY
+  - DOMAIN-SUFFIX,ipleak.net,PROXY
+  - DOMAIN-SUFFIX,browserleaks.com,PROXY
+  - DOMAIN-SUFFIX,browserscan.net,PROXY
+  - DOMAIN-SUFFIX,thehelldiversgame.com,PROXY
+  # User
+  - DOMAIN-KEYWORD,bambulab,DIRECT
+  - DOMAIN-KEYWORD,makerworld,DIRECT
+  - DOMAIN-SUFFIX,bambulab.cn,DIRECT
+  - DOMAIN-SUFFIX,uegov.org,DIRECT
+  - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
+  - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
+  - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
+  - DOMAIN-KEYWORD,autocad,DIRECT
+  - DOMAIN-KEYWORD,koishi,DIRECT
+  - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
+#--------------------------------------------------------------------------------------#
+  # ADBlock
+  - GEOSITE,category-ads-all,REJECT
+  - DOMAIN,youxi.xunlei.com,REJECT
+  # SpaceDesk
+  - DOMAIN-KEYWORD,vrdesktop,REJECT
+#--------------------------------------------------------------------------------------#
+  # Games
+  - GEOSITE,steam@cn,DIRECT
+  - GEOSITE,steam,PROXY
+  - DOMAIN-KEYWORD,epicgames,DIRECT
+  # China Games
+  - GEOSITE,category-games@cn,DIRECT
+#--------------------------------------------------------------------------------------#
+  # Services
+  # Google
+  - GEOSITE,google,Google
+  - GEOIP,GOOGLE,Google,no-resolve
+  # Notion
+  - DOMAIN,http-inputs-notion.splunkcloud.com,PROXY
+  # AKSpeedy-DOMAIN
+  - DOMAIN-KEYWORD,akspeedy,DIRECT
+  - DOMAIN,turing.captcha.qcloud.com,DIRECT
+  - DOMAIN,turing.captcha.gtimg.com,DIRECT
+  - DOMAIN,sensorsdata.web.bigdata.fulu.com,DIRECT
+  # CNMedia
+  - DOMAIN-KEYWORD,douyin,DIRECT
+  - DOMAIN-KEYWORD,youku,DIRECT
+  - DOMAIN-KEYWORD,iqiyi,DIRECT
+#--------------------------------------------------------------------------------------#
+  # Global
+  # GFWList
+  - GEOSITE,gfw,PROXY
+  # Global Domain
+  - DOMAIN-SUFFIX,imap.gmail.com,PROXY
+  - DOMAIN-SUFFIX,smtp.gmail.com,PROXY
+#--------------------------------------------------------------------------------------#
+  # GlobalSites
+  - GEOSITE,geolocation-!cn,GlobalSite
+#--------------------------------------------------------------------------------------#
+  # DIRECT DOMAIN & China Services
+  - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
+  - DOMAIN-SUFFIX,httpbin.org,DIRECT
+  - DOMAIN-SUFFIX,ghproxy.com,DIRECT
+  - GEOSITE,kurogames,DIRECT
+  - GEOSITE,tencent-games,DIRECT
+  - GEOSITE,cn,DIRECT
+#--------------------------------------------------------------------------------------#
+  # GEOIP RULESET
+  - GEOIP,PRIVATE,DIRECT,no-resolve
+  - GEOIP,cn,DIRECT
+#--------------------------------------------------------------------------------------#
+  # FINAL
+  - MATCH,FINAL
+#--------------------------------------------------------------------------------------#

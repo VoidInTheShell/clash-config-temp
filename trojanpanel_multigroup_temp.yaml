@@ -315,6 +315,7 @@ dns:
     - 'tls://8.8.4.4:853#PROXY'
     - 'tls://1.1.1.1:853#PROXY'
   direct-nameserver:
+    - 'system'
     - '208.67.222.222'
     - '223.5.5.5'
     - '119.29.29.29'
@@ -326,10 +327,12 @@ dns:
     - 'tls://8.8.4.4:853'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - 'system'
       - '223.5.5.5'
       - '119.29.29.29'
       - 'https://doh.pub/dns-query'
     'geosite:category-games@cn':
+      - 'system'
       - '223.5.5.5'
       - '119.29.29.29'
       - 'https://doh.pub/dns-query'
@@ -346,6 +349,7 @@ dns:
       - 'tls://8.8.4.4:853#PROXY'
       - 'tls://1.1.1.1:853#PROXY'
     'rule-set:BiliBili':
+      - 'system'
       - 'tls://8.8.4.4:853#哔哩哔哩'
       - '119.29.29.29'
       - '223.5.5.5'

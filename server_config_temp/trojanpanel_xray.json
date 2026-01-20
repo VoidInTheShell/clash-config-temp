@@ -23,6 +23,8 @@
         "domain": [
           "full:www.gstatic.com",
           "full:gstatic.com",
+          "golang.org",
+          "dl.google.com",
           "ipleak.net",
           "browserleaks.com",
           "iplark.com",
