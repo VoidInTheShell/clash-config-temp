@@ -888,7 +888,6 @@ dns:
     - 'tls://1.1.1.1:853#PROXY'
   direct-nameserver:
     - 'system'
-    - '208.67.222.222'
     - '223.5.5.5'
     - '119.29.29.29'
     - 'https://doh.pub/dns-query'
@@ -951,7 +950,7 @@ rules:
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
 #--------------------------------------------------------------------------------------#
   # Block
-  - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT
+  # - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
   - RULE-SET,Reject,REJECT
