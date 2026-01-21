@@ -179,8 +179,8 @@ proxy-groups:
   - name: 流媒体
     type: select
     proxies:
-      - 流媒体解锁
       - PROXY
+      - 流媒体解锁
       - 全部手选
       - 地区手选
       - 自建手选
@@ -201,9 +201,9 @@ proxy-groups:
   - name: AI
     type: select
     proxies:
+      - PROXY
       - AI优选
       - AI稳定
-      - PROXY
       - 全部手选
       - 地区手选
       - 自建手选
@@ -257,8 +257,8 @@ proxy-groups:
   - name: CDN
     type: select
     proxies:
-      - DIRECT
       - PROXY
+      - DIRECT
       - 自动选择
       - 全部手选
       - 地区手选
