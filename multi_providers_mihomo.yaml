@@ -888,15 +888,20 @@ dns:
     - '208.67.222.222#PROXY'
   direct-nameserver:
     - 'system'
+    - '223.5.5.5'
+    - '119.29.29.29'
   proxy-server-nameserver:
-    - 'tls://1.1.1.1'
-    - 'tls://8.8.4.4'
-    - 'tls://223.5.5.5'
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://doh.pub/dns-query'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
       - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
     'geosite:category-games@cn':
       - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'
@@ -914,6 +919,8 @@ dns:
       - '208.67.222.222#海淘购物'
     'rule-set:BiliBili':
       - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
       - '8.8.8.8#哔哩哔哩'
 #--------------------------------------------------------------------------------------#
 routing:
