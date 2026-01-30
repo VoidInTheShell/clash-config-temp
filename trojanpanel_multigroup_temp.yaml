@@ -1,4 +1,10 @@
       icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
+    - name: IPCheck
+      type: select
+      proxies:
+        - PROXY
+        - DIRECT
+      icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png"
     - name: FINAL
       type: select
       proxies:
@@ -21,6 +27,18 @@
         - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
+    - name: GlobalLegal
+      type: select
+      proxies:
+        - DIRECT
+        - PROXY
+        - US1-纽约-无限流量
+        - US2-纽约-无限流量
+        - US3-LA-流媒体解锁
+        - US-美西-三网CN2-电信优化
+        - JP-东京-软银-移动联通优化
+        - JP-东京-软银-流媒体解锁
+      icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png"
     - name: 流媒体
       type: select
       proxies:
@@ -341,10 +359,12 @@ dns:
     - 'https://dns.alidns.com/dns-query'
     - 'https://doh.pub/dns-query'
   nameserver-policy:
-    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - 'system'
-    'geosite:category-games@cn':
-      - 'system'
+    # 'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+    #   - 'system'
+    # 'geosite:category-games@cn':
+    #   - 'system'
+    # 'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+    #   - 'system'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'
@@ -369,12 +389,23 @@ routing:
   domainMatcher: hybrid
 #--------------------------------------------------------------------------------------#
 rules:
+  # IP&PROXY CHECK
+  - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve
+  - DOMAIN-SUFFIX,ipleak.net,IPCheck
+  - DOMAIN-SUFFIX,ipleak.com,IPCheck
+  - DOMAIN-SUFFIX,ip-api.com,IPCheck
+  - DOMAIN-SUFFIX,iplark.com,IPCheck
+  - DOMAIN-SUFFIX,ippure.com,IPCheck
+  - DOMAIN-SUFFIX,iprust.io,IPCheck
+  - DOMAIN-SUFFIX,ip123.in,IPCheck
+  - DOMAIN-SUFFIX,ipinfo.io,IPCheck
+  - DOMAIN-SUFFIX,ipdata.co,IPCheck
+  - DOMAIN-SUFFIX,meowvps.com,IPCheck
+  - DOMAIN-SUFFIX,browserleaks.com,IPCheck
+  - DOMAIN-SUFFIX,browserscan.net,IPCheck
   # Custom
   - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
   - PROCESS-NAME,Proxifier,PROXY
-  - DOMAIN-SUFFIX,ipleak.net,PROXY
-  - DOMAIN-SUFFIX,browserleaks.com,PROXY
-  - DOMAIN-SUFFIX,browserscan.net,PROXY
   - DOMAIN-SUFFIX,thehelldiversgame.com,PROXY
   # User
   - DOMAIN-KEYWORD,bambulab,DIRECT
@@ -389,7 +420,6 @@ rules:
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
 #--------------------------------------------------------------------------------------#
   # Block
-  - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
   - RULE-SET,Reject,REJECT
@@ -400,6 +430,15 @@ rules:
   - DOMAIN,youxi.xunlei.com,REJECT
   # SpaceDesk
   - DOMAIN-KEYWORD,vrdesktop,REJECT
+#--------------------------------------------------------------------------------------#
+  # Global Legal Services
+  - DOMAIN-SUFFIX,asrock.com,GlobalLegal
+  - RULE-SET,Nvidia,GlobalLegal
+  - RULE-SET,Samsung,GlobalLegal
+  - RULE-SET,Intel,GlobalLegal
+  - RULE-SET,AMD,GlobalLegal
+  - RULE-SET,Lenovo,GlobalLegal
+  - RULE-SET,Dell,GlobalLegal
 #--------------------------------------------------------------------------------------#
   # PROXY CIDR
   - RULE-SET,Telegram,PROXY
@@ -417,16 +456,21 @@ rules:
   - DOMAIN-KEYWORD,epicgames,DIRECT
   # China Games
   - GEOSITE,category-games@cn,DIRECT
+  - GEOSITE,kurogames,DIRECT
+  - GEOSITE,tencent-games,DIRECT
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
+  # Google
+  - RULE-SET,Google,Google
+  - RULE-SET,Gemini,Google
+  - GEOIP,GOOGLE,Google,no-resolve
   # AI
   - RULE-SET,category-ai-!cn,AI
   - RULE-SET,OpenAI,AI
   - RULE-SET,Twitter,AI
   - RULE-SET,Claude,AI
-  - RULE-SET,Gemini,AI
   # Apple Set
   - RULE-SET,Apple,Apple
   - RULE-SET,Icloud,Apple
@@ -441,9 +485,6 @@ rules:
   - RULE-SET,AmazonIP,海淘购物,no-resolve
   - RULE-SET,AmazonCN,海淘购物
   - RULE-SET,AmazonTrust,海淘购物
-  # Google
-  - RULE-SET,Google,Google
-  - GEOIP,GOOGLE,Google,no-resolve
   # Bing
   - DOMAIN-KEYWORD,bing,MicrosoftBing
   # Microsoft
@@ -503,8 +544,6 @@ rules:
   - RULE-SET,private_domain,DIRECT
   - DOMAIN-SUFFIX,httpbin.org,DIRECT
   - DOMAIN-SUFFIX,ghproxy.com,DIRECT
-  - GEOSITE,kurogames,DIRECT
-  - GEOSITE,tencent-games,DIRECT
   - GEOSITE,cn,DIRECT
 #--------------------------------------------------------------------------------------#
   # GEOIP RULESET
@@ -518,6 +557,42 @@ rules:
   - MATCH,FINAL
 #--------------------------------------------------------------------------------------#
 rule-providers:
+  Dell:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Dell.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Dell/Dell.yaml
+    interval: 86400
+  AMD:
+    type: http
+    behavior: classical
+    path: ./RuleSet/AMD.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AMD/AMD.yaml
+    interval: 86400
+  Intel:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Intel.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Intel/Intel.yaml
+    interval: 86400
+  Lenovo:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Lenovo.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Lenovo/Lenovo.yaml
+    interval: 86400
+  Samsung:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Samsung.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Samsung/Samsung.yaml
+    interval: 86400
+  Nvidia:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Nvidia.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Nvidia/Nvidia.yaml
+    interval: 86400
   fakeip-filter-dustinwin:
     type: http
     format: mrs
