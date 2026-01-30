@@ -907,18 +907,18 @@ dns:
     - 'https://223.5.5.5/dns-query'
     - 'https://doh.pub/dns-query'
   nameserver-policy:
-    # 'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-    #   - '223.5.5.5'
-    #   - '119.29.29.29'
-    #   - '114.114.114.114'
-    # 'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
-    #   - '223.5.5.5'
-    #   - '119.29.29.29'
-    #   - '114.114.114.114'
-    # 'geosite:category-games@cn':
-    #   - '223.5.5.5'
-    #   - '119.29.29.29'
-    #   - '114.114.114.114'
+    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
+    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
+    'geosite:category-games@cn':
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'

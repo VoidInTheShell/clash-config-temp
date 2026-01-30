@@ -173,12 +173,12 @@ dns:
     - 'https://dns.alidns.com/dns-query'
     - 'https://doh.pub/dns-query'
   nameserver-policy:
-    # 'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-    #   - 'system'
-    # 'geosite:category-games@cn':
-    #   - 'system'
-    # 'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
-    #   - 'system'
+    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - 'system'
+    'geosite:category-games@cn':
+      - 'system'
+    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+      - 'system'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'
