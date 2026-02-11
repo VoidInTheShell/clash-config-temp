@@ -1003,6 +1003,11 @@ sniffer:
     - 'Mijia Cloud'
     - '+.push.apple.com'
 #--------------------------------------------------------------------------------------#
+hosts:
+  services.googleapis.cn: services.googleapis.com
+  googleapis.cn: googleapis.com
+  google.cn: google.com
+#--------------------------------------------------------------------------------------#
 dns:
   enable: true
   listen: 0.0.0.0:1053
@@ -1254,6 +1259,7 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
+  - GEOSITE,GOOGLE-CN,DIRECT,no-resolve
   - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
   - GEOIP,GOOGLE,Google,no-resolve

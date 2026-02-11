@@ -13,7 +13,7 @@
         - US1-纽约-无限流量
         - US2-纽约-无限流量
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
+        - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
     - name: GlobalSite
       type: select
@@ -22,9 +22,7 @@
         - DIRECT
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png"
     - name: GlobalLegal
@@ -34,9 +32,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png"
     - name: 流媒体
@@ -46,9 +42,7 @@
         - DIRECT
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
     - name: AI
@@ -57,9 +51,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
     - name: MicrosoftBing
@@ -69,9 +61,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
     - name: CDN
@@ -81,9 +71,7 @@
         - DIRECT
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
     - name: 海淘购物
@@ -93,9 +81,7 @@
         - DIRECT
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
     - name: 哔哩哔哩
@@ -105,9 +91,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
     - name: Apple
@@ -117,9 +101,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
     - name: Google
@@ -128,9 +110,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
     - name: TikTok
@@ -140,9 +120,7 @@
         - PROXY
         - US1-纽约-无限流量
         - US2-纽约-无限流量
-        - US3-LA-流媒体解锁
         - US-美西-三网CN2-电信优化
-        - JP-东京-软银-移动联通优化
         - JP-东京-软银-流媒体解锁
       icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
 #--------------------------------------------------------------------------------------#
@@ -211,6 +189,11 @@ sniffer:
   skip-domain:
     - 'Mijia Cloud'
     - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
+hosts:
+  services.googleapis.cn: services.googleapis.com
+  googleapis.cn: googleapis.com
+  google.cn: google.com
 #--------------------------------------------------------------------------------------#
 dns:
   enable: true
@@ -463,6 +446,7 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
+  - GEOSITE,GOOGLE-CN,DIRECT,no-resolve
   - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
   - GEOIP,GOOGLE,Google,no-resolve
