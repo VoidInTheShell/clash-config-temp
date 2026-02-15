@@ -29,7 +29,7 @@ sniffer:
 hosts:
   services.googleapis.cn: services.googleapis.com
   googleapis.cn: googleapis.com
-  google.cn: google.com
+  google.cn: google.com    
 #--------------------------------------------------------------------------------------#
 dns:
   enable: true
@@ -45,6 +45,8 @@ dns:
     - 'rule-set:fakeip-filter-dustinwin'
     - 'rule-set:NetEase'
     - 'rule-set:Tencent'
+    - 'rule-set:Blizzard'
+    - 'geosite:category-games@cn'
     - '*.lan'
     - '*.local'
     - '*.example'
@@ -173,17 +175,21 @@ dns:
     - '9.9.9.9#PROXY'
     - '208.67.222.222#PROXY'
   direct-nameserver:
-    - 'system'
+    - '211.142.211.124'
+    - '111.8.14.18'
   proxy-server-nameserver:
     - 'https://dns.alidns.com/dns-query'
     - 'https://doh.pub/dns-query'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - 'system'
+      - '111.8.14.18'
+      - '211.142.211.124'
     'geosite:category-games@cn':
-      - 'system'
+      - '211.142.211.124'
+      - '111.8.14.18'
     'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
-      - 'system'
+      - '111.8.14.18'
+      - '211.142.211.124'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'
@@ -200,10 +206,11 @@ dns:
       - '9.9.9.9#海淘购物'
       - '208.67.222.222#海淘购物'
     'rule-set:BiliBili':
-      - 'system'
+      - '111.8.14.18'
+      - '211.142.211.124'
       - '8.8.8.8#哔哩哔哩'
 #--------------------------------------------------------------------------------------#
-# routing:
-#   domainStrategy: AsIs
-#   domainMatcher: hybrid
+#routing:
+#  domainStrategy: AsIs
+#  domainMatcher: hybrid
 #--------------------------------------------------------------------------------------#
