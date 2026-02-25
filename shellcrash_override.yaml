@@ -175,21 +175,17 @@ dns:
     - '9.9.9.9#PROXY'
     - '208.67.222.222#PROXY'
   direct-nameserver:
-    - '211.142.211.124'
-    - '111.8.14.18'
+    - 'system'
   proxy-server-nameserver:
     - 'https://dns.alidns.com/dns-query'
     - 'https://doh.pub/dns-query'
   nameserver-policy:
     'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - '111.8.14.18'
-      - '211.142.211.124'
+      - 'system'
     'geosite:category-games@cn':
-      - '211.142.211.124'
-      - '111.8.14.18'
+      - 'system'
     'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
-      - '111.8.14.18'
-      - '211.142.211.124'
+      - 'system'
     'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
       - '8.8.8.8#AI'
       - '1.1.1.1#AI'
