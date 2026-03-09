@@ -1024,7 +1024,9 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
-  - GEOSITE,GOOGLE-CN,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,googleapis.com,Google
+  - DOMAIN-SUFFIX,gstatic.com,Google
+  - GEOSITE,GOOGLE-CN,REJECT,no-resolve
   - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
   - GEOIP,GOOGLE,Google,no-resolve
