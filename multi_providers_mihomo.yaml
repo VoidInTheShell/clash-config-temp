@@ -17,7 +17,7 @@ dy: &dy
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5 # 秒
+      timeout: 800
       expected-status: "204"
       method: HEAD
 # ⚠️ smux 多路复用：部分机场不支持，如连接失败请注释本段
@@ -516,7 +516,7 @@ proxy-groups:
       interval: 1800
       url: https://cp.cloudflare.com/generate_204
       method: HEAD
-      timeout: 5
+      timeout: 1000
       expected-status: '204'
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
@@ -779,6 +779,7 @@ dns:
     - 'rule-set:fakeip-filter-dustinwin'
     - 'rule-set:NetEase'
     - 'rule-set:Tencent'
+    - 'rule-set:Blizzard'
     - '*.lan'
     - '*.local'
     - '*.example'
@@ -1024,8 +1025,8 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
-  - DOMAIN-SUFFIX,googleapis.com,Google
-  - DOMAIN-SUFFIX,gstatic.com,Google
+  - DOMAIN-SUFFIX,googleapis.com,Google,no-resolve
+  - DOMAIN-SUFFIX,gstatic.com,Google,no-resolve
   - GEOSITE,GOOGLE-CN,REJECT,no-resolve
   - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
@@ -1121,6 +1122,12 @@ rules:
   - MATCH,FINAL
 #--------------------------------------------------------------------------------------#
 rule-providers:
+  Blizzard:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Blizzard.yaml
+    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml
+    interval: 86400
   Dell:
     type: http
     behavior: classical
@@ -1305,13 +1312,13 @@ rule-providers:
     type: http
     format: mrs
     behavior: domain
-    url: https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
+    url: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
     path: ./RuleSet/category-ai-!cn.mrs
     interval: 86400
   PCDN:
     type: http
     behavior: domain
-    url: 'https://gh-proxy.com/https://raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
+    url: 'https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
     path: ./RuleSet/pcdn.yaml
     interval: 86400
   Reject:

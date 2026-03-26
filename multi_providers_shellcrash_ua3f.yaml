@@ -24,7 +24,7 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5
+      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -41,7 +41,7 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5
+      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -58,7 +58,7 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5
+      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -75,7 +75,7 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5
+      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -524,7 +524,7 @@ proxy-groups:
       interval: 900
       url: https://cp.cloudflare.com/generate_204
       method: HEAD
-      timeout: 5
+      timeout: 5000
       expected-status: '204'
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
@@ -1260,8 +1260,8 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
-  - DOMAIN-SUFFIX,googleapis.com,Google
-  - DOMAIN-SUFFIX,gstatic.com,Google
+  - DOMAIN-SUFFIX,googleapis.com,Google,no-resolve
+  - DOMAIN-SUFFIX,gstatic.com,Google,no-resolve
   - GEOSITE,GOOGLE-CN,REJECT,no-resolve
   - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
