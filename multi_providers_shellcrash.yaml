@@ -24,7 +24,6 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -41,7 +40,6 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -58,7 +56,6 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -75,7 +72,6 @@ proxy-providers:
       enable: true
       url: https://cp.cloudflare.com/generate_204
       interval: 600
-      timeout: 5000
       expected-status: "204"
       method: HEAD
     override:
@@ -450,15 +446,8 @@ proxy-groups:
     url: https://cp.cloudflare.com/generate_204
     include-all: false
     tolerance: 50
-    interval: 1800 #安卓可用1800，也就是半小时
+    interval: 180
     lazy: false
-    health-check:
-      enable: true
-      interval: 900
-      url: https://cp.cloudflare.com/generate_204
-      method: HEAD
-      timeout: 5000
-      expected-status: '204'
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
 
@@ -637,7 +626,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 300
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
@@ -651,7 +640,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 300
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
@@ -665,7 +654,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 300
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
@@ -679,7 +668,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 300
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
@@ -693,7 +682,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 600
+    interval: 300
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
@@ -708,7 +697,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 900
+    interval: 120
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -723,7 +712,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 900
+    interval: 120
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -738,7 +727,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 900
+    interval: 120
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -753,7 +742,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 900
+    interval: 120
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
@@ -768,7 +757,7 @@ proxy-groups:
       - 3.p3
       - 4.p4
     lazy: false
-    interval: 900
+    interval: 120
     max-failed-times: 3
     tolerance: 100
     url: https://cp.cloudflare.com/generate_204
