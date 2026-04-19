@@ -9,14 +9,22 @@
   - 同时启用负载均衡+自动测速+故障转移+地区分类策略组，适配多种不同场景需求
   - 适配MihomoPC+ShellCrash+ClashMi客户端，覆盖Windows、Linux（OpenWRT）、Android平台设备
 
+# 场景
+  - 覆盖常规GFWList和非大陆站点
+  - Google全分流，包含防送中规则
+  - 常见硬件和数码厂商驱动下载分流
+  - PC游戏平台下载直连分流
+  - bilibili港澳台分流，搭配对应节点解锁番剧
+
 # 说明
-  - multi_providers_mihomo.yaml：完整Mihomo内核使用
-  - multi_providers_shellcrash.yaml：ShellCrash残血Meta内核使用，不包含Mihomo语法
-  - multi_providers_shellcrash_ua3f.yaml：ShellCrash搭配UA3F（HTTP）使用
-  - shellcrash_override.yaml：ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
-  - trojanpanel_multigroup_temp.yaml：TrojanPanel默认规则模板
-  - /tools：shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
-  - /server_config_temp：服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
+  - **multi_providers_mihomo.yaml**：完整Mihomo内核使用
+  - **multi_providers_shellcrash.yaml：** ShellCrash残血Meta内核使用，不包含Mihomo语法
+  - **multi_providers_shellcrash_ua3f.yaml：** ShellCrash搭配UA3F（HTTP）使用
+  - **shellcrash_override.yaml：** ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
+  - ***fakeip_whitelist.yaml：** fakeip白名单规则，存在兼容性问题时可按需使用
+  - **trojanpanel_multigroup_temp.yaml：** TrojanPanel默认规则模板
+  - **/tools：** shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
+  - **/server_config_temp：** 服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
   - **更多详细说明与分流策略移步[wiki](https://github.com/VoidInTheShell/clash-config-temp/wiki/%E5%A4%9A%E6%9C%BA%E5%9C%BA%E8%AE%A2%E9%98%85%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)**
 
 # 快速配置
