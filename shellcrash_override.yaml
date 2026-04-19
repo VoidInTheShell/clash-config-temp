@@ -1,5 +1,7 @@
 #--------------------------------------------------------------------------------------#
 geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
 geox-url:
   geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
   geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
