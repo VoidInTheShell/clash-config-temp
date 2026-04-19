@@ -1,0 +1,105 @@
+#--------------------------------------------------------------------------------------#
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+  store-fake-ip: true
+#--------------------------------------------------------------------------------------#
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - 'Mijia Cloud'
+    - '+.push.apple.com'
+#--------------------------------------------------------------------------------------#
+hosts:
+  services.googleapis.cn: services.googleapis.com
+  googleapis.cn: googleapis.com
+  google.cn: google.com    
+#--------------------------------------------------------------------------------------#
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  fake-ip-filter-mode: whitelist
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'rule-set: category-ai-!cn'
+    - 'rule-set: OpenAI'
+    - 'rule-set: Twitter'
+    - 'rule-set: Claude'
+    - 'rule-set: eBay'
+    - 'rule-set: Amazon'
+    - 'rule-set: AmazonIP'
+    - 'rule-set: AmazonCN'
+    - 'rule-set: AmazonTrust'
+    - 'rule-set: Microsoft'
+    - 'rule-set: GFW'
+    - 'rule-set: geolocation-!cn'
+    - 'rule-set: Google'
+    - 'rule-set: Gemini'
+    - 'geoip: google'
+  default-nameserver:
+    - 'tls://1.1.1.1'
+    - 'tls://8.8.8.8'
+    - 'tls://223.5.5.5'
+    - '119.29.29.29'
+  nameserver:
+    - '8.8.8.8#PROXY'
+    - '1.1.1.1#PROXY'
+    - '9.9.9.9#PROXY'
+    - '208.67.222.222#PROXY'
+  direct-nameserver:
+    - 'system'
+  proxy-server-nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://doh.pub/dns-query'
+  nameserver-policy:
+    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - 'system'
+    'geosite:category-games@cn':
+      - 'system'
+    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+      - 'system'
+    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
+      - '8.8.8.8#AI'
+      - '1.1.1.1#AI'
+      - '9.9.9.9#AI'
+      - '208.67.222.222#AI'
+    'rule-set:Gemini,Google':
+      - '8.8.8.8#Google'
+      - '1.1.1.1#Google'
+      - '9.9.9.9#Google'
+      - '208.67.222.222#Google'
+    'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
+      - '8.8.8.8#海淘购物'
+      - '1.1.1.1#海淘购物'
+      - '9.9.9.9#海淘购物'
+      - '208.67.222.222#海淘购物'
+    'rule-set:BiliBili':
+      - 'system'
+      - '8.8.8.8#哔哩哔哩'
+#--------------------------------------------------------------------------------------#
+#routing:
+#  domainStrategy: AsIs
+#  domainMatcher: hybrid
+#--------------------------------------------------------------------------------------#
