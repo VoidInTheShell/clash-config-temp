@@ -391,6 +391,7 @@ rules:
   - DOMAIN,sgameicon.ecology.smoba.qq.com,REJECT
   - PROCESS-NAME,Proxifier,PROXY
   - DOMAIN-SUFFIX,thehelldiversgame.com,PROXY
+  - DOMAIN-SUFFIX,dida365.com,DIRECT
   # User
   - DOMAIN-KEYWORD,bambulab,DIRECT
   - DOMAIN-KEYWORD,makerworld,DIRECT
