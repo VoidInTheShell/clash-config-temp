@@ -1,9 +1,0 @@
-.gitignore
-.ace-tool/
-AGENTS.md
-CLAUDE.md
-config.yaml
-.claude/
-source/
-tools/AGENTS.md
-tools/CLAUDE.md
