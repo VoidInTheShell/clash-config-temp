@@ -183,12 +183,22 @@ sniffer:
       ports: [80, 8080-8880]
       override-destination: true
     TLS:
-      ports: [443, 8443]
+      ports: [443, 8443, 5228-5230]
     QUIC:
       ports: [443, 8443]
   skip-domain:
     - 'Mijia Cloud'
-    - '+.push.apple.com'
+    - 'dlg.io.mi.com'
+    - '*.push.apple.com'
+    - '*.apple.com'
+    - '*.wechat.com'
+    - '*.qpic.cn'
+    - '*.qq.com'
+    - '*.wechatapp.com'
+    - '*.vivox.com'
+    # 向日葵服务
+    - '*.oray.com'
+    - '*.sunlogin.net'
 #--------------------------------------------------------------------------------------#
 hosts:
   services.googleapis.cn: services.googleapis.com
@@ -207,6 +217,9 @@ dns:
     - 'geosite:connectivity-check'
     - 'geosite:private'
     - 'rule-set:fakeip-filter-dustinwin'
+    - 'rule-set:fakeip-filter-rfm'
+    - 'rule-set:fakeip-filter-quixoticheart'
+    - 'rule-set:fakeip-filter-shellcrash'
     - 'rule-set:NetEase'
     - 'rule-set:Tencent'
     - 'rule-set:Blizzard'
@@ -593,6 +606,28 @@ rule-providers:
     behavior: domain
     url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs
     path: ./RuleSet/fakeip_dustinwin.mrs
+    interval: 86400
+  fakeip-filter-rfm:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://cdn.jsdelivr.net/gh/xixu-me/RFM@basic/fake-ip-filter.mrs
+    path: ./RuleSet/fakeip_rfm.mrs
+    interval: 14400
+  fakeip-filter-quixoticheart:
+    type: http
+    format: mrs
+    behavior: domain
+    url: https://github.com/QuixoticHeart/rule-set/raw/refs/heads/ruleset/meta/domain/fake-ip-filter.mrs
+    path: ./RuleSet/fakeip_quixoticheart.mrs
+    interval: 86400
+  fakeip-filter-shellcrash:
+    type: http
+    format: text
+    behavior: domain
+    url: https://gh-proxy.com/raw.githubusercontent.com/juewuy/ShellCrash/master/public/fake_ip_filter.list
+    path: ./RuleSet/fakeip_shellcrash.list
+    interval: 86400
   blackmatrix7_direct:
     type: http
     format: yaml
