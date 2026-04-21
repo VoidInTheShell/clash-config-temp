@@ -22,6 +22,7 @@
   - **multi_providers_shellcrash_ua3f.yaml：** ShellCrash搭配UA3F（HTTP）使用
   - **shellcrash_override.yaml：** ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
   - ***fakeip_whitelist.yaml：** fakeip白名单规则，存在兼容性问题时可按需使用
+  **注意：shellcrash必须使用配套whitelist覆写规则**
   - **trojanpanel_multigroup_temp.yaml：** TrojanPanel默认规则模板
   - **/tools：** shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
   - **/server_config_temp：** 服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
@@ -47,14 +48,24 @@ export url='https://fastly.jsdelivr.net/gh/juewuy/ShellCrash@master' && wget -q 
 
 重要：安装完成后先不要启动代理，进入菜单-内核功能设置，确保**防火墙运行模式为混合或TPROXY**、**DNS运行模式为fake-ip**、**只代理常用端口为关闭**，然后进入**更新/卸载**菜单中，下载**ClashMeta内核（Mihomo）**、**面板（推荐ZashBoard）**、**更新数据库文件：Mihomo完整版+自定义meta-rules-dat的geosite.dat**
 
-下载[multi_providers_shellcrash.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash.yaml)或[multi_providers_shellcrash_ua3f.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash_ua3f.yaml)，按需添加订阅，修改完成后上传至设备的/tmp目录下
+下载[multi_providers_shellcrash.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash.yaml)或[multi_providers_shellcrash_ua3f.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash_ua3f.yaml)或[multi_providers_shellcrash_ua3f_fakeip_whitelist.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash_ua3f_fakeip_whitelist.yaml)，按需添加订阅，修改完成后上传至设备的/tmp目录下
 
 然后执行以下命令下载覆写文件并应用：
+
+**注意：whitelist版本务必使用对应覆写文件，否则会无法启动**
+
+**multi_providers_shellcrash_ua3f使用如下命令：**
 ```
 curl -fsSL https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/shellcrash_override.yaml -o /etc/ShellCrash/yamls/user.yaml
 ```
 
-**注意：如果使用UA3F，需要先启用UA3F并配置为HTTP模式，再开启代理否则大陆服务无法访问**
+**multi_providers_shellcrash_ua3f_fakeip_whitelist使用如下命令：**
+```
+curl -fsSL https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/shellcrash_override_fakeip_whitelist.yaml -o /etc/ShellCrash/yamls/user.yaml
+```
+
+
+**如果使用UA3F，需要先启用UA3F并配置为HTTP模式，再开启代理，否则大陆服务无法访问**
 
 最后启动ShellCrash即可
 
