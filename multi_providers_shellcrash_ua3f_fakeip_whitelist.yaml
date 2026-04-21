@@ -1023,12 +1023,22 @@ sniffer:
       ports: [80, 8080-8880]
       override-destination: true
     TLS:
-      ports: [443, 8443]
+      ports: [443, 8443, 5228-5230]
     QUIC:
       ports: [443, 8443]
   skip-domain:
     - 'Mijia Cloud'
-    - '+.push.apple.com'
+    - 'dlg.io.mi.com'
+    - '*.push.apple.com'
+    - '*.apple.com'
+    - '*.wechat.com'
+    - '*.qpic.cn'
+    - '*.qq.com'
+    - '*.wechatapp.com'
+    - '*.vivox.com'
+    # 向日葵服务
+    - '*.oray.com'
+    - '*.sunlogin.net'
 #--------------------------------------------------------------------------------------#
 hosts:
   services.googleapis.cn: services.googleapis.com
