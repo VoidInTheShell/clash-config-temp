@@ -22,7 +22,7 @@
   - **multi_providers_shellcrash_ua3f.yaml：** ShellCrash搭配UA3F（HTTP）使用
   - **shellcrash_override.yaml：** ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
   - ***fakeip_whitelist.yaml：** fakeip白名单规则，存在兼容性问题时可按需使用
-  **注意：shellcrash必须使用配套whitelist覆写规则**
+  - **注意：shellcrash必须使用配套whitelist覆写规则**
   - **trojanpanel_multigroup_temp.yaml：** TrojanPanel默认规则模板
   - **/tools：** shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
   - **/server_config_temp：** 服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
