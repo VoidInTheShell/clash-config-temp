@@ -732,7 +732,7 @@ global-client-fingerprint: chrome
 #--------------------------------------------------------------------------------------#
 external-controller: 0.0.0.0:7788
 secret: "123456"
-external-ui: WebUI/ZashBoard
+external-ui: WebUI/zashboard
 external-ui-url: "https://gh-proxy.com/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 external-controller-cors:
   allow-origins:
