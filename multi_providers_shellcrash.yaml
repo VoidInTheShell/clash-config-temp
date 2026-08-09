@@ -113,6 +113,8 @@ proxy-groups:
       - DIRECT
     icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
 
+
+
   # --- IP和代理检测 ---
   - name: IPCheck
     type: select
@@ -229,6 +231,32 @@ proxy-groups:
       - 故障转移-JP
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
+
+  # --- 跨境金融（手动选择，成员与 PROXY 一致） ---
+  - name: 跨境金融
+    type: select
+    proxies:
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+      - DIRECT
+    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
 
   # --- AI 服务 ---
   # 优先使用AI专用节点
@@ -1049,6 +1077,11 @@ dns:
     - 'https://dns.alidns.com/dns-query#DIRECT'
     - 'https://doh.pub/dns-query#DIRECT'
   nameserver-policy:
+    'rule-set:FinanceFallback,FinanceGlobal,CryptoGlobal':
+      - 'https://8.8.8.8/dns-query#跨境金融'
+      - 'https://1.1.1.1/dns-query#跨境金融'
+      - '9.9.9.9#跨境金融'
+      - '208.67.222.222#跨境金融'
     '+.uegov.org':
       - 'https://223.5.5.5/dns-query#DIRECT'
       - 'https://doh.pub/dns-query#DIRECT'
@@ -1085,6 +1118,10 @@ routing:
   domainMatcher: hybrid
 #--------------------------------------------------------------------------------------#
 rules:
+  # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
+  - RULE-SET,FinanceFallback,跨境金融
+  - RULE-SET,FinanceGlobal,跨境金融
+  - RULE-SET,CryptoGlobal,跨境金融
   # IP&PROXY CHECK
   - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve
   - DOMAIN-SUFFIX,ipleak.net,IPCheck
@@ -1257,6 +1294,27 @@ rules:
   - MATCH,FINAL
 #--------------------------------------------------------------------------------------#
 rule-providers:
+  FinanceGlobal:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./RuleSet/FinanceGlobal.mrs
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-finance.mrs"
+    interval: 86400
+  CryptoGlobal:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./RuleSet/CryptoGlobal.mrs
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-cryptocurrency.mrs"
+    interval: 86400
+  FinanceFallback:
+    type: http
+    behavior: domain
+    format: yaml
+    path: ./RuleSet/FinanceFallback.yaml
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/cross-border-finance-fallback.yaml"
+    interval: 86400
   Blizzard:
     type: http
     behavior: classical
