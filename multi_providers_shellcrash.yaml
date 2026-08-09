@@ -1132,6 +1132,8 @@ rules:
   - DOMAIN-SUFFIX,iprust.io,IPCheck
   - DOMAIN-SUFFIX,ip123.in,IPCheck
   - DOMAIN-SUFFIX,ipinfo.io,IPCheck
+  - DOMAIN-SUFFIX,ip2location.io,IPCheck
+  - DOMAIN-SUFFIX,ip2location.com,IPCheck
   - DOMAIN-SUFFIX,ipdata.co,IPCheck
   - DOMAIN-SUFFIX,meowvps.com,IPCheck
   - DOMAIN-SUFFIX,browserleaks.com,IPCheck
