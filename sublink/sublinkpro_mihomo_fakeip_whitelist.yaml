@@ -1092,27 +1092,9 @@ rule-anchor:
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
   class_yaml: &class_yaml {type: http, interval: 86400, behavior: classical, format: yaml}
 rule-providers:
-  FinanceGlobal:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/FinanceGlobal.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-finance.mrs"
-    interval: 86400
-  CryptoGlobal:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/CryptoGlobal.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-cryptocurrency.mrs"
-    interval: 86400
-  FinanceFallback:
-    type: http
-    behavior: domain
-    format: yaml
-    path: ./RuleSet/FinanceFallback.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/cross-border-finance-fallback.yaml"
-    interval: 86400
+  FinanceGlobal: { <<: *domain, path: ./RuleSet/FinanceGlobal.mrs, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-finance.mrs" }
+  CryptoGlobal: { <<: *domain, path: ./RuleSet/CryptoGlobal.mrs, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-cryptocurrency.mrs" }
+  FinanceFallback: { <<: *domain_yaml, path: ./RuleSet/FinanceFallback.yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/cross-border-finance-fallback.yaml" }
   MeiTuan: { <<: *class_yaml, url: "https://gh-proxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiTuan/MeiTuan.yaml" }
   Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
   VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
