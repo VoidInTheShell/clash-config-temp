@@ -845,24 +845,7 @@ dns:
   fake-ip-filter-mode: whitelist
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'rule-set:FinanceFallback'
-    - 'rule-set:FinanceGlobal'
-    - 'rule-set:CryptoGlobal'
-    - 'geosite:category-ai-!cn'
-    - 'rule-set:OpenAI'
-    - 'rule-set:Twitter'
-    - 'rule-set:Claude'
-    - 'rule-set:eBay'
-    - 'rule-set:Amazon'
-    - 'rule-set:AmazonIP'
-    - 'rule-set:AmazonCN'
-    - 'rule-set:AmazonTrust'
-    - 'rule-set:Microsoft'
-    - 'rule-set:GFW'
-    - 'rule-set:geolocation-!cn'
-    - 'rule-set:Google'
-    - 'rule-set:Gemini'
-    - 'geoip:google'
+    - 'rule-set:VoidFakeIPForce'
   default-nameserver:
     - '223.5.5.5'
     - '119.29.29.29'
@@ -891,7 +874,7 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - '114.114.114.114'
-    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+    'rule-set:VoidGlobalLegal':
       - '223.5.5.5'
       - '119.29.29.29'
       - '114.114.114.114'
@@ -899,7 +882,7 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - '114.114.114.114'
-    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
+    'rule-set:VoidAI':
       - 'https://8.8.8.8/dns-query#AI'
       - 'https://1.1.1.1/dns-query#AI'
       - '9.9.9.9#AI'
@@ -968,23 +951,15 @@ rules:
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
-  - RULE-SET,Reject,REJECT
+  - RULE-SET,VoidAds,REJECT
   # ADBlock
-  - RULE-SET,ADS1,REJECT
-  - RULE-SET,ADS2,REJECT
-  - RULE-SET,category-ads-all,REJECT
   - DOMAIN,youxi.xunlei.com,REJECT
   # SpaceDesk
   - DOMAIN-KEYWORD,vrdesktop,REJECT
 #--------------------------------------------------------------------------------------#
   # Global Legal Services
   - DOMAIN-SUFFIX,asrock.com,GlobalLegal
-  - RULE-SET,Nvidia,GlobalLegal
-  - RULE-SET,Samsung,GlobalLegal
-  - RULE-SET,Intel,GlobalLegal
-  - RULE-SET,AMD,GlobalLegal
-  - RULE-SET,Lenovo,GlobalLegal
-  - RULE-SET,Dell,GlobalLegal
+  - RULE-SET,VoidGlobalLegal,GlobalLegal
 #--------------------------------------------------------------------------------------#
   # PROXY CIDR
   - RULE-SET,Telegram,PROXY
@@ -1019,10 +994,7 @@ rules:
   - RULE-SET,Gemini,Google
   - GEOIP,GOOGLE,Google,no-resolve
   # AI
-  - RULE-SET,category-ai-!cn,AI
-  - RULE-SET,OpenAI,AI
-  - RULE-SET,Twitter,AI
-  - RULE-SET,Claude,AI
+  - RULE-SET,VoidAI,AI
   # Apple Set
   - RULE-SET,Apple,Apple
   - RULE-SET,Icloud,Apple
@@ -1143,13 +1115,10 @@ rule-providers:
     interval: 86400
   MeiTuan: { <<: *class_yaml, url: "https://gh-proxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiTuan/MeiTuan.yaml" }
   Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
-  Dell: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Dell/Dell.yaml" }
-  AMD: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AMD/AMD.yaml" }
-  Intel: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Intel/Intel.yaml" }
-  Lenovo: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Lenovo/Lenovo.yaml" }
-  Samsung: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Samsung/Samsung.yaml" }
-  Nvidia: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Nvidia/Nvidia.yaml" }
-  fakeip-filter-dustinwin: { <<: *domain, url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs" }
+  VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
+  VoidAds: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml" }
+  VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
+  VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
   blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }
   cf_ip: { <<: *ip, url: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs" }
   geoip_cloudfront: { <<: *ip, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cloudfront.mrs" }
@@ -1162,19 +1131,11 @@ rule-providers:
   JingDong: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/JingDong/JingDong.yaml" }
   ShiJiChaoXing: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml" }
   UnionPay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml" }
-  category-ads-all: { <<: *domain, url: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs" }
   private_domain: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs" }
-  ADS1: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/snapei/clash-pro-rules@release/reject.txt" }
-  ADS2: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml" }
   CNHTTPDNS: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml" }
   eBay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml" }
   Gemini: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml" }
-  Claude: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Claude/Claude.yaml" }
-  Twitter: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Twitter/Twitter.yaml" }
-  OpenAI: { <<: *class, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/OpenAI/OpenAI.list" }
-  category-ai-!cn: { <<: *domain, url: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs" }
   PCDN: { <<: *domain_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml" }
-  Reject: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt" }
   GFW: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt" }
   geolocation-!cn: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs" }
   Greatfire: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt" }

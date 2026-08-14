@@ -54,21 +54,7 @@ dns:
   fake-ip-filter-mode: whitelist
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'geosite:category-ai-!cn'
-    - 'rule-set:OpenAI'
-    - 'rule-set:Twitter'
-    - 'rule-set:Claude'
-    - 'rule-set:eBay'
-    - 'rule-set:Amazon'
-    - 'rule-set:AmazonIP'
-    - 'rule-set:AmazonCN'
-    - 'rule-set:AmazonTrust'
-    - 'rule-set:Microsoft'
-    - 'rule-set:GFW'
-    - 'rule-set:geolocation-!cn'
-    - 'rule-set:Google'
-    - 'rule-set:Gemini'
-    - 'geoip:google'
+    - 'rule-set:VoidFakeIPForce'
   default-nameserver:
     - 'tls://1.1.1.1'
     - 'tls://8.8.8.8'
@@ -92,9 +78,9 @@ dns:
       - 'system'
     'geosite:category-games@cn':
       - 'system'
-    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+    'rule-set:VoidGlobalLegal':
       - 'system'
-    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
+    'rule-set:VoidAI':
       - 'https://8.8.8.8/dns-query#AI'
       - 'https://1.1.1.1/dns-query#AI'
       - '9.9.9.9#AI'

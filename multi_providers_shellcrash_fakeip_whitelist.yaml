@@ -936,24 +936,7 @@ dns:
   fake-ip-filter-mode: whitelist
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'rule-set:FinanceFallback'
-    - 'rule-set:FinanceGlobal'
-    - 'rule-set:CryptoGlobal'
-    - 'geosite:category-ai-!cn'
-    - 'rule-set:OpenAI'
-    - 'rule-set:Twitter'
-    - 'rule-set:Claude'
-    - 'rule-set:eBay'
-    - 'rule-set:Amazon'
-    - 'rule-set:AmazonIP'
-    - 'rule-set:AmazonCN'
-    - 'rule-set:AmazonTrust'
-    - 'rule-set:Microsoft'
-    - 'rule-set:GFW'
-    - 'rule-set:geolocation-!cn'
-    - 'rule-set:Google'
-    - 'rule-set:Gemini'
-    - 'geoip:google'
+    - 'rule-set:VoidFakeIPForce'
   default-nameserver:
     - 'tls://1.1.1.1'
     - 'tls://8.8.8.8'
@@ -982,9 +965,9 @@ dns:
       - 'system'
     'geosite:category-games@cn':
       - 'system'
-    'rule-set:Nvidia,Intel,AMD,Samsung,Lenovo,Dell':
+    'rule-set:VoidGlobalLegal':
       - 'system'
-    'rule-set:category-ai-!cn,Twitter,OpenAI,Claude':
+    'rule-set:VoidAI':
       - 'https://8.8.8.8/dns-query#AI'
       - 'https://1.1.1.1/dns-query#AI'
       - '9.9.9.9#AI'
@@ -1051,23 +1034,15 @@ rules:
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
-  - RULE-SET,Reject,REJECT
+  - RULE-SET,VoidAds,REJECT
   # ADBlock
-  - RULE-SET,ADS1,REJECT
-  - RULE-SET,ADS2,REJECT
-  - RULE-SET,category-ads-all,REJECT
   - DOMAIN,youxi.xunlei.com,REJECT
   # SpaceDesk
   - DOMAIN-KEYWORD,vrdesktop,REJECT
 #--------------------------------------------------------------------------------------#
   # Global Legal Services
   - DOMAIN-SUFFIX,asrock.com,GlobalLegal
-  - RULE-SET,Nvidia,GlobalLegal
-  - RULE-SET,Samsung,GlobalLegal
-  - RULE-SET,Intel,GlobalLegal
-  - RULE-SET,AMD,GlobalLegal
-  - RULE-SET,Lenovo,GlobalLegal
-  - RULE-SET,Dell,GlobalLegal
+  - RULE-SET,VoidGlobalLegal,GlobalLegal
 #--------------------------------------------------------------------------------------#
   # PROXY CIDR
   - RULE-SET,Telegram,PROXY
@@ -1099,10 +1074,7 @@ rules:
   - RULE-SET,Gemini,Google
   - GEOIP,GOOGLE,Google,no-resolve
   # AI
-  - RULE-SET,category-ai-!cn,AI
-  - RULE-SET,OpenAI,AI
-  - RULE-SET,Twitter,AI
-  - RULE-SET,Claude,AI
+  - RULE-SET,VoidAI,AI
   # Apple Set
   - RULE-SET,Apple,Apple
   - RULE-SET,Icloud,Apple
@@ -1216,48 +1188,34 @@ rule-providers:
     path: ./RuleSet/Blizzard.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml
     interval: 86400
-  Dell:
+  VoidFakeIPForce:
     type: http
-    behavior: classical
-    path: ./RuleSet/Dell.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Dell/Dell.yaml
-    interval: 86400
-  AMD:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AMD.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AMD/AMD.yaml
-    interval: 86400
-  Intel:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Intel.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Intel/Intel.yaml
-    interval: 86400
-  Lenovo:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Lenovo.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Lenovo/Lenovo.yaml
-    interval: 86400
-  Samsung:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Samsung.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Samsung/Samsung.yaml
-    interval: 86400
-  Nvidia:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Nvidia.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Nvidia/Nvidia.yaml
-    interval: 86400
-  fakeip-filter-dustinwin:
-    type: http
-    format: mrs
     behavior: domain
-    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs
-    path: ./RuleSet/fakeip_dustinwin.mrs
+    format: mrs
+    path: ./RuleSet/VoidFakeIPForce.mrs
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs"
+    interval: 21600
+  VoidAds:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./RuleSet/VoidAds.yaml
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml"
+    interval: 21600
+  VoidGlobalLegal:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./RuleSet/VoidGlobalLegal.yaml
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml"
+    interval: 21600
+  VoidAI:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./RuleSet/VoidAI.yaml
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml"
+    interval: 21600
   blackmatrix7_direct:
     type: http
     format: yaml
@@ -1334,31 +1292,12 @@ rule-providers:
     behavior: classical
     path: ./RuleSet/UnionPay.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml
-  category-ads-all:
-    type: http
-    format: mrs
-    behavior: domain
-    url: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ads-all.mrs
-    path: ./RuleSet/category-ads-all.mrs
-    interval: 86400
   private_domain:
     type: http
     format: mrs
     behavior: domain
     url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs
     path: ./RuleSet/private_domain.mrs
-    interval: 86400
-  ADS1:
-    type: http
-    behavior: domain
-    url: https://cdn.jsdelivr.net/gh/snapei/clash-pro-rules@release/reject.txt
-    path: ./RuleSet/ADS1.yaml
-    interval: 86400
-  ADS2:
-    type: http
-    behavior: classical
-    path: ./RuleSet/ADS2.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml
     interval: 86400
   CNHTTPDNS:
     type: http
@@ -1378,42 +1317,11 @@ rule-providers:
     path: ./RuleSet/Gemini.yaml
     url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml
     interval: 86400
-  Claude:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Claude.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Claude/Claude.yaml
-    interval: 86400
-  Twitter:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Twitter.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Twitter/Twitter.yaml
-    interval: 86400
-  OpenAI:
-    type: http
-    behavior: classical
-    path: ./RuleSet/OpenAI.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/OpenAI/OpenAI.list
-    interval: 86400
-  category-ai-!cn:
-    type: http
-    format: mrs
-    behavior: domain
-    url: https://gh-proxy.com/https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
-    path: ./RuleSet/category-ai-!cn.mrs
-    interval: 86400
   PCDN:
     type: http
     behavior: domain
     url: 'https://gh-proxy.com/https://raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
     path: ./RuleSet/pcdn.yaml
-    interval: 86400
-  Reject:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt'
-    path: ./RuleSet/reject.yaml
     interval: 86400
   GFW:
     type: http
