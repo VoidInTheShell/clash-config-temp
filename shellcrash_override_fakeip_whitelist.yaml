@@ -63,8 +63,8 @@ dns:
   nameserver:
     - 'https://8.8.8.8/dns-query#PROXY'
     - 'https://1.1.1.1/dns-query#PROXY'
-    - '9.9.9.9#PROXY'
-    - '208.67.222.222#PROXY'
+    - 'https://9.9.9.9/dns-query#PROXY'
+    - 'https://208.67.222.222/dns-query#PROXY'
   direct-nameserver:
     - 'system'
   proxy-server-nameserver:
@@ -83,24 +83,24 @@ dns:
     'rule-set:VoidAI':
       - 'https://8.8.8.8/dns-query#AI'
       - 'https://1.1.1.1/dns-query#AI'
-      - '9.9.9.9#AI'
-      - '208.67.222.222#AI'
+      - 'https://9.9.9.9/dns-query#AI'
+      - 'https://208.67.222.222/dns-query#AI'
     'rule-set:Gemini,Google':
       - 'https://8.8.8.8/dns-query#Google'
       - 'https://1.1.1.1/dns-query#Google'
-      - '9.9.9.9#Google'
-      - '208.67.222.222#Google'
+      - 'https://9.9.9.9/dns-query#Google'
+      - 'https://208.67.222.222/dns-query#Google'
     'rule-set:eBay,Amazon,AmazonCN,AmazonTrust':
       - 'https://8.8.8.8/dns-query#海淘购物'
       - 'https://1.1.1.1/dns-query#海淘购物'
-      - '9.9.9.9#海淘购物'
-      - '208.67.222.222#海淘购物'
+      - 'https://9.9.9.9/dns-query#海淘购物'
+      - 'https://208.67.222.222/dns-query#海淘购物'
     'rule-set:BiliBili':
       - 'system'
       - 'https://8.8.8.8/dns-query#哔哩哔哩'
       - 'https://1.1.1.1/dns-query#哔哩哔哩'
-      - '9.9.9.9#哔哩哔哩'
-      - '208.67.222.222#哔哩哔哩'
+      - 'https://9.9.9.9/dns-query#哔哩哔哩'
+      - 'https://208.67.222.222/dns-query#哔哩哔哩'
 #--------------------------------------------------------------------------------------#
 #routing:
 #  domainStrategy: AsIs
