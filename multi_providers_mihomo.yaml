@@ -297,13 +297,15 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
 
-  # --- 地区解锁流媒体 ---
-  # 优先使用流媒体解锁节点
-  - name: 流媒体
+  # --- AI 服务 ---
+  # 默认跟随主代理组
+  # 推荐优先使用AI专用节点
+  - name: AI
     type: select
     proxies:
       - PROXY
-      - 流媒体解锁
+      - AI优选
+      - AI稳定
       - 全部手选
       - 地区手选
       - 自建手选
@@ -312,12 +314,44 @@ proxy-groups:
       - 负载均衡-SG
       - 负载均衡-JP
       - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
       - 故障转移-US
       - 故障转移-HK
       - 故障转移-SG
       - 故障转移-JP
       - 故障转移-其他
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
+    icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
+
+  # --- Google ---
+  # 默认跟随主代理组
+  - name: Google
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
 
   # # --- 非地区解锁流媒体 ---
   # - name: 非地区解锁流媒体
@@ -350,63 +384,6 @@ proxy-groups:
       - 故障转移-其他
       - DIRECT
     icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
-
-  # --- AI 服务 ---
-  # 默认跟随主代理组
-  # 推荐优先使用AI专用节点
-  - name: AI
-    type: select
-    proxies:
-      - PROXY
-      - AI优选
-      - AI稳定
-      - 全部手选
-      - 地区手选
-      - 自建手选
-      - 负载均衡-US
-      - 负载均衡-HK
-      - 负载均衡-SG
-      - 负载均衡-JP
-      - 负载均衡-其他
-      - 自动测速-US
-      - 自动测速-HK
-      - 自动测速-SG
-      - 自动测速-JP
-      - 自动测速-其他
-      - 故障转移-US
-      - 故障转移-HK
-      - 故障转移-SG
-      - 故障转移-JP
-      - 故障转移-其他
-    icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
-
-  # --- 微软必应 ---
-  # 默认直连
-  - name: MicrosoftBing
-    type: select
-    proxies:
-      - DIRECT
-      - PROXY
-      - 自动选择
-      - 全部手选
-      - 地区手选
-      - 自建手选
-      - 负载均衡-US
-      - 负载均衡-HK
-      - 负载均衡-SG
-      - 负载均衡-JP
-      - 负载均衡-其他
-      - 自动测速-US
-      - 自动测速-HK
-      - 自动测速-SG
-      - 自动测速-JP
-      - 自动测速-其他
-      - 故障转移-US
-      - 故障转移-HK
-      - 故障转移-SG
-      - 故障转移-JP
-      - 故障转移-其他
-    icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
 
   # --- CDN 服务 ---
   # 默认跟随主代理组
@@ -464,6 +441,56 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png"
 
+  # --- 地区解锁流媒体 ---
+  # 优先使用流媒体解锁节点
+  - name: 流媒体
+    type: select
+    proxies:
+      - PROXY
+      - 流媒体解锁
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png"
+
+  # --- 微软必应 ---
+  # 默认直连
+  - name: MicrosoftBing
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+      - 自动选择
+      - 全部手选
+      - 地区手选
+      - 自建手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://gh-proxy.com/github.com/blackmatrix7/ios_rule_script/blob/master/icon/color/microsoft.png"
+
   # --- 哔哩哔哩 ---
   # 默认直连，需要解锁时推荐切换负载均衡
   - name: 哔哩哔哩
@@ -505,33 +532,6 @@ proxy-groups:
       - 故障转移-其他
       - PROXY
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
-
-  # --- Google ---
-  # 默认跟随主代理组
-  - name: Google
-    type: select
-    proxies:
-      - PROXY
-      - 自动选择
-      - 全部手选
-      - 地区手选
-      - 自建手选
-      - 负载均衡-US
-      - 负载均衡-HK
-      - 负载均衡-SG
-      - 负载均衡-JP
-      - 负载均衡-其他
-      - 自动测速-US
-      - 自动测速-HK
-      - 自动测速-SG
-      - 自动测速-JP
-      - 自动测速-其他
-      - 故障转移-US
-      - 故障转移-HK
-      - 故障转移-SG
-      - 故障转移-JP
-      - 故障转移-其他
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
 
   # --- TikTok ---
   # 默认跟随直连，推荐负载均衡
