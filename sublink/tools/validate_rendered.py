@@ -180,7 +180,7 @@ def main() -> None:
         "airport_semantics_removed": all(AIRPORT_SEMANTIC_PATTERN.search(name) is None for name in names),
         "old_machine_markers_removed": all(not any(marker in name for marker in old_markers) for name in names),
         "home_nodes_present": bool(home_names),
-        "proxy_group_count": len(groups) == 48,
+        "proxy_group_count": len(groups) == 49,
         "unique_proxy_groups": len(groups) == len(group_map),
         "no_unresolved_group_references": not unresolved,
         "home_group_is_select": home_group.get("type") == "select",
@@ -190,7 +190,7 @@ def main() -> None:
         "home_nodes_sorted": home_names == sorted(home_names, key=home_sort_key),
         "all_other_dynamic_groups_exclude_home": not dynamic_groups_without_home_exclusion,
         "home_nodes_not_explicit_elsewhere": not explicit_home_membership_violations,
-        "home_after_self_in_parent_groups": len(parent_groups) == 16
+        "home_after_self_in_parent_groups": len(parent_groups) == 17
         and all(
             group["proxies"].index("家宽手选")
             == group["proxies"].index("自建手选") + 1
