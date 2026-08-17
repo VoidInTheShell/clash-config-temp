@@ -3,8 +3,9 @@
 
 # 特性
   - 多种去广告规则+HTTPDNS Block防止去广告失效
-  - 默认tun模式劫持53+853，udp+tls协议DNS
+  - 默认tun模式劫持53+853；代理侧DNS上游统一使用DoH，直连侧保持本地/系统解析策略
   - fakeip+nameserver-policy规则防止DNS泄露
+  - 跨境金融和商业IP代理池使用独立策略组、独立DNS选路及自有void-rules规则集
   - 开箱即用，分流完善，逻辑清晰，配置方便
   - 同时启用负载均衡+自动测速+故障转移+地区分类策略组，适配多种不同场景需求
   - 适配MihomoPC+ShellCrash+ClashMi客户端，覆盖Windows、Linux（OpenWRT）、Android平台设备
@@ -15,6 +16,7 @@
   - 常见硬件和数码厂商驱动下载分流
   - PC游戏平台下载直连分流
   - bilibili港澳台分流，搭配对应节点解锁番剧
+  - 常见IP代理池服务商官网、管理面板、API和代理网关分流
 
 # 说明
   - **sublink/**：给SublinkPro适配的Mihomo规则模板、订阅脚本和验证工具
@@ -48,7 +50,17 @@
 4. 节点命名规则设置为`$Name$LinkCountryName $LinkName`，开启请求时刷新用量，并启用落地地区、住宅IP、Claude、Gemini、OpenAI和Netflix检测。SublinkPro没有检测到地区时，脚本才会从原节点名提取地区作为兜底。
 5. 创建分享链接。下载Mihomo配置时必须携带`client=mihomo`，否则服务端可能不会按Mihomo目标格式渲染。
 
-模板会按落地IP把节点映射到地区组，并按来源把自建节点放入`自建手选`。AI解锁节点分别进入`Claude`、`Gemini`、`OpenAI`和`通用`，`AI优选`为故障转移策略且首选`通用`；Netflix解锁节点进入使用自动测速策略的`流媒体解锁`。家宽节点只直接进入`家宽手选`，在需要人工选路的策略组中位于`自建手选`之后，不会直接进入其他地区、AI或流媒体节点组。
+模板会按落地IP把节点映射到地区组，并按来源把自建节点放入`自建手选`。AI解锁节点分别进入`Claude`、`Gemini`、`OpenAI`和`通用`，`AI优选`为故障转移策略且首选`通用`；Netflix解锁节点进入使用自动测速策略的`流媒体解锁`。家宽节点只直接进入`家宽手选`，在需要人工选路的策略组中位于`自建手选`之后，不会直接进入其他地区、AI或流媒体节点组。`IP池`紧跟`IPCheck`，完整复制本模板`PROXY`的候选成员，因此也包含`家宽手选`。
+
+### IP代理池分流
+
+所有完整模板都在`IPCheck`后提供`IP池`策略组，并引用自有[`void-rules`](https://github.com/VoidInTheShell/void-rules)仓库的`ip-proxy-pools`域名规则。规则目前覆盖SeekProxy、Oxylabs、IPRoyal、Proxy-Seller、DataImpulse、Webshare、Decodo/Smartproxy、SOAX、Bright Data、NetNut、Rayobyte、Infatica、PacketStream、Proxy-Cheap、ProxyEmpire、Nimble、NodeMaven、Storm Proxies、MarsProxies和Geonode等服务商的官网、面板、API、官方旧域名和代理网关。
+
+- Mihomo MRS直链：`https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ip-proxy-pools/mihomo-domain.mrs`
+- `RULE-SET,IPProxyPools,IP池`位于常规业务规则之前；相关域名的DNS查询也通过`IP池`组上的DoH解析，Fake-IP白名单模板由`VoidFakeIPForce`统一纳入该规则集。
+- `IP池`的`type`和候选成员逐模板复制各自`PROXY`，不会把不同模板的`DIRECT`、`CAMPUS`、台湾地区组或`家宽手选`差异抹平。TrojanPanel文件是接在面板生成内容后的片段，片段中没有完整`PROXY`定义，因此复制当前面板`PROXY`对应的四个节点成员。
+- 域名规则无法识别服务商直接下发的裸`IP:port`。这类端点如果也需要前置代理，应在节点或链式代理配置中显式指定；不要把“服务商域名已分流”等同于“任意裸代理IP都已自动分流”。
+- 策略组图标使用公共[Qure图标库](https://github.com/Koolson/Qure)：`跨境金融`使用`Cryptocurrency_3.png`，`IP池`使用`Server.png`，两者互不复用。
 
 ## Mihomo
 1. 在设置中关闭**接管DNS设置**、**接管域名嗅探设置**
