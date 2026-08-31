@@ -980,7 +980,7 @@ dns:
     - 'https://dns.alidns.com/dns-query#DIRECT'
     - 'https://doh.pub/dns-query#DIRECT'
   nameserver-policy:
-    'rule-set:FinanceFallback,FinanceGlobal,CryptoGlobal':
+    'rule-set:VoidCrossBorderFinance':
       - 'https://8.8.8.8/dns-query#跨境金融'
       - 'https://1.1.1.1/dns-query#跨境金融'
       - 'https://9.9.9.9/dns-query#跨境金融'
@@ -1027,9 +1027,7 @@ routing:
 #--------------------------------------------------------------------------------------#
 rules:
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
-  - RULE-SET,FinanceFallback,跨境金融
-  - RULE-SET,FinanceGlobal,跨境金融
-  - RULE-SET,CryptoGlobal,跨境金融
+  - RULE-SET,VoidCrossBorderFinance,跨境金融
   - RULE-SET,IPProxyPools,IP池
   # IP&PROXY CHECK
   - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve
@@ -1194,26 +1192,12 @@ rules:
   - MATCH,FINAL
 #--------------------------------------------------------------------------------------#
 rule-providers:
-  FinanceGlobal:
+  VoidCrossBorderFinance:
     type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/FinanceGlobal.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-finance.mrs"
-    interval: 86400
-  CryptoGlobal:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/CryptoGlobal.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/category-cryptocurrency.mrs"
-    interval: 86400
-  FinanceFallback:
-    type: http
-    behavior: domain
+    behavior: classical
     format: yaml
-    path: ./RuleSet/FinanceFallback.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/cross-border-finance-rules/main/rules/cross-border-finance-fallback.yaml"
+    path: ./RuleSet/VoidCrossBorderFinance.yaml
+    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/cross-border-finance/mihomo-classical.yaml"
     interval: 86400
   IPProxyPools:
     type: http
