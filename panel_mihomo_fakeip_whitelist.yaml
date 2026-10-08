@@ -708,6 +708,13 @@ rules:
   - DOMAIN-SUFFIX,ipleak.com,IPCheck
   - DOMAIN-SUFFIX,ip-api.com,IPCheck
   - DOMAIN-SUFFIX,iplark.com,IPCheck
+  # IPPure 的取 IP 接口跟随 IPCheck；检测域名禁用 QUIC，使用 TCP 出口。
+  - AND,((NETWORK,UDP),(DST-PORT,443),(OR,((DOMAIN-SUFFIX,ippure.com),(DOMAIN-SUFFIX,icanhazip.com),(DOMAIN-SUFFIX,ipify.org),(DOMAIN,api.123169.xyz),(DOMAIN,cf.999831.xyz),(DOMAIN-SUFFIX,ipinfo.io),(DOMAIN-SUFFIX,ipapi.co)))),REJECT
+  - DOMAIN-SUFFIX,icanhazip.com,IPCheck
+  - DOMAIN-SUFFIX,ipify.org,IPCheck
+  - DOMAIN,api.123169.xyz,IPCheck
+  - DOMAIN,cf.999831.xyz,IPCheck
+  - DOMAIN-SUFFIX,ipapi.co,IPCheck
   - DOMAIN-SUFFIX,ippure.com,IPCheck
   - DOMAIN-SUFFIX,iprust.io,IPCheck
   - DOMAIN-SUFFIX,ip123.in,IPCheck

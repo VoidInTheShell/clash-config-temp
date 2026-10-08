@@ -31,6 +31,12 @@
   - **/server_config_temp：** 服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
   - **更多详细说明与分流策略移步[wiki](https://github.com/VoidInTheShell/clash-config-temp/wiki/%E5%A4%9A%E6%9C%BA%E5%9C%BA%E8%AE%A2%E9%98%85%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)**
 
+# IP 检测与服务端域名规则
+
+- 完整客户端模板将 IPPure 实际使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 统一交给 `IPCheck`。这些检测域名及 `ippure.com`、`ipinfo.io` 的 UDP/443 被拒绝，HTTPS 回落 TCP，适用于落地 SOCKS5 仅支持 TCP 的场景；其他 UDP 流量沿用原策略。
+- Loyalsoldier 的 `.txt` 规则文件实际是 YAML payload，模板按 `format: yaml` 加载。
+- 服务端 Xray 模板第一条放行 `www.gstatic.com`，随后阻断 `geosite:cn`、`.cn` 和 `geosite:google@cn` 及列出的 Google 大陆服务域名。使用包含这些分类的 geosite 数据文件；不将全部 `googleapis.com` 视为大陆域名。
+
 # 快速配置
 ## SublinkPro
 

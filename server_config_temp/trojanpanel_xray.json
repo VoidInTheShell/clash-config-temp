@@ -21,16 +21,47 @@
       {
         "type": "field",
         "domain": [
-          "googleapis.cn",
-          "google.cn",
-          "geosite:google-play@cn"
+          "full:www.gstatic.com"
+        ],
+        "outboundTag": "freedom"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:cn",
+          "geosite:google@cn",
+          "domain:cn",
+          "domain:google.cn",
+          "domain:googleapis.cn",
+          "domain:g.cn",
+          "domain:googlecnapps.cn",
+          "domain:gkecnapps.cn",
+          "domain:gstatic.cn",
+          "domain:gstaticcnapps.cn",
+          "domain:googleapis-cn.com",
+          "domain:googleapps-cn.com",
+          "domain:gstatic-cn.com",
+          "domain:gvt1-cn.com",
+          "domain:gvt2-cn.com",
+          "domain:googleflights-cn.net",
+          "domain:google-analytics-cn.com",
+          "domain:googleadservices-cn.com",
+          "domain:googlesyndication-cn.com",
+          "domain:googletagmanager-cn.com",
+          "domain:googletagservices-cn.com",
+          "domain:googletraveladservices-cn.com",
+          "domain:googleoptimize-cn.com",
+          "domain:doubleclick-cn.net",
+          "domain:2mdn-cn.net",
+          "domain:googleads-cn.com",
+          "domain:googlevads-cn.com",
+          "domain:recaptcha-cn.net"
         ],
         "outboundTag": "blocked"
       },
       {
         "type": "field",
         "domain": [
-          "full:www.gstatic.com",
           "geosite:google",
           "googleapis.com",
           "full:gstatic.com",
@@ -43,13 +74,6 @@
           "ippure.com"
         ],
         "outboundTag": "freedom"
-      },
-      {
-        "type": "field",
-        "domain": [
-          "geosite:cn"
-        ],
-        "outboundTag": "blocked"
       },
       {
         "type": "field",
@@ -102,7 +126,8 @@
   "inbounds": [],
   "outbounds": [
     {
-      "protocol": "freedom"
+      "protocol": "freedom",
+      "tag": "freedom"
     },
     {
       "tag": "blocked",

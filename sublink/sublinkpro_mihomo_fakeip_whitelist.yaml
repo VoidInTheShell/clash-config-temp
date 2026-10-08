@@ -953,6 +953,13 @@ rules:
   - DOMAIN-SUFFIX,ipleak.com,IPCheck
   - DOMAIN-SUFFIX,ip-api.com,IPCheck
   - DOMAIN-SUFFIX,iplark.com,IPCheck
+  # IPPure 的取 IP 接口跟随 IPCheck；检测域名禁用 QUIC，使用 TCP 出口。
+  - AND,((NETWORK,UDP),(DST-PORT,443),(OR,((DOMAIN-SUFFIX,ippure.com),(DOMAIN-SUFFIX,icanhazip.com),(DOMAIN-SUFFIX,ipify.org),(DOMAIN,api.123169.xyz),(DOMAIN,cf.999831.xyz),(DOMAIN-SUFFIX,ipinfo.io),(DOMAIN-SUFFIX,ipapi.co)))),REJECT
+  - DOMAIN-SUFFIX,icanhazip.com,IPCheck
+  - DOMAIN-SUFFIX,ipify.org,IPCheck
+  - DOMAIN,api.123169.xyz,IPCheck
+  - DOMAIN,cf.999831.xyz,IPCheck
+  - DOMAIN-SUFFIX,ipapi.co,IPCheck
   - DOMAIN-SUFFIX,ippure.com,IPCheck
   - DOMAIN-SUFFIX,iprust.io,IPCheck
   - DOMAIN-SUFFIX,ip123.in,IPCheck
@@ -1149,15 +1156,15 @@ rule-providers:
   eBay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml" }
   Gemini: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml" }
   PCDN: { <<: *domain_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml" }
-  GFW: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt" }
+  GFW: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt" }
   geolocation-!cn: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs" }
-  Greatfire: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt" }
-  Proxy: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt" }
-  Direct: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt" }
-  Private: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt" }
+  Greatfire: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt" }
+  Proxy: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt" }
+  Direct: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt" }
+  Private: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt" }
   China: { <<: *domain_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China_Domain.yaml" }
-  CNcidr: { <<: *ip_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt" }
-  TGcidr: { <<: *ip_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt" }
+  CNcidr: { <<: *ip_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt" }
+  TGcidr: { <<: *ip_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt" }
   Amazon: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml" }
   AmazonIP: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP_Classical.yaml" }
   AmazonTrust: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml" }
@@ -1169,7 +1176,7 @@ rule-providers:
   BiliBili: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml" }
   TikTok: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml" }
   Apple: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple_Classical.yaml" }
-  Icloud: { <<: *domain_text, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt" }
+  Icloud: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt" }
   AppleStore: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml" }
   AppleDaily: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDaily/AppleDaily.yaml" }
   AppleID: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml" }
