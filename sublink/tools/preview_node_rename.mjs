@@ -24,10 +24,13 @@ const countryNames = {
 
 const renamed = filterNode(nodes, 'mihomo');
 const names = renamed.map((node) => {
+  const carried = node.Name.match(/__SUBLINK_SELF_NAME_(.*?)__END_SELF_NAME__/);
+  if (carried) return decodeURIComponent(carried[1]);
   const countryName = countryNames[node.LinkCountry] || node.LinkCountry || '未知';
   return `${node.Name}${countryName}${node.LinkName ? ` ${node.LinkName}` : ''}`.trim();
 });
 
+const selfNames = names.filter((name, index) => isSelfBuilt(renamed[index]));
 const samples = (predicate, limit = 6) => names.filter(predicate).slice(0, limit);
 const result = {
   inputCount: nodes.length,
@@ -56,7 +59,7 @@ const result = {
     Gemini: names.filter((name) => /(?:^|\s)(?:AI|Gemini)(?:\s|$)/.test(name)).length,
     OpenAI: names.filter((name) => /(?:^|\s)(?:AI|OpenAI)(?:\s|$)/.test(name)).length,
     Netflix: names.filter((name) => /(?:^|\s)Netflix(?:\s|$)/.test(name)).length,
-    selfBuilt: names.filter((name) => /(?:^|\s)自建(?:\s|$)/.test(name)).length
+    selfBuilt: selfNames.length
   },
   samples: {
     Taiwan: samples((name) => name.startsWith('🇹🇼')),
@@ -66,7 +69,7 @@ const result = {
     partialAI: samples((name) => !/(?:^|\s)AI(?:\s|$)/.test(name) && /(?:^|\s)(?:Claude|Gemini|OpenAI)(?:\s|$)/.test(name)),
     Netflix: samples((name) => /(?:^|\s)Netflix(?:\s|$)/.test(name)),
     rate: samples((name) => /(?:^|\s)(?:0\.1x|0\.5x|1\.5x)(?:\s|$)/i.test(name)),
-    selfBuilt: samples((name) => /(?:^|\s)自建(?:\s|$)/.test(name))
+    selfBuilt: selfNames.slice(0, 6)
   }
 };
 

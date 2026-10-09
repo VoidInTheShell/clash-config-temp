@@ -1,81 +1,83 @@
 #--------------------------------------------------------------------------------------#
 #-----------------------------WrittenByVoidInTheShell----------------------------------#
 #--------------------------------------------------------------------------------------#
-#-------------------------------Multi-Providers-Ver------------------------------------#
+# SublinkPro：基于 multi_providers_mihomo_fakeip_rule.yaml，使用脚本注入节点。
 #--------------------------------------------------------------------------------------#
 
 # ========================================
-# 📌 用户配置区
+# 📌 SublinkPro 节点注入区
+# ========================================
+# SublinkPro 会把订阅筛选后的节点写入此处。
+# 节点名由订阅脚本使用 SublinkPro 元数据生成，NodeNameRule 只负责最终拼接。
+# 下方策略组按可见国旗、流媒体和自建标签完成动态映射。
+proxies: ~
+
+# 自建来源节点只直接进入四个自建组；其余家宽节点只直接进入“家宽手选”。
+dedicated-node-exclude: &dedicated-node-exclude '(?:^| )(?:家宽|自建)(?: |#|$)'
+
+# ========================================
+# 📌 模板定义区
 # ========================================
 
-# 代理提供者链接配置，在"url:"后填入你的订阅链接
-# 共提供4个代理提供者位置，可根据需要增减，复制粘贴模板后更名即可
-# 1.p1请填写自建节点订阅链接，2.p2及之后可填写其他机场订阅链接
+# 通用引用模板
+pg: &pg
+  type: select
+  proxies:
+    - 自动选择
+    - 全部手选
+    - 地区手选
+    - 自建节点
+    - 自建选1
+    - 自建选2
+    - 自建选3
+    - 家宽手选
+    - 负载均衡-US
+    - 负载均衡-HK
+    - 负载均衡-SG
+    - 负载均衡-JP
+    - 负载均衡-其他
+    - 自动测速-US
+    - 自动测速-HK
+    - 自动测速-SG
+    - 自动测速-JP
+    - 自动测速-其他
+    - 故障转移-US
+    - 故障转移-HK
+    - 故障转移-SG
+    - 故障转移-JP
+    - 故障转移-其他
 
-proxy-providers:
-  1.p1:
-    url: ""
-    path: ./proxy_provider/p1.yaml 
-    type: http
-    udp: true
-    interval: 86400
-    proxy: DIRECT
-    health-check:
-      enable: true
-      url: https://cp.cloudflare.com/generate_204
-      interval: 600
-      expected-status: "204"
-      method: HEAD
-    override:
-      additional-prefix: "p1 »"
+# 负载均衡模板
+rtt-lb: &rtt-lb
+  type: load-balance
+  include-all: true
+  exclude-filter: *dedicated-node-exclude
+  lazy: false
+  interval: 600
+  strategy: round-robin
+  max-failed-times: 3
+  tolerance: 80
+  url: https://cp.cloudflare.com/generate_204
 
-  2.p2:
-    url: ""
-    path: ./proxy_provider/p2.yaml
-    type: http
-    udp: true
-    interval: 86400
-    proxy: DIRECT
-    health-check:
-      enable: true
-      url: https://cp.cloudflare.com/generate_204
-      interval: 600
-      expected-status: "204"
-      method: HEAD
-    override:
-      additional-prefix: "p2 »"
+# 自动测速模板
+auto-test: &auto-test
+  type: url-test
+  include-all: true
+  exclude-filter: *dedicated-node-exclude
+  lazy: false
+  interval: 120
+  tolerance: 20
+  url: https://cp.cloudflare.com/generate_204
 
-  3.p3: 
-    url: ""
-    path: ./proxy_provider/p3.yaml 
-    type: http
-    udp: true
-    interval: 86400
-    proxy: DIRECT
-    health-check:
-      enable: true
-      url: https://cp.cloudflare.com/generate_204
-      interval: 600
-      expected-status: "204"
-      method: HEAD
-    override:
-      additional-prefix: "p3 »"
-
-  4.p4: 
-    url: ""
-    path: ./proxy_provider/p4.yaml 
-    type: http
-    udp: true
-    interval: 86400
-    proxy: DIRECT
-    health-check:
-      enable: true
-      url: https://cp.cloudflare.com/generate_204
-      interval: 600
-      expected-status: "204"
-      method: HEAD
-    override:
-      additional-prefix: "p4 »"
+# 故障转移模板
+fallback: &fallback
+  type: fallback
+  include-all: true
+  exclude-filter: *dedicated-node-exclude
+  lazy: false
+  interval: 60
+  max-failed-times: 3
+  url: https://cp.cloudflare.com/generate_204
 
 # ========================================
 # 🎯 代理组配置
@@ -86,15 +88,20 @@ proxy-groups:
   # ========================================
   # 📂 分流类型代理组（用于区分不同服务）
   # ========================================
+
   # --- 主代理组 ---
-  # 优先选择延迟最低的节点
+  # 推荐优先选择延迟最低的节点，默认为自动选择
   - name: PROXY
     type: select
     proxies:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -121,19 +128,29 @@ proxy-groups:
     proxies:
       - PROXY
       - DIRECT
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 全部手选
     icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png"
 
   # --- IP 代理池服务 ---
-  # 成员与本模板 PROXY 一致，用于代理服务商官网、面板、API 和网关
+  # 首选跟随 PROXY，其余成员与 PROXY 一致；用于代理服务商官网、面板、API 和网关
   - name: IP池
     type: select
+    default-selected: PROXY
     proxies:
+      - PROXY
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -158,11 +175,15 @@ proxy-groups:
     type: select
     proxies:
       - PROXY
-      - 自动选择
       - DIRECT
+      - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -191,7 +212,11 @@ proxy-groups:
       - FINAL
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -209,6 +234,39 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Available.png"
 
+# --- 全球可直连游戏厂商 ---
+# 无需求时保持直连，游戏切服需求时走代理
+  - name: GlobalGames
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+      - GlobalSite
+      - FINAL
+      - 全部手选
+      - 地区手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Game.png"
+
   # --- 漏网之鱼 ---
   # 默认跟随主代理组
   - name: FINAL
@@ -219,7 +277,11 @@ proxy-groups:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -238,16 +300,19 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png"
 
   # --- AI 服务 ---
-  # 优先使用AI专用节点
+  # 默认自建选1，可手动切换其他出口
   - name: AI
+    default-selected: 自建选1
     type: select
     proxies:
       - PROXY
-      - AI优选
-      - AI稳定
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -265,6 +330,35 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
 
+  - name: Claude
+    default-selected: 自建选1
+    type: select
+    proxies:
+      - PROXY
+      - 全部手选
+      - 地区手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+    icon: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png
+
   # --- Google ---
   # 默认跟随主代理组
   - name: Google
@@ -274,7 +368,11 @@ proxy-groups:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -292,14 +390,25 @@ proxy-groups:
       - 故障转移-其他
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png"
 
-  # --- 跨境金融（手动选择，成员与 PROXY 一致） ---
+  # # --- 非地区解锁流媒体 ---
+  # - name: 非地区解锁流媒体
+  #   type: select
+  #   <<: *pg
+  #   icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png"
+
+  # --- 跨境金融（默认自建选3，独立固定出口） ---
   - name: 跨境金融
+    default-selected: 自建选3
     type: select
     proxies:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -319,7 +428,7 @@ proxy-groups:
     icon: "https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cryptocurrency_3.png"
 
   # --- CDN 服务 ---
-  # 默认直连
+  # 默认跟随主代理组
   - name: CDN
     type: select
     proxies:
@@ -328,7 +437,11 @@ proxy-groups:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -356,7 +469,11 @@ proxy-groups:
       - DIRECT
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -383,7 +500,11 @@ proxy-groups:
       - 流媒体解锁
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -406,7 +527,11 @@ proxy-groups:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -432,10 +557,15 @@ proxy-groups:
       - DIRECT
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-HK
       - 自动测速-HK
       - 故障转移-HK
+      - PROXY
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
 
   # --- Apple ---
@@ -444,10 +574,13 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - PROXY
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-HK
       - 负载均衡-SG
@@ -463,11 +596,13 @@ proxy-groups:
       - 故障转移-SG
       - 故障转移-JP
       - 故障转移-其他
+      - PROXY
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
 
   # --- TikTok ---
-  # 默认直连，推荐负载均衡
+  # 默认自建选2，独立保存 TikTok 出口
   - name: TikTok
+    default-selected: 自建选2
     type: select
     proxies:
       - DIRECT
@@ -475,7 +610,11 @@ proxy-groups:
       - 自动选择
       - 全部手选
       - 地区手选
-      - 自建手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 家宽手选
       - 负载均衡-US
       - 负载均衡-SG
       - 负载均衡-JP
@@ -488,19 +627,15 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png"
 
   # ========================================
-  # ⚙️ 策略类型代理组（用于自动化选择节点）
+  # ⚙️ 节点组（手动选择、测速、故障转移）
   # ========================================
 
   - name: 自动选择
     type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     url: https://cp.cloudflare.com/generate_204
-    include-all: false
-    tolerance: 50
+    include-all: true
+    exclude-filter: *dedicated-node-exclude
+    tolerance: 20
     interval: 180
     lazy: false
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
@@ -508,13 +643,13 @@ proxy-groups:
 
   # --- 1️⃣ 全部手选 ---
   - name: 全部手选
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
+    exclude-filter: *dedicated-node-exclude
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png"
 
@@ -527,343 +662,191 @@ proxy-groups:
       - 手选-SG
       - 手选-JP
       - 手选-其他
+      - 自建选1
+      - 自建选2
+      - 自建选3
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/World_Map.png"
 
   - name: 手选-US
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    filter: '^🇺🇸'
+    exclude-filter: *dedicated-node-exclude
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
 
   - name: 手选-HK
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
-    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    filter: '^🇭🇰'
+    exclude-filter: *dedicated-node-exclude
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
 
   - name: 手选-SG
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
-    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    filter: '^🇸🇬'
+    exclude-filter: *dedicated-node-exclude
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
 
   - name: 手选-JP
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
-    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    filter: '^🇯🇵'
+    exclude-filter: *dedicated-node-exclude
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
 
   - name: 手选-其他
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
     type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
     include-all: true
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    filter: '.*'
+    exclude-filter: '(?:^| )(?:家宽|自建)(?: |#|$)|^(?:🇺🇸|🇭🇰|🇸🇬|🇯🇵)'
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png"
 
-  # --- 3️⃣ 自建手选 ---
-  - name: 自建手选
+  # --- 3️⃣ 自建节点 ---
+  # 由配套 subMod 按来源填入原名，不依赖节点名称中的标签。
+  - name: 自建节点
     type: select
-    use:
-      - 1.p1
+    proxies: []
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
 
-  # --- 4️⃣ 负载均衡（按地区分类）---
+  # 由 subMod 填入与自建节点相同的节点，三个选择互相独立。
+  - name: 自建选1
+    type: select
+    proxies: []
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
+
+  - name: 自建选2
+    type: select
+    proxies: []
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
+
+  - name: 自建选3
+    type: select
+    proxies: []
+    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png"
+
+  # --- 4️⃣ 家宽手选（按地区、解锁能力排序）---
+  - name: 家宽手选
+    proxies:
+      - 自建选1
+      - 自建选2
+      - 自建选3
+    type: select
+    include-all: true
+    filter: '(?:^| )家宽(?: |#|$)'
+    exclude-filter: '(?:^| )自建(?: |#|$)'
+    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png"
+
+  # --- 5️⃣ 负载均衡（按地区分类）---
   - name: 负载均衡-US
-    type: load-balance
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 600
-    strategy: round-robin
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    <<: *rtt-lb
+    filter: '^🇺🇸'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-HK
-    type: load-balance
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 600
-    strategy: round-robin
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    <<: *rtt-lb
+    filter: '^🇭🇰'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-SG
-    type: load-balance
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 600
-    strategy: round-robin
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    <<: *rtt-lb
+    filter: '^🇸🇬'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-JP
-    type: load-balance
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 600
-    strategy: round-robin
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    <<: *rtt-lb
+    filter: '^🇯🇵'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-其他
-    type: load-balance
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 600
-    strategy: round-robin
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|狮城|SG|Singapore|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    <<: *rtt-lb
+    filter: '.*'
+    exclude-filter: '(?:^| )(?:家宽|自建)(?: |#|$)|^(?:🇺🇸|🇭🇰|🇸🇬|🇯🇵)'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
-  # --- 5️⃣ 自动测速（按地区分类）---
+  # --- 6️⃣ 自动测速（按地区分类）---
   - name: 自动测速-US
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 300
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    <<: *auto-test
+    filter: '^🇺🇸'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-HK
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 300
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    <<: *auto-test
+    filter: '^🇭🇰'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-SG
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 300
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    <<: *auto-test
+    filter: '^🇸🇬'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-JP
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 300
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    <<: *auto-test
+    filter: '^🇯🇵'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-其他
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 300
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    <<: *auto-test
+    filter: '.*'
+    exclude-filter: '(?:^| )(?:家宽|自建)(?: |#|$)|^(?:🇺🇸|🇭🇰|🇸🇬|🇯🇵)'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
-  # --- 6️⃣ 故障转移（按地区分类）---
+  # --- 7️⃣ 故障转移（按地区分类）---
   - name: 故障转移-US
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 120
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
+    <<: *fallback
+    filter: '^🇺🇸'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-HK
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 120
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
+    <<: *fallback
+    filter: '^🇭🇰'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-SG
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 120
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
+    <<: *fallback
+    filter: '^🇸🇬'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-JP
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 120
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)(🇯🇵|日本|东京|东京|JP|japan|tokyo|osaka)"
+    <<: *fallback
+    filter: '^🇯🇵'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-其他
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    lazy: false
-    interval: 120
-    max-failed-times: 3
-    tolerance: 100
-    url: https://cp.cloudflare.com/generate_204
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
+    <<: *fallback
+    filter: '.*'
+    exclude-filter: '(?:^| )(?:家宽|自建)(?: |#|$)|^(?:🇺🇸|🇭🇰|🇸🇬|🇯🇵)'
     icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
-  # --- 7️⃣ 特殊策略：AI 专用 ---
-# 手动选择你的AI稳定节点
-# 请替换为你客户端显示的实际节点名称（包括前缀）
-# 示例："1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
-# 语法为：订阅名 » 节点名称，中间用竖线 | 分隔多个节点，也可以使用自建节点
-  - name: AI稳定
-    type: fallback
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    url: https://cp.cloudflare.com/generate_204
-    interval: 7200
-    max-failed-times: 1
-    tolerance: 100
-    lazy: false
-    # 请替换为你客户端显示的实际节点名称（包括订阅名前缀）
-    filter: "1.p1 »🇺🇸 美国-01|1.p1 »🇸🇬 新加坡-01"
-    icon: "https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/ai.png"
 
-  - name: AI优选
-    type: url-test
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    url: https://cp.cloudflare.com/generate_204
-    interval: 3600
-    tolerance: 50
-    lazy: false
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York|🇸🇬|新加坡|狮城|SG|Singapore)"
-    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/ai_backup.png"
+
+
+
 
   # --- 特殊策略：流媒体解锁 ---
   - name: 流媒体解锁
-    type: select
-    use:
-      - 1.p1
-      - 2.p2
-      - 3.p3
-      - 4.p4
-    include-all: true
-    filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Disney|HBO)"
+    <<: *auto-test
+    filter: '(?:^| )Netflix(?: |#|$)'
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
 #--------------------------------------------------------------------------------------#
 
@@ -960,13 +943,16 @@ dns:
   respect-rules: false
   cache-algorithm: arc
   enhanced-mode: fake-ip
+  fake-ip-filter-mode: rule
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - 'rule-set:VoidFakeIPBypass'
+    - RULE-SET,VoidClaude,fake-ip
+    - RULE-SET,VoidSTUN,fake-ip
+    - RULE-SET,VoidFakeIPForce,fake-ip
+    - RULE-SET,VoidFakeIPBypass,real-ip
+    - MATCH,fake-ip
   default-nameserver:
-    - 'tls://1.1.1.1'
-    - 'tls://8.8.8.8'
-    - 'tls://223.5.5.5'
+    - '223.5.5.5'
     - '119.29.29.29'
   nameserver:
     - 'https://8.8.8.8/dns-query#PROXY'
@@ -974,9 +960,11 @@ dns:
     - 'https://9.9.9.9/dns-query#PROXY'
     - 'https://208.67.222.222/dns-query#PROXY'
   direct-nameserver:
-    - 'system'
+    - '223.5.5.5'
+    - '119.29.29.29'
+    - '114.114.114.114'
   proxy-server-nameserver:
-    - 'https://dns.alidns.com/dns-query#DIRECT'
+    - 'https://223.5.5.5/dns-query#DIRECT'
     - 'https://doh.pub/dns-query#DIRECT'
   nameserver-policy:
     'rule-set:VoidCrossBorderFinance':
@@ -992,12 +980,23 @@ dns:
     '+.uegov.org':
       - 'https://223.5.5.5/dns-query#DIRECT'
       - 'https://doh.pub/dns-query#DIRECT'
-    'rule-set:cn_domain,blackmatrix7_direct,Tencent,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
-      - 'system'
-    'geosite:category-games@cn':
-      - 'system'
+    'rule-set:cn_domain,blackmatrix7_direct,Tencent,MeiTuan,NetEase,Alibaba,AliPay,JingDong,ShiJiChaoXing,UnionPay,GameDownloadCN,EPIC,SteamCN':
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
     'rule-set:VoidGlobalLegal':
-      - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
+    'geosite:category-games@cn':
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
+    'rule-set:VoidClaude':
+      - 'https://8.8.8.8/dns-query#Claude'
+      - 'https://1.1.1.1/dns-query#Claude'
+      - 'https://9.9.9.9/dns-query#Claude'
+      - 'https://208.67.222.222/dns-query#Claude'
     'rule-set:VoidAI':
       - 'https://8.8.8.8/dns-query#AI'
       - 'https://1.1.1.1/dns-query#AI'
@@ -1014,7 +1013,9 @@ dns:
       - 'https://9.9.9.9/dns-query#海淘购物'
       - 'https://208.67.222.222/dns-query#海淘购物'
     'rule-set:BiliBili':
-      - 'system'
+      - '223.5.5.5'
+      - '119.29.29.29'
+      - '114.114.114.114'
       - 'https://8.8.8.8/dns-query#哔哩哔哩'
       - 'https://1.1.1.1/dns-query#哔哩哔哩'
       - 'https://9.9.9.9/dns-query#哔哩哔哩'
@@ -1027,6 +1028,7 @@ routing:
 rules:
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
   - RULE-SET,VoidCrossBorderFinance,跨境金融
+  - RULE-SET,VoidClaude,Claude
   - RULE-SET,IPProxyPools,IP池
   # IP&PROXY CHECK
   - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve
@@ -1041,7 +1043,7 @@ rules:
   - DOMAIN,api.123169.xyz,IPCheck
   - DOMAIN,cf.999831.xyz,IPCheck
   - DOMAIN-SUFFIX,ipapi.co,IPCheck
-  - DOMAIN-SUFFIX,ippure.com,IPCheck
+  - DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve
   - DOMAIN-SUFFIX,iprust.io,IPCheck
   - DOMAIN-SUFFIX,ip123.in,IPCheck
   - DOMAIN-SUFFIX,ipinfo.io,IPCheck
@@ -1091,14 +1093,17 @@ rules:
   - RULE-SET,SteamCN,DIRECT,no-resolve
   - GEOSITE,steam,PROXY
   # Nintendo
-  - RULE-SET,Nintendo,PROXY
+  - RULE-SET,Nintendo,GlobalGames
   # EPIC Set
   - RULE-SET,EPIC,DIRECT,no-resolve
   - DOMAIN-KEYWORD,epicgames,DIRECT
   # China Games
   - GEOSITE,category-games@cn,DIRECT
-  - GEOSITE,kurogames,DIRECT
   - GEOSITE,tencent-games,DIRECT
+  # Global Games
+  - RULE-SET,Blizzard,GlobalGames
+  - GEOSITE,kurogames,GlobalGames
+  - GEOSITE,category-games-!cn,GlobalGames
 #--------------------------------------------------------------------------------------#
   # Services
   # BiliBili
@@ -1173,6 +1178,7 @@ rules:
 #--------------------------------------------------------------------------------------#
   # DIRECT DOMAIN & China Services
   - DOMAIN-SUFFIX,ua.233996.xyz,DIRECT
+  - RULE-SET,MeiTuan,DIRECT
   - RULE-SET,UnionPay,DIRECT
   - RULE-SET,ShiJiChaoXing,DIRECT
   - RULE-SET,JingDong,DIRECT
@@ -1197,383 +1203,79 @@ rules:
   # FINAL
   - MATCH,FINAL
 #--------------------------------------------------------------------------------------#
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  ip_text: &ip_text {type: http, interval: 86400, behavior: ipcidr, format: text}
+  ip_yaml: &ip_yaml {type: http, interval: 86400, behavior: ipcidr, format: yaml}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  domain_4h: &domain_4h {type: http, interval: 14400, behavior: domain, format: mrs}
+  domain_text: &domain_text {type: http, interval: 86400, behavior: domain, format: text}
+  domain_yaml: &domain_yaml {type: http, interval: 86400, behavior: domain, format: yaml}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+  class_yaml: &class_yaml {type: http, interval: 86400, behavior: classical, format: yaml}
 rule-providers:
-  VoidCrossBorderFinance:
-    type: http
-    behavior: classical
-    format: yaml
-    path: ./RuleSet/VoidCrossBorderFinance.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/cross-border-finance/mihomo-classical.yaml"
-    interval: 86400
-  IPProxyPools:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/IPProxyPools.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ip-proxy-pools/mihomo-domain.mrs"
-    interval: 86400
-  Blizzard:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Blizzard.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml
-    interval: 86400
-  VoidFakeIPBypass:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./RuleSet/VoidFakeIPBypass.mrs
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs"
-    interval: 21600
-  VoidAds:
-    type: http
-    behavior: classical
-    format: yaml
-    path: ./RuleSet/VoidAds.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml"
-    interval: 21600
-  VoidGlobalLegal:
-    type: http
-    behavior: classical
-    format: yaml
-    path: ./RuleSet/VoidGlobalLegal.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml"
-    interval: 21600
-  VoidAI:
-    type: http
-    behavior: classical
-    format: yaml
-    path: ./RuleSet/VoidAI.yaml
-    url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml"
-    interval: 21600
-  blackmatrix7_direct:
-    type: http
-    format: yaml
-    behavior: classical
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
-    path: ./RuleSet/blackmatrix7_direct.yaml
-    interval: 86400
-  cf_ip:
-    type: http
-    format: mrs
-    behavior: ipcidr
-    url: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs
-    path: ./RuleSet/cf_ip.mrs
-    interval: 86400
-  geoip_cloudfront:
-    type: http
-    format: mrs
-    behavior: ipcidr
-    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cloudfront.mrs
-    path: ./RuleSet/geoip_cloudfront.mrs
-    interval: 86400
-  cn_ip:
-    type: http
-    format: mrs
-    behavior: ipcidr
-    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs
-    path: ./RuleSet/cn_ip.mrs
-    interval: 86400
-  cn_domain:
-    type: http
-    format: mrs
-    behavior: domain
-    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs
-    path: ./RuleSet/cn_domain.mrs
-    interval: 86400
-  Tencent:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Tencent.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Tencent/Tencent_Classical.yaml
-    interval: 86400
-  NetEase:
-    type: http
-    behavior: classical
-    path: ./RuleSet/NetEase.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/NetEase/NetEase.yaml
-    interval: 86400
-  Alibaba:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Alibaba.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Alibaba/Alibaba_Classical.yaml
-    interval: 86400
-  AliPay:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AliPay.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AliPay/AliPay.yaml
-    interval: 86400
-  JingDong:
-    type: http
-    behavior: classical
-    path: ./RuleSet/JingDong.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/JingDong/JingDong.yaml
-    interval: 86400
-  ShiJiChaoXing:
-    type: http
-    behavior: classical
-    path: ./RuleSet/ShiJiChaoXing.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml
-    interval: 86400
-  UnionPay:
-    type: http
-    behavior: classical
-    path: ./RuleSet/UnionPay.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml
-  private_domain:
-    type: http
-    format: mrs
-    behavior: domain
-    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs
-    path: ./RuleSet/private_domain.mrs
-    interval: 86400
-  CNHTTPDNS:
-    type: http
-    behavior: classical
-    path: ./RuleSet/CNHTTPDNS.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml
-    interval: 86400
-  eBay:
-    type: http
-    behavior: classical
-    path: ./RuleSet/eBay.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml
-    interval: 86400
-  Gemini:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Gemini.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml
-    interval: 86400
-  PCDN:
-    type: http
-    behavior: domain
-    url: 'https://gh-proxy.com/https://raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml'
-    path: ./RuleSet/pcdn.yaml
-    interval: 86400
-  GFW:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt'
-    path: ./RuleSet/gfw.yaml
-    interval: 86400
-  geolocation-!cn:
-    type: http
-    format: mrs
-    behavior: domain
-    url: https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs
-    path: ./RuleSet/geolocation-!cn.mrs
-    interval: 86400
-  Greatfire:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt'
-    path: ./RuleSet/greatfire.yaml
-    interval: 86400
-  Proxy:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt'
-    path: ./RuleSet/Proxy.yaml
-    interval: 86400
-  Direct:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt'
-    path: ./RuleSet/direct.yaml
-    interval: 86400
-  Private:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt'
-    path: ./RuleSet/private.yaml
-    interval: 86400
-  China:
-    type: http
-    behavior: domain
-    path: ./RuleSet/China.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China_Domain.yaml
-    interval: 86400
-  CNcidr:
-    type: http
-    behavior: ipcidr
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt'
-    path: ./RuleSet/cncidr.yaml
-    interval: 86400
-  TGcidr:
-    type: http
-    behavior: ipcidr
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt'
-    path: ./RuleSet/telegramcidr.yaml
-    interval: 86400
-  Amazon:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Amazon.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml
-    interval: 86400
-  AmazonIP:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AmazonIP_Classical.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP_Classical.yaml
-    interval: 86400
-  AmazonTrust:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AmazonTrust.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml
-    interval: 86400
-  AmazonCN:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AmazonCN.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonCN/AmazonCN.yaml
-    interval: 86400
-  CloudFlare:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Cloudflare.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflare/Cloudflare.yaml
-    interval: 86400
-  AKAMAI:
-    type: http
-    behavior: classical
-    path: ./RuleSet/akamai.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Akamai/Akamai.yaml
-    interval: 86400
-  EPIC:
-    type: http
-    behavior: classical
-    path: ./RuleSet/EPIC.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Epic/Epic.yaml
-    interval: 86400
-  Google:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Google.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
-    interval: 86400
-  BiliBili:
-    type: http
-    behavior: classical
-    path: ./RuleSet/bilibili.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml
-    interval: 86400
-  TikTok:
-    type: http
-    behavior: classical
-    path: ./RuleSet/tiktok.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
-    interval: 86400
-  Apple:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Apple_Classical.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple_Classical.yaml
-    interval: 86400
-  Icloud:
-    type: http
-    behavior: domain
-    url: 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt'
-    path: ./RuleSet/icloud.yaml
-    interval: 86400
-  AppleStore:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AppStore.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml
-    interval: 86400
-  AppleDaily:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AppleDaily.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDaily/AppleDaily.yaml
-    interval: 86400
-  AppleID:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AppleID.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml
-    interval: 86400
-  AppleFirmware:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AppleFirmware.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleFirmware/AppleFirmware.yaml
-    interval: 86400
-  AppleHardware:
-    type: http
-    behavior: classical
-    path: ./RuleSet/AppleHardware.yaml
-    url: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleHardware/AppleHardware.yaml
-    interval: 86400
-  Microsoft:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Microsoft.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml
-    interval: 86400
-  Nintendo:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Nintendo.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Nintendo/Nintendo.yaml
-    interval: 86400
-  Notion:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Notion.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Notion/Notion.yaml
-    interval: 86400
-  Ubisoft:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Ubisoft.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Ubisoft/Ubisoft.yaml
-    interval: 86400
-  SteamCN:
-    type: http
-    behavior: classical
-    path: ./RuleSet/SteamCN.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml
-    interval: 86400
-  GameDownloadCN:
-    type: http
-    behavior: classical
-    path: ./RuleSet/GameDownloadCN.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/GameDownloadCN/GameDownloadCN.yaml
-    interval: 86400
-  Telegram:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Telegram.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml
-    interval: 86400
-  Spotify:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Spotify.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Spotify/Spotify.yaml
-    interval: 86400
-  Netflix:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Netflix.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix.yaml
-    interval: 86400
-  Bahamut:
-    type: http
-    behavior: classical
-    path: ./RuleSet/Bahamut.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bahamut/Bahamut.yaml
-    interval: 86400
-  Streaming:
-    type: http
-    behavior: domain
-    path: ./RuleSet/Streaming.yaml
-    url: https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GlobalMedia/GlobalMedia_Domain.yaml
-    interval: 86400
-#--------------------------------------------------------------------------------------#
+  VoidClaude: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-rules/mihomo-domain.mrs" }
+  VoidSTUN: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/stun/mihomo-domain.mrs" }
+  VoidCrossBorderFinance: { <<: *class_yaml, path: ./RuleSet/VoidCrossBorderFinance.yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/cross-border-finance/mihomo-classical.yaml" }
+  IPProxyPools: { <<: *domain, path: ./RuleSet/IPProxyPools.mrs, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ip-proxy-pools/mihomo-domain.mrs" }
+  MeiTuan: { <<: *class_yaml, url: "https://gh-proxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/MeiTuan/MeiTuan.yaml" }
+  Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
+  VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
+  VoidFakeIPBypass: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs" }
+  VoidAds: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml" }
+  VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
+  VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
+  blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }
+  cf_ip: { <<: *ip, url: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs" }
+  geoip_cloudfront: { <<: *ip, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cloudfront.mrs" }
+  cn_ip: { <<: *ip, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs" }
+  cn_domain: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs" }
+  Tencent: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Tencent/Tencent_Classical.yaml" }
+  NetEase: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/NetEase/NetEase.yaml" }
+  Alibaba: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Alibaba/Alibaba_Classical.yaml" }
+  AliPay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/AliPay/AliPay.yaml" }
+  JingDong: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/JingDong/JingDong.yaml" }
+  ShiJiChaoXing: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ShiJiChaoXing/ShiJiChaoXing.yaml" }
+  UnionPay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/UnionPay/UnionPay.yaml" }
+  private_domain: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs" }
+  CNHTTPDNS: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml" }
+  eBay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml" }
+  Gemini: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml" }
+  PCDN: { <<: *domain_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml" }
+  GFW: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt" }
+  geolocation-!cn: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs" }
+  Greatfire: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt" }
+  Proxy: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt" }
+  Direct: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt" }
+  Private: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt" }
+  China: { <<: *domain_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China_Domain.yaml" }
+  CNcidr: { <<: *ip_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt" }
+  TGcidr: { <<: *ip_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt" }
+  Amazon: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Amazon/Amazon.yaml" }
+  AmazonIP: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonIP/AmazonIP_Classical.yaml" }
+  AmazonTrust: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonTrust/AmazonTrust.yaml" }
+  AmazonCN: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonCN/AmazonCN.yaml" }
+  CloudFlare: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Cloudflare/Cloudflare.yaml" }
+  AKAMAI: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Akamai/Akamai.yaml" }
+  EPIC: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Epic/Epic.yaml" }
+  Google: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml" }
+  BiliBili: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml" }
+  TikTok: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml" }
+  Apple: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple_Classical.yaml" }
+  Icloud: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt" }
+  AppleStore: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppStore/AppStore.yaml" }
+  AppleDaily: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleDaily/AppleDaily.yaml" }
+  AppleID: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleID/AppleID.yaml" }
+  AppleFirmware: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleFirmware/AppleFirmware.yaml" }
+  AppleHardware: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AppleHardware/AppleHardware.yaml" }
+  Microsoft: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml" }
+  Nintendo: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Nintendo/Nintendo.yaml" }
+  Notion: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Notion/Notion.yaml" }
+  Ubisoft: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Ubisoft/Ubisoft.yaml" }
+  SteamCN: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml" }
+  GameDownloadCN: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/GameDownloadCN/GameDownloadCN.yaml" }
+  Telegram: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml" }
+  Spotify: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Spotify/Spotify.yaml" }
+  Netflix: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix.yaml" }
+  Bahamut: { <<: *class_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bahamut/Bahamut.yaml" }
+  Streaming: { <<: *domain_yaml, url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GlobalMedia/GlobalMedia_Domain.yaml" }

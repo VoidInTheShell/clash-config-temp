@@ -1,0 +1,4 @@
+{
+  "config/proxy-folders": "{\"folders\":[{\"id\":\"builtin-strategy\",\"name\":\"folder_builtin_strategy\",\"order\":0,\"rules\":[{\"type\":\"regex\",\"pattern\":\"^(?:PROXY|IPCheck|IP池|GlobalSite|GlobalLegal|GlobalGames|FINAL|AI|Claude|Google|跨境金融|CDN|海淘购物|流媒体|MicrosoftBing|哔哩哔哩|Apple|TikTok)$\"}],\"manualIncludes\":[]},{\"id\":\"builtin-nodes\",\"name\":\"folder_builtin_nodes\",\"order\":1,\"rules\":[{\"type\":\"regex\",\"pattern\":\".*\"},{\"type\":\"excludeRegex\",\"pattern\":\"^(?:PROXY|IPCheck|IP池|GlobalSite|GlobalLegal|GlobalGames|FINAL|AI|Claude|Google|跨境金融|CDN|海淘购物|流媒体|MicrosoftBing|哔哩哔哩|Apple|TikTok)$\"}],\"manualIncludes\":[]}],\"activeId\":\"__all__\",\"seeded\":true}",
+  "config/proxy-folder-mode-setting": "on"
+}

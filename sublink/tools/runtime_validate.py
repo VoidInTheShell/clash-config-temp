@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import re
 import socket
@@ -20,12 +21,14 @@ ROOT = Path(__file__).resolve().parents[2]
 RENDERED = (
     Path(sys.argv[1]).resolve()
     if len(sys.argv) > 1
-    else ROOT / "sublink" / "mihomo_fakeip_whitelist.rendered.yaml"
+    else ROOT / "sublink" / "mihomo_fakeip_rule.rendered.yaml"
 )
 RUNTIME_TEMP = TemporaryDirectory(prefix="sublinkpro-mihomo-runtime-")
 RUNTIME_CONFIG = Path(RUNTIME_TEMP.name) / "runtime-validation.yaml"
-RUNTIME_HOME = ROOT / ".planning" / "sublinkpro-mihomo-template" / "mihomo-home"
+RUNTIME_HOME = Path(os.environ.get("MIHOMO_TEST_HOME", RUNTIME_TEMP.name))
 RUNTIME_LOG = Path(RUNTIME_TEMP.name) / "runtime-validation.log"
+SELF_GROUPS = {"自建节点", "自建选1", "自建选2", "自建选3"}
+SELF_SLOTS = ["自建选1", "自建选2", "自建选3"]
 API_SECRET = "sublinkpro-runtime-validation"
 
 
@@ -58,7 +61,11 @@ def wait_for_api(process: subprocess.Popen[bytes], port: int) -> dict[str, Any]:
         if process.poll() is not None:
             raise RuntimeError(f"Mihomo exited before API readiness (code {process.returncode})")
         try:
-            return api_get(port, "/version")
+            version = api_get(port, "/version")
+            if "自建选3" not in (api_get(port, "/proxies").get("proxies") or {}):
+                time.sleep(0.25)
+                continue
+            return version
         except Exception as error:  # The listener may not exist yet.
             last_error = error
             time.sleep(0.25)
@@ -70,11 +77,12 @@ def token_members(names: set[str], *tokens: str) -> set[str]:
     return {name for name in names if pattern.search(name)}
 
 
-def expected_groups(names: list[str]) -> dict[str, list[str]]:
+def expected_groups(names: list[str], self_names: list[str]) -> dict[str, list[str]]:
     expected: dict[str, list[str]] = {}
     name_set = set(names)
-    home = token_members(name_set, "家宽")
-    eligible = name_set - home
+    self_built = set(self_names)
+    home = token_members(name_set, "家宽") - self_built
+    eligible = name_set - home - self_built
     region_flags = {"US": "🇺🇸", "HK": "🇭🇰", "SG": "🇸🇬", "JP": "🇯🇵"}
     regions = {
         code: {name for name in eligible if name.startswith(flag)}
@@ -90,12 +98,9 @@ def expected_groups(names: list[str]) -> dict[str, list[str]]:
             expected[f"{mode}-{code}"] = sorted(members)
         expected[f"{mode}-其他"] = sorted(other)
 
-    expected["自建手选"] = sorted(token_members(eligible, "自建"))
-    expected["家宽手选"] = [name for name in names if token_members({name}, "家宽")]
-    expected["Claude"] = sorted(token_members(eligible, "AI", "Claude"))
-    expected["Gemini"] = sorted(token_members(eligible, "AI", "Gemini"))
-    expected["OpenAI"] = sorted(token_members(eligible, "AI", "OpenAI"))
-    expected["通用"] = sorted(token_members(eligible, "AI"))
+    for name in SELF_GROUPS:
+        expected[name] = sorted(self_built)
+    expected["家宽手选"] = [name for name in names if name in home] + SELF_SLOTS
     expected["流媒体解锁"] = sorted(token_members(eligible, "Netflix"))
     return expected
 
@@ -104,6 +109,7 @@ def main() -> None:
     config = load_mapping(RENDERED)
     controller_port, mixed_port, redir_port, tproxy_port = (free_port() for _ in range(4))
 
+    config["routing-mark"] = 0
     config["allow-lan"] = False
     config["bind-address"] = "127.0.0.1"
     config["external-controller"] = f"127.0.0.1:{controller_port}"
@@ -112,6 +118,10 @@ def main() -> None:
     config["redir-port"] = redir_port
     config["tproxy-port"] = tproxy_port
     config.setdefault("tun", {})["enable"] = False
+    config.setdefault("dns", {})["listen"] = f"127.0.0.1:{free_port()}"
+    config.setdefault("profile", {})["store-selected"] = False
+    config["external-ui"] = ""
+    config["external-ui-url"] = ""
     RUNTIME_CONFIG.write_text(
         yaml.safe_dump(config, allow_unicode=True, sort_keys=False),
         encoding="utf-8",
@@ -121,7 +131,7 @@ def main() -> None:
     with RUNTIME_LOG.open("wb") as log:
         process = subprocess.Popen(
             [
-                "mihomo",
+                os.environ.get("MIHOMO_BINARY", "mihomo"),
                 "-d",
                 str(RUNTIME_HOME),
                 "-f",
@@ -146,11 +156,22 @@ def main() -> None:
                 for proxy in config.get("proxies") or []
                 if isinstance(proxy, dict) and proxy.get("name")
             ]
-            expected = expected_groups(proxy_names)
+            self_group = next(group for group in config["proxy-groups"] if group["name"] == "自建节点")
+            expected = expected_groups(proxy_names, self_group.get("proxies") or [])
+
+            for group in config.get("proxy-groups") or []:
+                if group["name"] in expected and group.get("type") == "select" and group["name"] not in SELF_GROUPS | {"家宽手选"}:
+                    expected[group["name"]] = list(group.get("proxies") or []) + expected[group["name"]]
+                if group["name"] not in expected:
+                    if group.get("include-all"):
+                        raise ValueError(f"Missing membership expectation: {group['name']}")
+                    expected[group["name"]] = list(group.get("proxies") or [])
 
             checks: dict[str, dict[str, Any]] = {}
             failures: list[str] = []
             for group_name, expected_members in expected.items():
+                # Mihomo supplies COMPATIBLE when a dynamic group has no matching nodes.
+                expected_members = expected_members or ["COMPATIBLE"]
                 runtime_group = runtime_proxies.get(group_name) or {}
                 actual_members = list(runtime_group.get("all") or [])
                 expected_set = set(expected_members)
@@ -169,13 +190,17 @@ def main() -> None:
                 if not exact or not order_exact:
                     failures.append(group_name)
 
-            ai_preferred = runtime_proxies.get("AI优选") or {}
-            ai_order = list(ai_preferred.get("all") or [])
-            expected_ai_order = ["通用", "Claude", "Gemini", "OpenAI"]
-            if ai_order != expected_ai_order:
-                failures.append("AI优选-order")
+            claude = runtime_proxies.get("Claude") or {}
+            ai = runtime_proxies.get("AI") or {}
+            if claude.get("type") != "Selector" or claude.get("all") != ai.get("all"):
+                failures.append("Claude-service-selector")
+            for name, expected_default in {"AI": "自建选1", "Claude": "自建选1", "IP池": "PROXY"}.items():
+                if runtime_proxies.get(name, {}).get("now") != expected_default:
+                    failures.append(f"{name}-default")
+            if {"AI优选", "AI稳定", "Gemini", "OpenAI", "通用"}.intersection(runtime_proxies):
+                failures.append("removed-AI-node-groups")
 
-            home_names = set(expected["家宽手选"])
+            home_names = set(expected["家宽手选"]) - set(SELF_SLOTS)
             defined_group_names = {
                 str(group.get("name", ""))
                 for group in config.get("proxy-groups") or []
@@ -195,13 +220,26 @@ def main() -> None:
             if home_membership_violations:
                 failures.append("home-membership-exclusivity")
 
+            self_names = set(expected["自建节点"])
+            self_membership_violations = {
+                group_name: sorted(self_names.intersection(
+                    set((runtime_proxies.get(group_name) or {}).get("all") or [])
+                ))
+                for group_name in sorted(defined_group_names - SELF_GROUPS)
+                if self_names.intersection(
+                    set((runtime_proxies.get(group_name) or {}).get("all") or [])
+                )
+            }
+            if self_membership_violations:
+                failures.append("self-membership-exclusivity")
+
             result = {
                 "mihomo": version,
                 "process_started": process.poll() is None,
                 "runtime_group_count": sum(
                     isinstance(value, dict) and "all" in value for value in runtime_proxies.values()
                 ),
-                "verified_group_count": len(checks) + 1,
+                "verified_group_count": len(checks),
                 "all_memberships_exact": not failures,
                 "failures": failures,
                 "home_membership_exclusivity": {
@@ -209,11 +247,15 @@ def main() -> None:
                     "checked_group_count": len(defined_group_names) - 1,
                     "violations": home_membership_violations,
                 },
+                "self_membership_exclusivity": {
+                    "exclusive": not self_membership_violations,
+                    "checked_group_count": len(defined_group_names) - len(SELF_GROUPS),
+                    "violations": self_membership_violations,
+                },
                 "groups": checks,
-                "ai_preferred": {
-                    "type": ai_preferred.get("type"),
-                    "order": ai_order,
-                    "now": ai_preferred.get("now"),
+                "claude": {
+                    "type": claude.get("type"),
+                    "now": claude.get("now"),
                 },
             }
             print(json.dumps(result, ensure_ascii=False, indent=2))

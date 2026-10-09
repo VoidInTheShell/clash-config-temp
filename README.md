@@ -1,114 +1,132 @@
-# 自用Mihomo配置文件
-适配多平台的Mihomo+ClashMeta配置
+# Mihomo 订阅与分流模板
 
-# 特性
-  - 多种去广告规则+HTTPDNS Block防止去广告失效
-  - 默认tun模式劫持53+853；代理侧DNS上游统一使用DoH，直连侧保持本地/系统解析策略
-  - fakeip+nameserver-policy规则防止DNS泄露
-  - 跨境金融和商业IP代理池使用独立策略组、独立DNS选路及自有void-rules规则集
-  - 开箱即用，分流完善，逻辑清晰，配置方便
-  - 同时启用负载均衡+自动测速+故障转移+地区分类策略组，适配多种不同场景需求
-  - 适配MihomoPC+ShellCrash+ClashMi客户端，覆盖Windows、Linux（OpenWRT）、Android平台设备
+主线维护三个方向：**SublinkPro 聚合模板、PanelTemp（Xboard 订阅模板）、Mihomo Providers 配置**。SublinkPro 与 Providers 版用于聚合机场和自建节点：源码、资源下载等常规代理流量走机场；需要固定出口 IP 的服务通过独立自建组选择节点。PanelTemp 只使用 Xboard 为当前用户生成的自建节点。
 
-# 场景
-  - 覆盖常规GFWList和非大陆站点
-  - Google全分流，包含防送中规则
-  - 常见硬件和数码厂商驱动下载分流
-  - PC游戏平台下载直连分流
-  - bilibili港澳台分流，搭配对应节点解锁番剧
-  - 常见IP代理池服务商官网、管理面板、API和代理网关分流
+| 方向 | 文件 | 节点来源 | 使用方式 |
+| --- | --- | --- | --- |
+| SublinkPro | [rule 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml) + [重命名脚本](sublink/sublinkpro_node_metadata_rename.js) | 多个机场来源、名称以 `自建` 开头的来源组 | 在 SublinkPro 中渲染后导入客户端 |
+| PanelTemp | [panel_mihomo_fakeip_rule.yaml](panel_mihomo_fakeip_rule.yaml) | Xboard 当前用户有权订阅的节点 | 整份填入 Xboard 的 `clashmeta` 订阅模板 |
+| Providers rule（推荐） | [multi_providers_mihomo_fakeip_rule.yaml](multi_providers_mihomo_fakeip_rule.yaml) | 一个自建提供商 + 多个机场提供商 | 填好订阅 URL 后交给 Mihomo 内核 |
+| Providers 白名单 | [multi_providers_mihomo_fakeip_whitelist.yaml](multi_providers_mihomo_fakeip_whitelist.yaml) | 一个自建提供商 + 多个机场提供商 | 填好订阅 URL 后交给 Mihomo 内核 |
+| Providers 黑名单兼容 | [multi_providers_mihomo.yaml](multi_providers_mihomo.yaml) | 同上 | 使用 rule 语法保留黑名单默认行为，并优先为 Claude/STUN 返回 Fake-IP |
 
-# 说明
-  - **sublink/**：给SublinkPro适配的Mihomo规则模板、订阅脚本和验证工具
-  - **multi_providers_mihomo.yaml**：完整Mihomo内核使用
-  - **multi_providers_shellcrash.yaml：** ShellCrash残血Meta内核使用，不包含Mihomo语法
-  - **multi_providers_shellcrash_ua3f.yaml：** ShellCrash搭配UA3F（HTTP）使用
-  - **shellcrash_override.yaml：** ShellCrash覆写规则，重命名为user.yaml放在shellcrash的/yamls目录下
-  - ***fakeip_whitelist.yaml：** fakeip白名单规则，存在兼容性问题时可按需使用
-  - **注意：shellcrash必须使用配套whitelist覆写规则**
-  - **trojanpanel_multigroup_temp.yaml：** TrojanPanel默认规则模板
-  - **/tools：** shellcrash默认限制对于多设备环境不适用，提供快速修改配置脚本
-  - **/server_config_temp：** 服务端XRAY模板，已配置防止回大陆方向流量、广告过滤
-  - **更多详细说明与分流策略移步[wiki](https://github.com/VoidInTheShell/clash-config-temp/wiki/%E5%A4%9A%E6%9C%BA%E5%9C%BA%E8%AE%A2%E9%98%85%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)**
+白名单版对 `VoidClaude`、`VoidSTUN`、`VoidFakeIPForce` 中的域名返回 Fake-IP。其余维护中的模板使用 Fake-IP `rule` 模式，最终均为 `MATCH,fake-ip`。黑名单兼容版先匹配 Claude/STUN，再对排除集返回真实 IP；专用 rule 版还会优先匹配 `VoidFakeIPForce`。SublinkPro 使用脚本注入节点和元数据分组。
 
-# IP 检测与服务端域名规则
+## 自建出口与服务分流
 
-- 完整客户端模板将 IPPure 实际使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 统一交给 `IPCheck`。这些检测域名及 `ippure.com`、`ipinfo.io` 的 UDP/443 被拒绝，HTTPS 回落 TCP，适用于落地 SOCKS5 仅支持 TCP 的场景；其他 UDP 流量沿用原策略。
-- Loyalsoldier 的 `.txt` 规则文件实际是 YAML payload，模板按 `format: yaml` 加载。
-- 服务端 Xray 模板第一条放行 `www.gstatic.com`，随后阻断 `geosite:cn`、`.cn` 和 `geosite:google@cn` 及列出的 Google 大陆服务域名。使用包含这些分类的 geosite 数据文件；不将全部 `googleapis.com` 视为大陆域名。
+Providers 和 SublinkPro 提供以下四个组，排列顺序固定：
 
-# 快速配置
+1. `自建节点`：自建节点总入口。
+2. `自建选1`：独立手动选择一个自建节点。
+3. `自建选2`：独立手动选择一个自建节点。
+4. `自建选3`：独立手动选择一个自建节点。
+
+四组均为 `select`，直接成员是同一批自建节点，选择状态互相独立。三个新组加入**所有其他手动选择组**，包括业务组、全部手选、地区手选和家宽手选；已有 `自建节点` 的候选列表按上述顺序连续排列。四个自建组自身不相互嵌套。自动测速、故障转移、负载均衡组不加入三个手动出口组。
+
+PanelTemp 全部来自自建面板，统一改为 `自选1`、`自选2`、`自选3`、`自选4`。四组都是手动选择，均包含当前用户的全部节点，没有筛选器；服务默认出口分别使用自选1/2/3。旧 `自建选1/2/3` 对应自选1/2/3，旧总入口 `自建节点` 对应自选4。
+
+| 流量或服务 | 默认策略 |
+| --- | --- |
+| `PROXY`、常规境外站点、CDN 和资源下载 | 机场自动选择；原有大陆直连规则继续生效 |
+| `AI`、`Claude` | `自建选1`（PanelTemp 为 `自选1`） |
+| `TikTok` | `自建选2` |
+| `跨境金融` | `自建选3` |
+| `IPCheck` | 跟随 `PROXY`，也可手动选任一自建出口检查 IP |
+| `IP池` | 首选及 `default-selected` 均为 `PROXY` |
+
+服务默认值通过 Mihomo 的 `default-selected` 设置。已有客户端保存的选择优先于初始默认值；升级模板后如需采用新默认，请在客户端切换一次。其他有 IP 要求的服务也可自行选用这三个组。它们不会自动按地区选节点，也不会互相切换出口。PanelTemp 没有机场来源，表中的常规代理流量使用面板节点。
+
 ## SublinkPro
 
-提供给SublinkPro使用的Mihomo适配规则模板、节点筛选重命名脚本和验证工具，
-面向使用和维护的SublinkPro配置统一保存在[`sublink/`](sublink/)目录：
+1. 创建 Clash/Mihomo 模板，例如 `mihomo_fakeip_rule`，内容使用 [SublinkPro 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml)。服务端文件模板路径可使用 `./template/mihomo_fakeip_rule`。
+2. 创建订阅脚本，例如 `mihomo_sublink_metadata_rename`，内容使用 [JavaScript 脚本](sublink/sublinkpro_node_metadata_rename.js)，并绑定目标订阅。模板和脚本需要配套更新；共用时可复制为独立版本后切换目标订阅。
+3. 在订阅中选择机场来源组，以及所有名称以 `自建` 开头的来源组，例如 `自建`、`自建-Pub`。新增来源组后还需加入目标订阅。
+4. 节点命名规则设置为 `$Name$LinkCountryName $LinkName`。开启请求时刷新用量，以及落地地区、住宅 IP、Claude、Gemini、OpenAI、Netflix 检测。
+5. 创建分享链接，下载时携带 `client=mihomo`，将渲染后的完整配置导入客户端。
 
-- [`sublinkpro_mihomo_fakeip_whitelist.yaml`](sublink/sublinkpro_mihomo_fakeip_whitelist.yaml)：SublinkPro模板源文件。服务端模板名称固定为`mihomo_fakeip_whitelist`，配置路径为`./template/mihomo_fakeip_whitelist`。
-- [`sublinkpro_node_metadata_rename.js`](sublink/sublinkpro_node_metadata_rename.js)：订阅脚本，同时提供`filterNode`和`subMod`。前者按SublinkPro检测属性统一节点元数据，后者把家宽节点写入`家宽手选`并确保其不直接进入其他策略组。
-- `mihomo_fakeip_whitelist.rendered.yaml`：从SublinkPro分享链接下载的当前Mihomo完整配置，可直接交给Mihomo裸核加载。该文件包含实际节点连接信息，仅作为本地生成产物保存在受控环境中，不纳入公开仓库。
-- [`tools/`](sublink/tools/)：节点命名预览、订阅表单生成、`subMod`本地执行、静态检查和Mihomo运行时验证工具。
+`filterNode` 根据来源识别自建节点，保留原名或备注，不附加国旗、能力标签或编号；`subMod` 将这些节点写入全部四个自建组，并从其他动态节点组排除。自建节点即使检测为家宽，也仍属于自建组。普通机场节点按落地地区、家宽和解锁能力生成名称；没有地区检测结果时才从原名提取地区。
 
-### SublinkPro端配置
+非自建家宽节点只直接进入 `家宽手选`，按地区与能力排序。`家宽手选` 同时提供三个自建出口组作为候选；它们是组引用，机场家宽节点不会因此混入自建组。其他机场节点进入地区和流媒体自动组。已移除 `AI优选`、`AI稳定`、`通用` 及按 Claude/Gemini/OpenAI 解锁能力自动筛选的节点组；节点名称中的能力标签继续保留。新的 `Claude` 是独立业务策略组，紧跟 `AI`，成员、类型和默认出口与 `AI` 相同。
 
-1. 新建或更新Clash模板，名称使用`mihomo_fakeip_whitelist`，内容使用本地模板源文件。模板保留原有规则、DNS、面板、节点组和策略组，并启用`include-all`供SublinkPro生成的节点参与匹配。
-2. 新建或更新订阅脚本`mihomo_sublink_metadata_rename`，内容使用本地JavaScript文件，并将该脚本绑定到目标订阅。
-3. 订阅中选择需要合并的机场节点组和`自建`节点组；机场节点使用SublinkPro自带的检测与过滤规则，`自建`按来源分组过滤。不要再把节点逐个手工加入订阅。
-4. 节点命名规则设置为`$Name$LinkCountryName $LinkName`，开启请求时刷新用量，并启用落地地区、住宅IP、Claude、Gemini、OpenAI和Netflix检测。SublinkPro没有检测到地区时，脚本才会从原节点名提取地区作为兜底。
-5. 创建分享链接。下载Mihomo配置时必须携带`client=mihomo`，否则服务端可能不会按Mihomo目标格式渲染。
+## PanelTemp：Xboard
 
-模板会按落地IP把节点映射到地区组，并按来源把自建节点放入`自建手选`。AI解锁节点分别进入`Claude`、`Gemini`、`OpenAI`和`通用`，`AI优选`为故障转移策略且首选`通用`；Netflix解锁节点进入使用自动测速策略的`流媒体解锁`。家宽节点只直接进入`家宽手选`，在需要人工选路的策略组中位于`自建手选`之后，不会直接进入其他地区、AI或流媒体节点组。`IP池`紧跟`IPCheck`，完整复制本模板`PROXY`的候选成员，因此也包含`家宽手选`。
+本模板按 JPGREEN 运行中的 Xboard `ClashMeta` 生成器适配：
 
-### IP代理池分流
+1. 打开 Xboard 管理后台的订阅模板设置，选择 **Clash Meta / Mihomo（`clashmeta`）**。
+2. 将 [panel_mihomo_fakeip_rule.yaml](panel_mihomo_fakeip_rule.yaml) 的完整内容粘贴并保存。
+3. 使用有可订阅节点的用户获取 Mihomo 订阅。客户端需被识别为 Mihomo / Clash Meta；该模板不面向旧版 Clash 内核。
 
-所有完整模板都在`IPCheck`后提供`IP池`策略组，并引用自有[`void-rules`](https://github.com/VoidInTheShell/void-rules)仓库的`ip-proxy-pools`域名规则。规则目前覆盖SeekProxy、Oxylabs、IPRoyal、Proxy-Seller、DataImpulse、Webshare、Decodo/Smartproxy、SOAX、Bright Data、NetNut、Rayobyte、Infatica、PacketStream、Proxy-Cheap、ProxyEmpire、Nimble、NodeMaven、Storm Proxies、MarsProxies和Geonode等服务商的官网、面板、API、官方旧域名和代理网关。
+顶层 `proxies: []` 由 Xboard 注入用户节点，模板不包含外部 `proxy-providers` 或机场 URL。`自选1–4` 各自使用空的 `proxies: []`，Xboard 自动追加全部节点，无正则或 `filter`。普通业务组中的 `/a^/` 阻止 Xboard 额外注入全部节点；地区手选继续使用 PHP 正则及自选组。自动测速只保留现有的 `自动选择`，已移除各地区 `自动测速-*` 及其引用；地区手选、故障转移仍保留。
 
-- Mihomo MRS直链：`https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ip-proxy-pools/mihomo-domain.mrs`
-- `RULE-SET,IPProxyPools,IP池`位于常规业务规则之前；相关域名的DNS查询也通过`IP池`组上的DoH解析，Fake-IP白名单模板由`VoidFakeIPForce`统一纳入该规则集。
-- `IP池`的`type`和候选成员逐模板复制各自`PROXY`，不会把不同模板的`DIRECT`、`CAMPUS`、台湾地区组或`家宽手选`差异抹平。TrojanPanel文件是接在面板生成内容后的片段，片段中没有完整`PROXY`定义，因此复制当前面板`PROXY`对应的四个节点成员。
-- 域名规则无法识别服务商直接下发的裸`IP:port`。这类端点如果也需要前置代理，应在节点或链式代理配置中显式指定；不要把“服务商域名已分流”等同于“任意裸代理IP都已自动分流”。
-- 策略组图标使用公共[Qure图标库](https://github.com/Koolson/Qure)：`跨境金融`使用`Cryptocurrency_3.png`，`IP池`使用`Server.png`，两者互不复用。
+这是**面板输入模板**，正则占位符需要 Xboard 展开，不能直接导入 Mihomo。用户必须至少有一个可输出给 Mihomo 的节点；当前生成器会删除无成员的组，无节点用户的渲染结果不适合作为客户端配置。节点连接参数和订阅鉴权由 Xboard 生成，不填写到公开模板中。
 
-## Mihomo
-1. 在设置中关闭**接管DNS设置**、**接管域名嗅探设置**
-2. 按下图配置虚拟网卡：
-   
-   <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/afa65f1b-99be-498d-ae60-6d1e20ce76ad" />
+## Mihomo Providers
 
+三份 Providers 模板使用相同的来源边界：
 
-3. 在**订阅管理** 中填入如下链接导入配置文件
-```
-https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_mihomo.yaml
-```
-## ShellCrash
-安装ShellCrash：
-```
-export url='https://fastly.jsdelivr.net/gh/juewuy/ShellCrash@master' && wget -q --no-check-certificate -O /tmp/install.sh $url/install.sh  && sh /tmp/install.sh && source /etc/profile &> /dev/null
-```
+- `1.p1`：唯一自建提供商，填自建面板的订阅 URL。该提供商的**全部节点**通过 `use: *a2` 导入四个自建组，不依赖节点命名或地区标签。
+- `2.p2`、`3.p3`、`4.p4`：机场提供商。`u: &a1` 仅引用这些机场，供普通节点组和自动策略使用。
+- 不使用的机场栏位应连同 `u` 中对应引用一起删除；新增机场时同时添加 provider 与 `u` 引用。保留自建栏位并确保返回有效节点。
+- 固定自建出口使用 `自建选1/2/3`；AI 服务通过 `AI`、`Claude` 业务策略组选择出口，不再提供专用 AI 测速节点组。
 
-重要：安装完成后先不要启动代理，进入菜单-内核功能设置，确保**防火墙运行模式为混合或TPROXY**、**DNS运行模式为fake-ip**、**只代理常用端口为关闭**，然后进入**更新/卸载**菜单中，下载**ClashMeta内核（Mihomo）**、**面板（推荐ZashBoard）**、**更新数据库文件：Mihomo完整版+自定义meta-rules-dat的geosite.dat**
+订阅端点需返回 Mihomo 可解析的节点集合或完整 Clash/Mihomo YAML。内核通过 `use` 引入 provider，语义见 [Mihomo 代理组文档](https://wiki.metacubex.one/config/proxy-groups/)。`include-all` 保持关闭，避免绕过 `use` 把自建提供商混入机场组。
 
-下载[multi_providers_shellcrash.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash.yaml)或[multi_providers_shellcrash_ua3f.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash_ua3f.yaml)或[multi_providers_shellcrash_ua3f_fakeip_whitelist.yaml](https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/multi_providers_shellcrash_ua3f_fakeip_whitelist.yaml)，按需添加订阅，修改完成后上传至设备的/tmp目录下
+填好 URL 后保存为本地配置运行；也可使用客户端的订阅或覆写机制管理。模板包含 TUN、DNS 和嗅探配置，客户端使用模板设置时应关闭重复接管；按设备需求调整监听端口、控制器密码和 LAN 权限。
 
-然后执行以下命令下载覆写文件并应用：
+## Fake-IP rule 模式
 
-**注意：whitelist版本务必使用对应覆写文件，否则会无法启动**
+按 [Mihomo 官方 DNS 写法](https://wiki.metacubex.one/config/dns/#fake-ip-filter-mode) 自上而下匹配，Claude、STUN、Force 优先于 Bypass：
 
-**multi_providers_shellcrash_ua3f使用如下命令：**
-```
-curl -fsSL https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/shellcrash_override.yaml -o /etc/ShellCrash/yamls/user.yaml
+```yaml
+dns:
+  enhanced-mode: fake-ip
+  fake-ip-filter-mode: rule
+  fake-ip-filter:
+    - RULE-SET,VoidClaude,fake-ip
+    - RULE-SET,VoidSTUN,fake-ip
+    - RULE-SET,VoidFakeIPForce,fake-ip
+    - RULE-SET,VoidFakeIPBypass,real-ip
+    - MATCH,fake-ip
 ```
 
-**multi_providers_shellcrash_ua3f_fakeip_whitelist使用如下命令：**
-```
-curl -fsSL https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/clash-config-temp/refs/heads/main/shellcrash_override_fakeip_whitelist.yaml -o /etc/ShellCrash/yamls/user.yaml
+四个 rule-provider 均为 `behavior: domain`，分别使用自有 `void-rules` 的 `void-claude-rules`、`stun`、`fake-ip-force` 与 `fake-ip-bypass` 集合。同一域名命中强制集与 Bypass 时返回 Fake-IP；仅命中 Bypass 时返回真实 IP；未命中任何集合时仍返回 Fake-IP。黑名单兼容版不添加 Force 条目，其余顺序一致。这里仅决定 DNS 是否下发 Fake-IP，出口由顶层 `rules` 决定。客户端需要支持 `fake-ip-filter-mode: rule` 的 Mihomo。
+
+`RULE-SET,VoidClaude,Claude` 紧跟跨境金融规则，位于通用 AI 规则之前。`nameserver-policy` 中的 `'rule-set:VoidClaude'` 也先于 `'rule-set:VoidAI'`，DNS 服务器列表与 AI 相同，但所有 `#` 出口标签均为 `Claude`。
+
+旧的 `sublinkpro_mihomo_fakeip_whitelist.yaml` 和 `panel_mihomo_fakeip_whitelist.yaml` 已分别改名为 `sublinkpro_mihomo_fakeip_rule.yaml`、`panel_mihomo_fakeip_rule.yaml`；引用原始文件 URL 的使用者需要更新路径。
+
+## DNS、IP 检测与公共规则
+
+- 代理 DNS 使用 DoH；直连和节点域名解析保持独立路径。支持广告与 HTTPDNS 拦截、Google 分流、游戏平台下载、跨境金融与 IP 代理池规则。
+- IPPure 使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 交给 `IPCheck`。检测域名的 UDP/443 拒绝后回落 HTTPS/TCP，便于检查仅支持 TCP 的 SOCKS5 出口。
+- IPPure 主域规则为 `DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve`。
+- `IP池` 紧跟 `IPCheck`，第一候选为 `PROXY`，其余候选与各模板 `PROXY` 一致，默认跟随 `PROXY`。它使用自有 [void-rules](https://github.com/VoidInTheShell/void-rules) 的 `ip-proxy-pools` 规则，相关 DNS 也经该组解析。域名规则不覆盖服务商直接下发的裸 `IP:port`。
+- Loyalsoldier `.txt` 规则按 YAML payload 加载。
+
+## Zashboard 策略组与节点组
+
+导入 [zashboard-settings.json](zashboard-settings.json)，将 `PROXY`、`IPCheck`、`IP池`、`AI`、`Claude` 等业务分流组放入“策略组”，全部手选、地区手选、家宽手选、自建/自选、测速和故障转移等放入“节点组”。该文件仅设置文件夹分类及开启文件夹模式。
+
+Zashboard 默认按是否嵌套其他组分类，因此仅更新 YAML 无法让嵌套自选组的手选组进入“节点组”。在 Zashboard 设置中的导入设置入口导入上述 JSON；此设置保存在浏览器中，每个浏览器需单独导入。分类规则参考 [Zashboard 文件夹实现](https://github.com/Zephyruso/zashboard/blob/main/src/store/proxy-folders.ts)。
+
+## 本地验证
+
+```sh
+node sublink/tools/test_selfbuilt_groups.mjs
+python3 tools/validate_templates.py
+MIHOMO_BINARY=/path/to/mihomo python3 tools/test_dns_runtime.py
+python3 sublink/tools/validate_rendered.py /path/to/rendered.yaml
+python3 sublink/tools/runtime_validate.py /path/to/rendered.yaml
 ```
 
+Python 校验工具依赖 PyYAML，运行时校验另需 `mihomo` 在 PATH 中，或用 `MIHOMO_BINARY` 指定内核路径。`MIHOMO_TEST_HOME` 可指向仓库外已有的规则缓存；未设置时使用临时目录。工具覆盖来源识别、原名恢复、分组引用与运行时成员；运行时校验需自行取得已渲染配置及所需规则数据。
 
-**如果使用UA3F，需要先启用UA3F并配置为HTTP模式，再开启代理，否则大陆服务无法访问**
+实际订阅、连接凭据和 `*.rendered.yaml` 存放在仓库外。公开模板只提供结构，不包含真实订阅链接。
 
-最后启动ShellCrash即可
+## TrojanPanel 归档
 
-**如果缺失geo规则无法启动，可以手动下载到/etc/ShellCrash目录中：**
-```
-wget https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb /etc/ShellCrash/GeoLite2-ASN.mmdb && wget https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat /etc/ShellCrash/geoip.dat && wget https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat /etc/ShellCrash/geosite.dat && wget https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb /etc/ShellCrash/Ggeoip.metadb
-```
+TrojanPanel 已停止维护，相关客户端模板与服务端 Xray 示例原样迁入 [archive/trojanpanel](archive/trojanpanel/README.md)。这些文件不参与主线模板更新和校验。
+
+## ShellCrash 归档
+
+ShellCrash 停止维护，历史配置、UA3F 变体、覆写文件与专用文件描述符工具保存在 `shellcrash` 分支和 `shellcrash-archive-20261008` tag，对应提交 `337c97a`。主线已移除这些文件与安装指引；旧设备需要时从归档取用。

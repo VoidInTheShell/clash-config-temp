@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[2]
 RENDERED = (
     Path(sys.argv[1]).resolve()
     if len(sys.argv) > 1
-    else ROOT / "sublink" / "mihomo_fakeip_whitelist.rendered.yaml"
+    else ROOT / "sublink" / "mihomo_fakeip_rule.rendered.yaml"
 )
 EXPECTED_PROXY_COUNT = int(sys.argv[2]) if len(sys.argv) > 2 else None
-CANDIDATE = ROOT / "sublink" / "sublinkpro_mihomo_fakeip_whitelist.yaml"
+CANDIDATE = ROOT / "sublink" / "sublinkpro_mihomo_fakeip_rule.yaml"
 
 FLAG_PATTERN = r"[\U0001F1E6-\U0001F1FF]{2}"
 INFO_PATTERN = re.compile(r"剩余流量|套餐到期|下次重置|重置剩余|官网", re.IGNORECASE)
@@ -49,12 +49,12 @@ def count_token(names: list[str], token: str) -> int:
     return sum(has_token(name, token) for name in names)
 
 
-def excludes_home(group: dict[str, Any]) -> bool:
+def excludes_token(group: dict[str, Any], token: str) -> bool:
     pattern = str(group.get("exclude-filter", ""))
     if not pattern:
         return False
     try:
-        return re.search(pattern, "🇭🇰 香港 家宽 Netflix") is not None
+        return re.search(pattern, f"🇭🇰 香港 {token} Netflix") is not None
     except re.error:
         return False
 
@@ -94,6 +94,11 @@ def main() -> None:
     groups = rendered.get("proxy-groups") or []
     group_map = {str(group["name"]): group for group in groups}
 
+    self_groups = {"自建节点", "自建选1", "自建选2", "自建选3"}
+    self_slots = ["自建选1", "自建选2", "自建选3"]
+    self_names = set(group_map.get("自建节点", {}).get("proxies") or [])
+    airport_names = [name for name in names if name not in self_names]
+
     builtins = {"DIRECT", "REJECT", "REJECT-DROP", "PASS", "COMPATIBLE", "GLOBAL"}
     unresolved = sorted(
         {
@@ -121,7 +126,7 @@ def main() -> None:
         "Gemini": sum(has_token(name, "AI") or has_token(name, "Gemini") for name in names),
         "OpenAI": sum(has_token(name, "AI") or has_token(name, "OpenAI") for name in names),
         "Netflix": count_token(names, "Netflix"),
-        "SelfBuilt": count_token(names, "自建"),
+        "SelfBuilt": len(self_names),
     }
 
     preserved_keys = (
@@ -142,22 +147,22 @@ def main() -> None:
 
     old_markers = ("[LC=", "[G=", "[OA=", "[GM=", "[CL=", "[NF=")
     duplicate_flags = sum(
-        re.match(rf"^{FLAG_PATTERN}\s+{FLAG_PATTERN}", name) is not None for name in names
+        re.match(rf"^{FLAG_PATTERN}\s+{FLAG_PATTERN}", name) is not None for name in airport_names
     )
-    ai_preferred = group_map["AI优选"]
+    claude = group_map["Claude"]
     media_unlock = group_map["流媒体解锁"]
     home_group = group_map["家宽手选"]
-    home_names = [name for name in names if has_token(name, "家宽")]
+    home_names = [name for name in names if has_token(name, "家宽") and name not in self_names]
     home_name_set = set(home_names)
     parent_groups = [
-        group for group in groups if "自建手选" in (group.get("proxies") or [])
+        group for group in groups if "自建节点" in (group.get("proxies") or [])
     ]
     dynamic_groups_without_home_exclusion = [
         str(group.get("name", ""))
         for group in groups
-        if group.get("name") != "家宽手选"
+        if group.get("name") not in self_groups | {"家宽手选"}
         and group.get("include-all") is True
-        and not excludes_home(group)
+        and not excludes_token(group, "家宽")
     ]
     explicit_home_membership_violations = {
         str(group.get("name", "")): sorted(
@@ -168,32 +173,71 @@ def main() -> None:
         and home_name_set.intersection(set(group.get("proxies") or []))
     }
 
+    self_group = group_map.get("自建节点", {})
+    self_exclusion_violations = [
+        group.get("name") for group in groups
+        if group.get("name") not in self_groups
+        and group.get("include-all") is True
+        and not all(re.search(str(group.get("exclude-filter") or r"(?!)"), name) for name in self_names)
+    ]
+    self_explicit_violations = [
+        group.get("name") for group in groups
+        if group.get("name") not in self_groups
+        and self_names.intersection(group.get("proxies") or [])
+    ]
     checks = {
         "proxy_count": bool(proxies)
         and (EXPECTED_PROXY_COUNT is None or len(proxies) == EXPECTED_PROXY_COUNT),
         "all_proxies_are_mappings": len(proxy_maps) == len(proxies),
         "unique_proxy_names": len(names) == len(set(names)),
-        "all_names_start_with_one_flag": bool(names)
-        and all(re.match(rf"^(?:{FLAG_PATTERN}|🏳️) ", name) is not None for name in names),
+        "airport_names_start_with_one_flag": bool(airport_names)
+        and all(re.match(rf"^(?:{FLAG_PATTERN}|🏳️) ", name) is not None for name in airport_names),
         "duplicate_flags_removed": duplicate_flags == 0,
-        "airport_info_removed": all(INFO_PATTERN.search(name) is None for name in names),
-        "airport_semantics_removed": all(AIRPORT_SEMANTIC_PATTERN.search(name) is None for name in names),
+        "airport_info_removed": all(INFO_PATTERN.search(name) is None for name in airport_names),
+        "airport_semantics_removed": all(AIRPORT_SEMANTIC_PATTERN.search(name) is None for name in airport_names),
         "old_machine_markers_removed": all(not any(marker in name for marker in old_markers) for name in names),
-        "home_nodes_present": bool(home_names),
-        "proxy_group_count": len(groups) == 49,
+        "self_nodes_present": bool(self_names),
+        "self_group_is_select": self_group.get("type") == "select",
+        "self_group_has_explicit_members": bool(self_names) and self_names.issubset(names),
+        "self_group_has_no_name_filter": "include-all" not in self_group
+        and "filter" not in self_group and "exclude-filter" not in self_group,
+        "no_internal_name_markers": all("__SUBLINK_SELF_NAME_" not in name for name in names),
+        "all_other_dynamic_groups_exclude_self": not self_exclusion_violations,
+        "self_nodes_not_explicit_elsewhere": not self_explicit_violations,
+        "self_slots_same_members": all(
+            group_map.get(name, {}).get("proxies") == self_group.get("proxies")
+            and group_map.get(name, {}).get("type") == "select"
+            and not any(key in group_map.get(name, {}) for key in ("use", "include-all", "filter", "exclude-filter"))
+            for name in self_slots
+        ),
+        "self_slots_after_self": [group["name"] for group in groups][
+            [group["name"] for group in groups].index("自建节点") + 1:
+            [group["name"] for group in groups].index("自建节点") + 4
+        ] == self_slots,
+        "self_slots_in_all_manual_groups": all(
+            all(name in (group.get("proxies") or []) for name in self_slots)
+            for group in groups if group.get("type") == "select" and group["name"] not in self_groups
+        ),
+        "old_self_group_removed": "自建手选" not in group_map,
+        "proxy_group_count": len(groups) == len(candidate["proxy-groups"]),
         "unique_proxy_groups": len(groups) == len(group_map),
         "no_unresolved_group_references": not unresolved,
         "home_group_is_select": home_group.get("type") == "select",
-        "home_group_has_explicit_members": home_group.get("proxies") == home_names,
-        "home_group_dynamic_filter_removed": "include-all" not in home_group
-        and "filter" not in home_group,
+        "home_group_membership_mode": (
+            home_group.get("proxies") == home_names + self_slots
+            and "include-all" not in home_group and "filter" not in home_group
+        ) if home_names else (
+            home_group.get("include-all") is True
+            and home_group.get("filter") == r"(?:^| )家宽(?: |#|$)"
+            and all(re.search(str(home_group.get("exclude-filter") or r"(?!)"), name) for name in self_names)
+        ),
         "home_nodes_sorted": home_names == sorted(home_names, key=home_sort_key),
         "all_other_dynamic_groups_exclude_home": not dynamic_groups_without_home_exclusion,
         "home_nodes_not_explicit_elsewhere": not explicit_home_membership_violations,
-        "home_after_self_in_parent_groups": len(parent_groups) == 17
+        "home_after_self_in_parent_groups": len(parent_groups) == sum("自建节点" in (g.get("proxies") or []) for g in candidate["proxy-groups"])
         and all(
             group["proxies"].index("家宽手选")
-            == group["proxies"].index("自建手选") + 1
+            == group["proxies"].index("自建节点") + 4
             for group in parent_groups
         ),
         "home_not_added_to_active_groups": all(
@@ -201,8 +245,11 @@ def main() -> None:
             for group in groups
             if group.get("type") in {"load-balance", "fallback", "url-test"}
         ),
-        "ai_preferred_is_fallback": ai_preferred.get("type") == "fallback",
-        "ai_preferred_order": ai_preferred.get("proxies") == ["通用", "Claude", "Gemini", "OpenAI"],
+        "removed_ai_node_groups": not {"AI优选", "AI稳定", "Gemini", "OpenAI", "通用"}.intersection(group_map),
+        "claude_is_service_selector": claude == next(g for g in candidate["proxy-groups"] if g["name"] == "Claude"),
+        "claude_after_ai": list(group_map).index("Claude") == list(group_map).index("AI") + 1,
+        "pool_follows_proxy": group_map["IP池"]["proxies"][0] == "PROXY"
+        and group_map["IP池"].get("default-selected") == "PROXY",
         "media_unlock_is_url_test": media_unlock.get("type") == "url-test",
         "no_proxy_providers": "proxy-providers" not in rendered,
         "no_groups_with_use": all("use" not in group for group in groups),
@@ -221,9 +268,9 @@ def main() -> None:
         "features": features,
         "duplicate_flags": duplicate_flags,
         "unresolved_group_references": unresolved,
-        "ai_preferred": {
-            "type": ai_preferred.get("type"),
-            "order": ai_preferred.get("proxies"),
+        "claude": {
+            "type": claude.get("type"),
+            "default": claude.get("default-selected"),
         },
         "media_unlock": {
             "type": media_unlock.get("type"),
