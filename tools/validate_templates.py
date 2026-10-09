@@ -18,6 +18,8 @@ FILES = [
     "sublink/sublinkpro_mihomo_fakeip_rule.yaml",
 ]
 
+CLAUDE_DNS_OVERLAP_PROVIDER = "VoidAClaudeOverlap"
+
 
 class UniqueLoader(yaml.SafeLoader):
     """Reject repeated keys, allowing YAML merge keys."""
@@ -122,13 +124,23 @@ def validate(filename):
             referenced_filters.update(entry.removeprefix("rule-set:").split(","))
     for name in referenced_filters:
         assert config["rule-providers"][name]["behavior"] == "domain"
-    for name, path in {"VoidClaude": "void-claude-rules", "VoidSTUN": "stun"}.items():
+    for name, path in {
+        "VoidAClaudeOverlap": "void-claude-ai-overlap",
+        "VoidClaude": "void-claude-rules",
+        "VoidSTUN": "stun",
+    }.items():
         provider = config["rule-providers"][name]
         assert provider["format"] == "mrs"
         assert provider["url"].endswith(f"/dist/{path}/mihomo-domain.mrs")
     policy = config["dns"]["nameserver-policy"]
     assert policy["rule-set:VoidClaude"] == [s.replace("#AI", "#Claude") for s in policy["rule-set:VoidAI"]]
-    assert list(policy).index("rule-set:VoidClaude") < list(policy).index("rule-set:VoidAI")
+    overlap_key = f"rule-set:{CLAUDE_DNS_OVERLAP_PROVIDER}"
+    assert overlap_key in policy
+    assert policy[overlap_key] == policy["rule-set:VoidClaude"]
+    # Xboard/Sublink may sort mapping keys. The generated overlap rule must
+    # still precede VoidAI after that transformation.
+    sorted_policy_keys = sorted(policy)
+    assert sorted_policy_keys.index(overlap_key) < sorted_policy_keys.index("rule-set:VoidAI")
     assert config["rules"].index("RULE-SET,VoidClaude,Claude") < config["rules"].index("RULE-SET,VoidAI,AI")
     assert config["rules"][config["rules"].index("RULE-SET,VoidCrossBorderFinance,跨境金融") + 1] == "RULE-SET,VoidClaude,Claude"
     assert "DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve" in config["rules"]

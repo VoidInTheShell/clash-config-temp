@@ -1,40 +1,31 @@
-# Mihomo 订阅与分流模板
+# Void-Configs
 
-主线维护三个方向：**SublinkPro 聚合模板、PanelTemp（Xboard 订阅模板）、Mihomo Providers 配置**。SublinkPro 与 Providers 版用于聚合机场和自建节点：源码、资源下载等常规代理流量走机场；需要固定出口 IP 的服务通过独立自建组选择节点。PanelTemp 只使用 Xboard 为当前用户生成的自建节点。
+分流合理、覆盖多种流量处理规则与使用场景的多终端Clash系客户端配置文件
 
-| 方向 | 文件 | 节点来源 | 使用方式 |
-| --- | --- | --- | --- |
-| SublinkPro | [rule 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml) + [重命名脚本](sublink/sublinkpro_node_metadata_rename.js) | 多个机场来源、名称以 `自建` 开头的来源组 | 在 SublinkPro 中渲染后导入客户端 |
-| PanelTemp | [panel_mihomo_fakeip_rule.yaml](panel_mihomo_fakeip_rule.yaml) | Xboard 当前用户有权订阅的节点 | 整份填入 Xboard 的 `clashmeta` 订阅模板 |
-| Providers rule（推荐） | [multi_providers_mihomo_fakeip_rule.yaml](multi_providers_mihomo_fakeip_rule.yaml) | 一个自建提供商 + 多个机场提供商 | 填好订阅 URL 后交给 Mihomo 内核 |
-| Providers 白名单 | [multi_providers_mihomo_fakeip_whitelist.yaml](multi_providers_mihomo_fakeip_whitelist.yaml) | 一个自建提供商 + 多个机场提供商 | 填好订阅 URL 后交给 Mihomo 内核 |
-| Providers 黑名单兼容 | [multi_providers_mihomo.yaml](multi_providers_mihomo.yaml) | 同上 | 使用 rule 语法保留黑名单默认行为，并优先为 Claude/STUN 返回 Fake-IP |
+
+| 方向                 | 文件                                                                                                          | 节点来源                   | 使用方式                                            |
+| ------------------ | ----------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------- |
+| SublinkPro         | [rule 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml) + [重命名脚本](sublink/sublinkpro_node_metadata_rename.js) | 多个机场来源、名称以 `自建` 开头的来源组 | 在 SublinkPro 中渲染后导入客户端                          |
+| PanelTemp          | [panel\_mihomo\_fakeip\_rule.yaml](panel_mihomo_fakeip_rule.yaml)                                           | Xboard 当前用户有权订阅的节点     | 整份填入 Xboard 的 `clashmeta` 订阅模板                  |
+| Providers rule（推荐） | [multi\_providers\_mihomo\_fakeip\_rule.yaml](multi_providers_mihomo_fakeip_rule.yaml)                      | 一个自建提供商 + 多个机场提供商      | 填好订阅 URL 后交给 Mihomo 内核                          |
+| Providers 白名单      | [multi\_providers\_mihomo\_fakeip\_whitelist.yaml](multi_providers_mihomo_fakeip_whitelist.yaml)            | 一个自建提供商 + 多个机场提供商      | 填好订阅 URL 后交给 Mihomo 内核                          |
+| Providers 黑名单兼容    | [multi\_providers\_mihomo.yaml](multi_providers_mihomo.yaml)                                                | 同上                     | 使用 rule 语法保留黑名单默认行为，并优先为 Claude/STUN 返回 Fake-IP |
+
 
 白名单版对 `VoidClaude`、`VoidSTUN`、`VoidFakeIPForce` 中的域名返回 Fake-IP。其余维护中的模板使用 Fake-IP `rule` 模式，最终均为 `MATCH,fake-ip`。黑名单兼容版先匹配 Claude/STUN，再对排除集返回真实 IP；专用 rule 版还会优先匹配 `VoidFakeIPForce`。SublinkPro 使用脚本注入节点和元数据分组。
 
-## 自建出口与服务分流
+## 不调整分流组、默认情况下的分流策略
 
-Providers 和 SublinkPro 提供以下四个组，排列顺序固定：
 
-1. `自建节点`：自建节点总入口。
-2. `自建选1`：独立手动选择一个自建节点。
-3. `自建选2`：独立手动选择一个自建节点。
-4. `自建选3`：独立手动选择一个自建节点。
+| 流量或服务                    | 默认策略               |
+| ------------------------ | ------------------ |
+| `PROXY`、常规境外站点、CDN 和资源下载 | 自动选择所有机场节点中延迟最低的节点 |
+| `AI`、`Claude`            | 跟随 `PROXY`         |
+| `TikTok`                 | 跟随 `PROXY`         |
+| `跨境金融`                   | 跟随 `PROXY`         |
+| `IPCheck`                | 跟随 `PROXY`         |
+| `IP池`                    | 跟随 `PROXY`         |
 
-四组均为 `select`，直接成员是同一批自建节点，选择状态互相独立。三个新组加入**所有其他手动选择组**，包括业务组、全部手选、地区手选和家宽手选；已有 `自建节点` 的候选列表按上述顺序连续排列。四个自建组自身不相互嵌套。自动测速、故障转移、负载均衡组不加入三个手动出口组。
-
-PanelTemp 全部来自自建面板，统一改为 `自选1`、`自选2`、`自选3`、`自选4`。四组都是手动选择，均包含当前用户的全部节点，没有筛选器；服务默认出口分别使用自选1/2/3。旧 `自建选1/2/3` 对应自选1/2/3，旧总入口 `自建节点` 对应自选4。
-
-| 流量或服务 | 默认策略 |
-| --- | --- |
-| `PROXY`、常规境外站点、CDN 和资源下载 | 机场自动选择；原有大陆直连规则继续生效 |
-| `AI`、`Claude` | `自建选1`（PanelTemp 为 `自选1`） |
-| `TikTok` | `自建选2` |
-| `跨境金融` | `自建选3` |
-| `IPCheck` | 跟随 `PROXY`，也可手动选任一自建出口检查 IP |
-| `IP池` | 首选及 `default-selected` 均为 `PROXY` |
-
-服务默认值通过 Mihomo 的 `default-selected` 设置。已有客户端保存的选择优先于初始默认值；升级模板后如需采用新默认，请在客户端切换一次。其他有 IP 要求的服务也可自行选用这三个组。它们不会自动按地区选节点，也不会互相切换出口。PanelTemp 没有机场来源，表中的常规代理流量使用面板节点。
 
 ## SublinkPro
 
@@ -102,12 +93,6 @@ dns:
 - IPPure 主域规则为 `DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve`。
 - `IP池` 紧跟 `IPCheck`，第一候选为 `PROXY`，其余候选与各模板 `PROXY` 一致，默认跟随 `PROXY`。它使用自有 [void-rules](https://github.com/VoidInTheShell/void-rules) 的 `ip-proxy-pools` 规则，相关 DNS 也经该组解析。域名规则不覆盖服务商直接下发的裸 `IP:port`。
 - Loyalsoldier `.txt` 规则按 YAML payload 加载。
-
-## Zashboard 策略组与节点组
-
-导入 [zashboard-settings.json](zashboard-settings.json)，将 `PROXY`、`IPCheck`、`IP池`、`AI`、`Claude` 等业务分流组放入“策略组”，全部手选、地区手选、家宽手选、自建/自选、测速和故障转移等放入“节点组”。该文件仅设置文件夹分类及开启文件夹模式。
-
-Zashboard 默认按是否嵌套其他组分类，因此仅更新 YAML 无法让嵌套自选组的手选组进入“节点组”。在 Zashboard 设置中的导入设置入口导入上述 JSON；此设置保存在浏览器中，每个浏览器需单独导入。分类规则参考 [Zashboard 文件夹实现](https://github.com/Zephyruso/zashboard/blob/main/src/store/proxy-folders.ts)。
 
 ## 本地验证
 

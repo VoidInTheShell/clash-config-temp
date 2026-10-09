@@ -992,6 +992,12 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - '114.114.114.114'
+    # Generated VoidAI/Claude overlap must sort before VoidAI in subscribers.
+    'rule-set:VoidAClaudeOverlap':
+      - 'https://8.8.8.8/dns-query#Claude'
+      - 'https://1.1.1.1/dns-query#Claude'
+      - 'https://9.9.9.9/dns-query#Claude'
+      - 'https://208.67.222.222/dns-query#Claude'
     'rule-set:VoidClaude':
       - 'https://8.8.8.8/dns-query#Claude'
       - 'https://1.1.1.1/dns-query#Claude'
@@ -1215,6 +1221,7 @@ rule-anchor:
   class_yaml: &class_yaml {type: http, interval: 86400, behavior: classical, format: yaml}
 rule-providers:
   VoidClaude: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-rules/mihomo-domain.mrs" }
+  VoidAClaudeOverlap: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-ai-overlap/mihomo-domain.mrs" }
   VoidSTUN: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/stun/mihomo-domain.mrs" }
   VoidCrossBorderFinance: { <<: *class_yaml, path: ./RuleSet/VoidCrossBorderFinance.yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/cross-border-finance/mihomo-classical.yaml" }
   IPProxyPools: { <<: *domain, path: ./RuleSet/IPProxyPools.mrs, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ip-proxy-pools/mihomo-domain.mrs" }
