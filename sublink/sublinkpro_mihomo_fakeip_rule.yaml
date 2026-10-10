@@ -1079,6 +1079,11 @@ rules:
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
+  # MRS 不含关键词规则；vrdesktop 保留在下方 SpaceDesk 规则中。
+  - DOMAIN-KEYWORD,-ad.sm.cn,REJECT
+  - DOMAIN-KEYWORD,-ad.video.yximgs.com,REJECT
+  - DOMAIN-KEYWORD,-ad.wtzw.com,REJECT
+  - DOMAIN-KEYWORD,-be-pack-sign.pglstatp-toutiao.com,REJECT
   - RULE-SET,VoidAds,REJECT
   # ADBlock
   - DOMAIN,youxi.xunlei.com,REJECT
@@ -1229,7 +1234,7 @@ rule-providers:
   Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
   VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
   VoidFakeIPBypass: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs" }
-  VoidAds: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml" }
+  VoidAds: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-domain.mrs" }
   VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
   VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
   blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }

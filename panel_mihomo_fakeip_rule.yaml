@@ -135,7 +135,6 @@ proxy-groups:
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/aihdde/Rules@master/icon/fish.png
 - name: AI
-  default-selected: 自选1
   type: select
   proxies:
   - PROXY
@@ -151,7 +150,6 @@ proxy-groups:
   icon: https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png
 
 - name: Claude
-  default-selected: 自选1
   type: select
   proxies:
   - PROXY
@@ -180,7 +178,6 @@ proxy-groups:
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
 - name: 跨境金融
-  default-selected: 自选3
   type: select
   proxies:
   - PROXY
@@ -289,7 +286,6 @@ proxy-groups:
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png
 - name: TikTok
-  default-selected: 自选2
   type: select
   proxies:
   - DIRECT
@@ -587,7 +583,6 @@ dns:
       - '223.5.5.5'
       - '119.29.29.29'
       - '114.114.114.114'
-    # Generated VoidAI/Claude overlap must sort before VoidAI in subscribers.
     'rule-set:VoidAClaudeOverlap':
       - 'https://8.8.8.8/dns-query#Claude'
       - 'https://1.1.1.1/dns-query#Claude'
@@ -637,8 +632,6 @@ rules:
   - DOMAIN-SUFFIX,ipleak.com,IPCheck
   - DOMAIN-SUFFIX,ip-api.com,IPCheck
   - DOMAIN-SUFFIX,iplark.com,IPCheck
-  # IPPure 的取 IP 接口跟随 IPCheck；检测域名禁用 QUIC，使用 TCP 出口。
-  - AND,((NETWORK,UDP),(DST-PORT,443),(OR,((DOMAIN-SUFFIX,ippure.com),(DOMAIN-SUFFIX,icanhazip.com),(DOMAIN-SUFFIX,ipify.org),(DOMAIN,api.123169.xyz),(DOMAIN,cf.999831.xyz),(DOMAIN-SUFFIX,ipinfo.io),(DOMAIN-SUFFIX,ipapi.co)))),REJECT
   - DOMAIN-SUFFIX,icanhazip.com,IPCheck
   - DOMAIN-SUFFIX,ipify.org,IPCheck
   - DOMAIN,api.123169.xyz,IPCheck
@@ -674,6 +667,11 @@ rules:
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
+  # MRS 不含关键词规则；vrdesktop 保留在下方 SpaceDesk 规则中。
+  - DOMAIN-KEYWORD,-ad.sm.cn,REJECT
+  - DOMAIN-KEYWORD,-ad.video.yximgs.com,REJECT
+  - DOMAIN-KEYWORD,-ad.wtzw.com,REJECT
+  - DOMAIN-KEYWORD,-be-pack-sign.pglstatp-toutiao.com,REJECT
   - RULE-SET,VoidAds,REJECT
   # ADBlock
   - DOMAIN,youxi.xunlei.com,REJECT
@@ -824,7 +822,7 @@ rule-providers:
   Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
   VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
   VoidFakeIPBypass: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs" }
-  VoidAds: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml" }
+  VoidAds: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-domain.mrs" }
   VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
   VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
   blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }

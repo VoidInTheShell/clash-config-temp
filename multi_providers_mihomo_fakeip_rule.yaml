@@ -189,7 +189,6 @@ proxy-groups:
   # 首选跟随 PROXY，其余成员与 PROXY 一致；用于代理服务商官网、面板、API 和网关
   - name: IP池
     type: select
-    default-selected: PROXY
     proxies:
       - PROXY
       - 自动选择
@@ -346,7 +345,6 @@ proxy-groups:
   # --- AI 服务 ---
   # 默认自建选1，可手动切换其他出口
   - name: AI
-    default-selected: 自建选1
     type: select
     proxies:
       - PROXY
@@ -374,7 +372,6 @@ proxy-groups:
     icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
 
   - name: Claude
-    default-selected: 自建选1
     type: select
     proxies:
       - PROXY
@@ -439,7 +436,6 @@ proxy-groups:
 
   # --- 跨境金融（默认自建选3，独立固定出口） ---
   - name: 跨境金融
-    default-selected: 自建选3
     type: select
     proxies:
       - 自动选择
@@ -636,7 +632,6 @@ proxy-groups:
   # --- TikTok ---
   # 默认自建选2，独立保存 TikTok 出口
   - name: TikTok
-    default-selected: 自建选2
     type: select
     proxies:
       - DIRECT
@@ -1065,8 +1060,6 @@ rules:
   - DOMAIN-SUFFIX,ipleak.com,IPCheck
   - DOMAIN-SUFFIX,ip-api.com,IPCheck
   - DOMAIN-SUFFIX,iplark.com,IPCheck
-  # IPPure 的取 IP 接口跟随 IPCheck；检测域名禁用 QUIC，使用 TCP 出口。
-  - AND,((NETWORK,UDP),(DST-PORT,443),(OR,((DOMAIN-SUFFIX,ippure.com),(DOMAIN-SUFFIX,icanhazip.com),(DOMAIN-SUFFIX,ipify.org),(DOMAIN,api.123169.xyz),(DOMAIN,cf.999831.xyz),(DOMAIN-SUFFIX,ipinfo.io),(DOMAIN-SUFFIX,ipapi.co)))),REJECT
   - DOMAIN-SUFFIX,icanhazip.com,IPCheck
   - DOMAIN-SUFFIX,ipify.org,IPCheck
   - DOMAIN,api.123169.xyz,IPCheck
@@ -1102,6 +1095,11 @@ rules:
   # Block
   - RULE-SET,CNHTTPDNS,REJECT
   - RULE-SET,PCDN,REJECT
+  # MRS 不含关键词规则；vrdesktop 保留在下方 SpaceDesk 规则中。
+  - DOMAIN-KEYWORD,-ad.sm.cn,REJECT
+  - DOMAIN-KEYWORD,-ad.video.yximgs.com,REJECT
+  - DOMAIN-KEYWORD,-ad.wtzw.com,REJECT
+  - DOMAIN-KEYWORD,-be-pack-sign.pglstatp-toutiao.com,REJECT
   - RULE-SET,VoidAds,REJECT
   # ADBlock
   - DOMAIN,youxi.xunlei.com,REJECT
@@ -1141,8 +1139,8 @@ rules:
   - DOMAIN-SUFFIX,googleapis.com,Google,no-resolve
   - DOMAIN-SUFFIX,gstatic.com,Google,no-resolve
   - GEOSITE,GOOGLE-CN,REJECT,no-resolve
-  - RULE-SET,Google,Google
   - RULE-SET,Gemini,Google
+  - RULE-SET,Google,Google
   - GEOIP,GOOGLE,Google,no-resolve
   # AI
   - RULE-SET,VoidAI,AI
@@ -1252,7 +1250,7 @@ rule-providers:
   Blizzard: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Blizzard/Blizzard.yaml" }
   VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
   VoidFakeIPBypass: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs" }
-  VoidAds: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-classical.yaml" }
+  VoidAds: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-domain.mrs" }
   VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
   VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
   blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }

@@ -3,13 +3,13 @@
 分流合理、覆盖多种流量处理规则与使用场景的多终端Clash系客户端配置文件
 
 
-| 方向                 | 文件                                                                                                          | 节点来源                   | 使用方式                                            |
-| ------------------ | ----------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------- |
-| SublinkPro         | [rule 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml) + [重命名脚本](sublink/sublinkpro_node_metadata_rename.js) | 多个机场来源、名称以 `自建` 开头的来源组 | 在 SublinkPro 中渲染后导入客户端                          |
-| PanelTemp          | [panel\_mihomo\_fakeip\_rule.yaml](panel_mihomo_fakeip_rule.yaml)                                           | Xboard 当前用户有权订阅的节点     | 整份填入 Xboard 的 `clashmeta` 订阅模板                  |
-| Providers rule（推荐） | [multi\_providers\_mihomo\_fakeip\_rule.yaml](multi_providers_mihomo_fakeip_rule.yaml)                      | 一个自建提供商 + 多个机场提供商      | 填好订阅 URL 后交给 Mihomo 内核                          |
-| Providers 白名单      | [multi\_providers\_mihomo\_fakeip\_whitelist.yaml](multi_providers_mihomo_fakeip_whitelist.yaml)            | 一个自建提供商 + 多个机场提供商      | 填好订阅 URL 后交给 Mihomo 内核                          |
-| Providers 黑名单兼容    | [multi\_providers\_mihomo.yaml](multi_providers_mihomo.yaml)                                                | 同上                     | 使用 rule 语法保留黑名单默认行为，并优先为 Claude/STUN 返回 Fake-IP |
+| 方向                 | 文件                                                                                                          | 说明                                      | 使用方式                      |
+| ------------------ | ----------------------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------- |
+| SublinkPro         | [rule 模板](sublink/sublinkpro_mihomo_fakeip_rule.yaml) + [重命名脚本](sublink/sublinkpro_node_metadata_rename.js) | 基于fakeip rule的Sublinkpro规则模板，DNS、分流规则不变 | 见下文Sublink章节              |
+| PanelTemp          | [panel\_mihomo\_fakeip\_rule.yaml](panel_mihomo_fakeip_rule.yaml)                                           | 同上，Xboard                               | 填入模板即可                    |
+| Providers rule（推荐） | [multi\_providers\_mihomo\_fakeip\_rule.yaml](multi_providers_mihomo_fakeip_rule.yaml)                      | 多供应商规则，可作为裸核配置启动，默认TUN+fakeip+rule      | 关闭客户端覆写，直接作为mihomo的配置文件启动 |
+| Providers 白名单      | [multi\_providers\_mihomo\_fakeip\_whitelist.yaml](multi_providers_mihomo_fakeip_whitelist.yaml)            | 同上，但fakeip使用白名单模式                       | 关闭客户端覆写，直接作为mihomo的配置文件启动 |
+| Providers 黑名单兼容    | [multi\_providers\_mihomo.yaml](multi_providers_mihomo.yaml)                                                | 同上                                      | 关闭客户端覆写，直接作为mihomo的配置文件启动 |
 
 
 白名单版对 `VoidClaude`、`VoidSTUN`、`VoidFakeIPForce` 中的域名返回 Fake-IP。其余维护中的模板使用 Fake-IP `rule` 模式，最终均为 `MATCH,fake-ip`。黑名单兼容版先匹配 Claude/STUN，再对排除集返回真实 IP；专用 rule 版还会优先匹配 `VoidFakeIPForce`。SublinkPro 使用脚本注入节点和元数据分组。
@@ -46,8 +46,6 @@
 1. 打开 Xboard 管理后台的订阅模板设置，选择 **Clash Meta / Mihomo（`clashmeta`）**。
 2. 将 [panel_mihomo_fakeip_rule.yaml](panel_mihomo_fakeip_rule.yaml) 的完整内容粘贴并保存。
 3. 使用有可订阅节点的用户获取 Mihomo 订阅。客户端需被识别为 Mihomo / Clash Meta；该模板不面向旧版 Clash 内核。
-
-顶层 `proxies: []` 由 Xboard 注入用户节点，模板不包含外部 `proxy-providers` 或机场 URL。`自选1–4` 各自使用空的 `proxies: []`，Xboard 自动追加全部节点，无正则或 `filter`。普通业务组中的 `/a^/` 阻止 Xboard 额外注入全部节点；地区手选继续使用 PHP 正则及自选组。自动测速只保留现有的 `自动选择`，已移除各地区 `自动测速-*` 及其引用；地区手选、故障转移仍保留。
 
 这是**面板输入模板**，正则占位符需要 Xboard 展开，不能直接导入 Mihomo。用户必须至少有一个可输出给 Mihomo 的节点；当前生成器会删除无成员的组，无节点用户的渲染结果不适合作为客户端配置。节点连接参数和订阅鉴权由 Xboard 生成，不填写到公开模板中。
 
