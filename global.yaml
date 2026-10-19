@@ -1,0 +1,171 @@
+#--------------------------------------------------------------------------------------#
+#-----------------------------WrittenByVoidInTheShell----------------------------------#
+#--------------------------------------------------------------------------------------#
+#-------------------------------Multi-Providers-Ver------------------------------------#
+#--------------------------------------------------------------------------------------#
+# 全球模式模板：四个代理提供者 → 唯一 PROXY 组；DNS redir-host + 四个加密 DNS 全走 PROXY；
+# IPv6 全量捕获并黑洞；规则仅大陆域名/大陆 IP 阻断，其余全部 MATCH,PROXY。
+
+# ========================================
+# 📌 模板定义
+# ========================================
+# 订阅提供者引用模板
+dy: &dy
+    type: http
+    udp: true
+    interval: 86400
+    proxy: DIRECT
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com/generate_204
+      interval: 600
+      expected-status: "204"
+      method: HEAD
+# ========================================
+# 📌 用户配置区
+# ========================================
+
+# 代理提供者链接配置，在"url:"后填入你的订阅链接
+# 共提供4个代理提供者位置，可根据需要增减，复制粘贴模板后更名即可
+# 四个提供者的全部节点统一进入唯一的 PROXY 组，不按名称筛选。
+proxy-providers:
+  1.p1:
+    url: ""
+    path: ./proxy_provider/p1.yaml 
+    <<: *dy
+    override:
+      additional-prefix: "p1 »"
+
+  2.p2:
+    url: ""
+    path: ./proxy_provider/p2.yaml
+    <<: *dy
+    override:
+      additional-prefix: "p2 »"
+
+  3.p3: 
+    url: ""
+    path: ./proxy_provider/p3.yaml 
+    <<: *dy
+    override:
+      additional-prefix: "p3 »"
+
+  4.p4: 
+    url: ""
+    path: ./proxy_provider/p4.yaml 
+    <<: *dy
+    override:
+      additional-prefix: "p4 »"
+
+# ========================================
+# 🎯 代理组配置
+# ========================================
+
+# 全球模式：唯一代理组，引用四个提供者的全部节点
+proxy-groups:
+  # 所有出站流量统一经此组出站；DNS 加密查询与 MATCH 规则均指向该组
+  - name: PROXY
+    type: select
+    use:
+      - 1.p1
+      - 2.p2
+      - 3.p3
+      - 4.p4
+    include-all: false
+    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
+
+#--------------------------------------------------------------------------------------#
+
+# ========================================
+# 📌 全局内核配置
+# ========================================
+
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+routing-mark: 7894
+mode: rule
+# IPv6 捕获：允许内核接受 IPv6 流量，TUN 获得 v6 地址并由 auto-route 路由 ::/1+8000::/1，
+# 使全部 IPv6 流量进入内核后交由 rules 中的 IPv6 黑洞丢弃；
+# 注意：系统其他网卡无 IPv6 时 TUN 的 v6 功能会被自动禁用，需强制开启请设置环境变量 SKIP_SYSTEM_IPV6_CHECK=1
+ipv6: true
+allow-lan: true
+log-level: info
+unified-delay: true
+tcp-concurrent: true
+#--------------------------------------------------------------------------------------#
+tun:
+  enable: true
+  stack: mixed
+  device: Meta
+  auto-route: true
+  strict-route: true
+  auto-detect-interface: true
+  auto-redirect: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+    - any:853
+    - tls://any:853
+    - tcp://any:853
+#--------------------------------------------------------------------------------------#
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: "https://gh-proxy.com/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://gh-proxy.com/github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+  mmdb: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb"
+  asn: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb"
+#--------------------------------------------------------------------------------------#
+profile:
+  store-selected: true
+#--------------------------------------------------------------------------------------#
+hosts:
+  services.googleapis.cn: services.googleapis.com
+  googleapis.cn: googleapis.com
+  google.cn: google.com
+#--------------------------------------------------------------------------------------#
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  # 解析 AAAA 记录，配合顶层 ipv6 与 TUN 捕获 IPv6 流量，再由 rules 黑洞丢弃
+  ipv6: true
+  prefer-h3: false
+  respect-rules: false
+  cache-algorithm: arc
+  enhanced-mode: redir-host
+  # 域名解析统一使用以下四个加密 DNS，全部经 PROXY 组出站
+  nameserver:
+    - 'https://8.8.8.8/dns-query#PROXY'
+    - 'https://1.1.1.1/dns-query#PROXY'
+    - 'https://9.9.9.9/dns-query#PROXY'
+    - 'https://208.67.222.222/dns-query#PROXY'
+  proxy-server-nameserver:
+    - 'https://223.5.5.5/dns-query#DIRECT'
+    - 'https://doh.pub/dns-query#DIRECT'
+#--------------------------------------------------------------------------------------#
+rules:
+  # 阻断
+  # IPv6 黑洞：捕获到的所有 IPv6 流量全部静默丢弃；如需立即失败回退 IPv4 可改用 REJECT
+  - IP-CIDR,::/1,REJECT-DROP,no-resolve
+  - IP-CIDR,8000::/1,REJECT-DROP,no-resolve
+  # 大陆域名 / 大陆 IP 阻断
+  - RULE-SET,cn_domain,REJECT
+  - RULE-SET,cn_ip,REJECT,no-resolve
+  # 其余全部走 PROXY
+  - MATCH,PROXY
+#--------------------------------------------------------------------------------------#
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  ip_text: &ip_text {type: http, interval: 86400, behavior: ipcidr, format: text}
+  ip_yaml: &ip_yaml {type: http, interval: 86400, behavior: ipcidr, format: yaml}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  domain_4h: &domain_4h {type: http, interval: 14400, behavior: domain, format: mrs}
+  domain_text: &domain_text {type: http, interval: 86400, behavior: domain, format: text}
+  domain_yaml: &domain_yaml {type: http, interval: 86400, behavior: domain, format: yaml}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+  class_yaml: &class_yaml {type: http, interval: 86400, behavior: classical, format: yaml}
+rule-providers:
+  cn_domain: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs" }
+  cn_ip: { <<: *ip, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs" }

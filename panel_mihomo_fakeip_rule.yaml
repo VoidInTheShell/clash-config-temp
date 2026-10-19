@@ -617,10 +617,6 @@ dns:
       - 'https://9.9.9.9/dns-query#哔哩哔哩'
       - 'https://208.67.222.222/dns-query#哔哩哔哩'
 #--------------------------------------------------------------------------------------#
-routing:
-  domainStrategy: AsIs
-  domainMatcher: hybrid
-#--------------------------------------------------------------------------------------#
 rules:
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
   - RULE-SET,VoidCrossBorderFinance,跨境金融
