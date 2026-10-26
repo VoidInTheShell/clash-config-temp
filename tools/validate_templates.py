@@ -36,7 +36,7 @@ UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, map
 
 
 def validate(filename):
-    config = yaml.load((ROOT / filename).read_text(), Loader=UniqueLoader)
+    config = yaml.load((ROOT / filename).read_text(encoding="utf-8"), Loader=UniqueLoader)
     groups = config["proxy-groups"]
     group_map = {g["name"]: g for g in groups}
     assert len(groups) == len(group_map), "Duplicate group name"
@@ -54,15 +54,30 @@ def validate(filename):
     for group in groups:
         members = group.get("proxies") or []
         assert len(members) == len(set(members)), group["name"]
-        if group["name"] in selectors:
+        manual = "手选" in group["name"] or group["name"] == "流媒体解锁"
+        if manual:
+            assert group["type"] == "select"
+            assert not set(group_map).intersection(members), (group["name"], "Manual selectors must contain nodes only")
+            assert not set(members).intersection({"DIRECT", "REJECT", "COMPATIBLE"}), group["name"]
+            if panel:
+                assert all(member.startswith("/") and member.endswith("/") for member in members)
+            else:
+                assert group.get("include-all") is True and not members and "use" not in group, group["name"]
+                assert not group.get("exclude-filter") and not group.get("exclude-type"), group["name"]
+                if group["name"] in {"全部手选", "地区手选"}:
+                    assert not group.get("filter"), group["name"]
+                elif group["name"] == "流媒体解锁":
+                    assert group.get("filter") == "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)"
+        elif group["name"] in selectors:
             assert group["type"] == "select"
             assert not set(selectors).intersection(members), "Selector cycle"
             assert not any(k in group for k in ("filter", "exclude-filter", "exclude-type"))
         elif group["type"] == "select":
             assert set(selectors if panel else slots).issubset(members), group["name"]
             if set(selectors).issubset(members):
-                i = members.index(selectors[0])
-                assert members[i:i + 4] == selectors, group["name"]
+                ordered = [name for name in selectors if name != group.get("default-selected")]
+                i = members.index(ordered[0])
+                assert members[i:i + len(ordered)] == ordered, group["name"]
         else:
             assert not set(slots).intersection(members), group["name"]
         for member in members:
@@ -77,10 +92,17 @@ def validate(filename):
                 visit(member, stack + [name])
     for name in names:
         visit(name, [])
-    assert group_map["IP池"]["proxies"] == ["PROXY", *group_map["PROXY"]["proxies"]]
-    assert group_map["IP池"]["default-selected"] == "PROXY"
-    for name, slot in {"AI": slots[0], "Claude": slots[0], "TikTok": slots[1], "跨境金融": slots[2]}.items():
-        assert group_map[name]["default-selected"] == slot
+    pool_members = [member for member in group_map["IP池"]["proxies"] if member != "/a^/"]
+    proxy_members = [member for member in group_map["PROXY"]["proxies"] if member != "/a^/"]
+    assert pool_members == ["PROXY", *proxy_members]
+    for name, target in {"IP池": "PROXY", "AI": "PROXY", "Claude": "PROXY", "跨境金融": "PROXY", "STUN": "PROXY", "TikTok": "DIRECT", "海淘购物": "PROXY"}.items():
+        group = group_map[name]
+        assert group.get("default-selected", group["proxies"][0]) == target, name
+        assert group["proxies"][0] == target, (name, "Default must also work on older kernels")
+    assert "default-selected" not in group_map["TikTok"]
+    assert group_map["海淘购物"]["proxies"][:3] == ["PROXY", "DIRECT", "自动选择"]
+    assert config["rules"].count("RULE-SET,VoidSTUN,STUN") == 1
+    assert config["rules"].index("RULE-SET,VoidSTUN,STUN") < config["rules"].index("DOMAIN-SUFFIX,browserleaks.com,IPCheck")
     assert names[names.index("AI") + 1] == "Claude"
     comparable = lambda group: {k: v for k, v in group.items() if k not in {"name", "icon"}}
     assert comparable(group_map["AI"]) == comparable(group_map["Claude"])
@@ -91,6 +113,8 @@ def validate(filename):
         assert len(self_providers) == 1 and not set(self_providers).intersection(airports)
         assert set(config["proxy-providers"]) == set(self_providers + airports)
         for group in groups:
+            if "手选" in group["name"] or group["name"] == "流媒体解锁":
+                continue
             assert not group.get("include-all"), group["name"]
             if group["name"] in SELF_GROUPS:
                 assert group["use"] == self_providers and not group.get("filter")
@@ -153,7 +177,7 @@ def validate(filename):
     for key in policy:
         if key.startswith("rule-set:"):
             assert set(key.removeprefix("rule-set:").split(",")) <= config["rule-providers"].keys(), key
-    settings = json.loads((ROOT / "zashboard-settings.json").read_text())
+    settings = json.loads((ROOT / "zashboard-settings.json").read_text(encoding="utf-8"))
     folders = json.loads(settings["config/proxy-folders"])["folders"]
     def matches(folder, name):
         include = [r for r in folder["rules"] if r["type"] == "regex"]

@@ -136,7 +136,7 @@ def main() -> None:
                             assert query(listen_port, "chatgpt.com") == "203.0.113.22"
                             assert query(listen_port, "example.net") == "203.0.113.33"
                             break
-                        except (AssertionError, socket.timeout):
+                        except (AssertionError, socket.timeout, ConnectionResetError, ConnectionRefusedError):
                             if process.poll() is not None:
                                 raise AssertionError(log_path.read_text())
                             time.sleep(0.1)

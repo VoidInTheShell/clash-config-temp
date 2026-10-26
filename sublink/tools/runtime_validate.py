@@ -91,17 +91,32 @@ def expected_groups(names: list[str], self_names: list[str]) -> dict[str, list[s
     other = {name for name in eligible if not name.startswith(tuple(region_flags.values()))}
 
     expected["自动选择"] = sorted(eligible)
-    expected["全部手选"] = sorted(eligible)
+    expected["全部手选"] = sorted(name_set)
+    expected["地区手选"] = sorted(name_set)
 
-    for mode in ("手选", "负载均衡", "自动测速", "故障转移"):
+    for mode in ("负载均衡", "自动测速", "故障转移"):
         for code, members in regions.items():
             expected[f"{mode}-{code}"] = sorted(members)
         expected[f"{mode}-其他"] = sorted(other)
 
+    manual_patterns = {
+        "US": r"🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York",
+        "HK": r"🇭🇰|香港|HK|hong\s?kong",
+        "SG": r"🇸🇬|新加坡|狮城|SG|Singapore",
+        "JP": r"🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka",
+    }
+    manual_regions = {
+        code: {name for name in name_set if re.search(pattern, name, re.IGNORECASE)}
+        for code, pattern in manual_patterns.items()
+    }
+    for code, members in manual_regions.items():
+        expected[f"手选-{code}"] = sorted(members)
+    expected["手选-其他"] = sorted(name_set - set().union(*manual_regions.values()))
+
     for name in SELF_GROUPS:
         expected[name] = sorted(self_built)
-    expected["家宽手选"] = [name for name in names if name in home] + SELF_SLOTS
-    expected["流媒体解锁"] = sorted(token_members(eligible, "Netflix"))
+    expected["家宽手选"] = [name for name in names if name in home] + self_names
+    expected["流媒体解锁"] = sorted(name for name in name_set if re.search(r"流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO", name, re.IGNORECASE))
     return expected
 
 
@@ -194,25 +209,28 @@ def main() -> None:
             ai = runtime_proxies.get("AI") or {}
             if claude.get("type") != "Selector" or claude.get("all") != ai.get("all"):
                 failures.append("Claude-service-selector")
-            for name, expected_default in {"AI": "自建选1", "Claude": "自建选1", "IP池": "PROXY"}.items():
+            for name, expected_default in {"AI": "PROXY", "Claude": "PROXY", "跨境金融": "PROXY", "STUN": "PROXY", "TikTok": "DIRECT", "海淘购物": "PROXY", "IP池": "PROXY"}.items():
                 if runtime_proxies.get(name, {}).get("now") != expected_default:
                     failures.append(f"{name}-default")
+            if runtime_proxies.get("海淘购物", {}).get("all", [])[:3] != ["PROXY", "DIRECT", "自动选择"]:
+                failures.append("shopping-candidate-order")
             if {"AI优选", "AI稳定", "Gemini", "OpenAI", "通用"}.intersection(runtime_proxies):
                 failures.append("removed-AI-node-groups")
 
-            home_names = set(expected["家宽手选"]) - set(SELF_SLOTS)
+            home_names = set(expected["家宽手选"]) - set(self_group.get("proxies") or [])
             defined_group_names = {
                 str(group.get("name", ""))
                 for group in config.get("proxy-groups") or []
                 if isinstance(group, dict) and group.get("name")
             }
+            manual_group_names = {name for name in defined_group_names if "手选" in name or name == "流媒体解锁"}
             home_membership_violations = {
                 group_name: sorted(
                     home_names.intersection(
                         set((runtime_proxies.get(group_name) or {}).get("all") or [])
                     )
                 )
-                for group_name in sorted(defined_group_names - {"家宽手选"})
+                for group_name in sorted(defined_group_names - manual_group_names)
                 if home_names.intersection(
                     set((runtime_proxies.get(group_name) or {}).get("all") or [])
                 )
@@ -225,7 +243,7 @@ def main() -> None:
                 group_name: sorted(self_names.intersection(
                     set((runtime_proxies.get(group_name) or {}).get("all") or [])
                 ))
-                for group_name in sorted(defined_group_names - SELF_GROUPS)
+                for group_name in sorted(defined_group_names - SELF_GROUPS - manual_group_names)
                 if self_names.intersection(
                     set((runtime_proxies.get(group_name) or {}).get("all") or [])
                 )

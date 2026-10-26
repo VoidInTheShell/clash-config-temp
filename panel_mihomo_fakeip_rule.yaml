@@ -24,12 +24,24 @@ proxy-groups:
   - 故障转移-其他
   - DIRECT
   - /a^/
-  icon: https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png
 - name: IPCheck
   type: select
   proxies:
   - PROXY
   - DIRECT
+  - 全部手选
+  - 自选1
+  - 自选2
+  - 自选3
+  - 自选4
+  - /a^/
+  icon: https://gh-proxy.com/raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png
+# WebRTC/STUN：默认跟随 PROXY，VoidSTUN 规则在下方接入。
+- name: STUN
+  type: select
+  proxies:
+  - PROXY
   - 自动选择
   - 全部手选
   - 地区手选
@@ -37,11 +49,16 @@ proxy-groups:
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
+  - DIRECT
   - /a^/
-  icon: https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png
+  icon: https://www.svgrepo.com/show/354551/webrtc.svg
 - name: IP池
   type: select
-  default-selected: PROXY
   proxies:
   - PROXY
   - 自动选择
@@ -81,11 +98,10 @@ proxy-groups:
 - name: GlobalLegal
   type: select
   proxies:
-  - PROXY
   - DIRECT
+  - PROXY
   - GlobalSite
   - FINAL
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
@@ -106,13 +122,17 @@ proxy-groups:
   - PROXY
   - GlobalSite
   - FINAL
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Game.png
 - name: FINAL
@@ -138,36 +158,41 @@ proxy-groups:
   type: select
   proxies:
   - PROXY
-  - DIRECT
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
-  icon: https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png
+  icon: https://gh-proxy.com/github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png
 
 - name: Claude
   type: select
   proxies:
   - PROXY
-  - DIRECT
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
-  icon: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png
 - name: Google
   type: select
   proxies:
   - PROXY
-  - DIRECT
   - 自动选择
   - 全部手选
   - 地区手选
@@ -175,13 +200,17 @@ proxy-groups:
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
 - name: 跨境金融
   type: select
   proxies:
   - PROXY
-  - DIRECT
   - 自动选择
   - 全部手选
   - 地区手选
@@ -189,6 +218,12 @@ proxy-groups:
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
+  - DIRECT
   - /a^/
   icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cryptocurrency_3.png
 - name: CDN
@@ -210,6 +245,7 @@ proxy-groups:
   - 故障转移-其他
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png
+# 同时包含亚马逊 CDN，会影响相关游戏和站点；默认跟随 PROXY。
 - name: 海淘购物
   type: select
   proxies:
@@ -222,20 +258,29 @@ proxy-groups:
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Amazon.png
 - name: 流媒体
   type: select
   proxies:
   - PROXY
-  - DIRECT
-  - 自动选择
+  - 流媒体解锁
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
 - name: MicrosoftBing
@@ -261,28 +306,33 @@ proxy-groups:
   type: select
   proxies:
   - DIRECT
-  - PROXY
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-HK
+  - PROXY
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png
+# 包含 Apple 大陆服务，默认直连；选择代理会一起改变这些服务的出口。
 - name: Apple
   type: select
   proxies:
   - DIRECT
-  - PROXY
-  - 自动选择
   - 全部手选
   - 地区手选
   - 自选1
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-HK
+  - 故障转移-SG
+  - 故障转移-JP
+  - 故障转移-其他
+  - PROXY
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png
 - name: TikTok
@@ -297,6 +347,9 @@ proxy-groups:
   - 自选2
   - 自选3
   - 自选4
+  - 故障转移-US
+  - 故障转移-SG
+  - 故障转移-JP
   - /a^/
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/TikTok.png
 - name: 自动选择
@@ -305,78 +358,43 @@ proxy-groups:
   tolerance: 20
   interval: 180
   lazy: false
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png
   proxies:
   - /(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$/
   - 自选4
 - name: 全部手选
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png
-  proxies:
-  - /(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
+  proxies: []
 - name: 地区手选
   type: select
-  proxies:
-  - 手选-US
-  - 手选-HK
-  - 手选-SG
-  - 手选-JP
-  - 手选-其他
-  - /a^/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/World_Map.png
+  proxies: []
 - name: 手选-US
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png
   proxies:
   - /(?i)(🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York)/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
 - name: 手选-HK
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png
   proxies:
   - /(?i)(🇭🇰|香港|HK|hong\s?kong)/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
 - name: 手选-SG
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png
   proxies:
   - /(?i)(🇸🇬|新加坡|狮城|SG|Singapore)/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
 - name: 手选-JP
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png
   proxies:
   - /(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
 - name: 手选-其他
   type: select
   icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png
   proxies:
-  - /(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$/
-  - 自选1
-  - 自选2
-  - 自选3
-  - 自选4
+  - /(?i)^((?!((🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York)|(🇭🇰|香港|HK|hong\s?kong)|(🇸🇬|新加坡|狮城|SG|Singapore)|(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka))).)*$/
 - name: 自选1
   type: select
   proxies: []
@@ -399,7 +417,7 @@ proxy-groups:
   max-failed-times: 3
   url: https://cp.cloudflare.com/generate_204
   name: 故障转移-US
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
   proxies:
   - /(?i)(🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York)/
   - 自选4
@@ -409,7 +427,7 @@ proxy-groups:
   max-failed-times: 3
   url: https://cp.cloudflare.com/generate_204
   name: 故障转移-HK
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
   proxies:
   - /(?i)(🇭🇰|香港|HK|hong\s?kong)/
   - 自选4
@@ -419,7 +437,7 @@ proxy-groups:
   max-failed-times: 3
   url: https://cp.cloudflare.com/generate_204
   name: 故障转移-SG
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
   proxies:
   - /(?i)(🇸🇬|新加坡|狮城|SG|Singapore)/
   - 自选4
@@ -429,7 +447,7 @@ proxy-groups:
   max-failed-times: 3
   url: https://cp.cloudflare.com/generate_204
   name: 故障转移-JP
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
   proxies:
   - /(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)/
   - 自选4
@@ -439,10 +457,17 @@ proxy-groups:
   max-failed-times: 3
   url: https://cp.cloudflare.com/generate_204
   name: 故障转移-其他
-  icon: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
+  icon: https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png
   proxies:
   - /(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$/
   - 自选4
+
+# 流媒体解锁：从面板注入节点中按名称关键词筛选，只列出具体节点。
+- name: 流媒体解锁
+  type: select
+  proxies:
+  - /(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)/
+  icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
 
 # Mihomo 客户端、DNS 与规则配置
 mixed-port: 7890
@@ -621,6 +646,7 @@ rules:
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
   - RULE-SET,VoidCrossBorderFinance,跨境金融
   - RULE-SET,VoidClaude,Claude
+  - RULE-SET,VoidSTUN,STUN
   - RULE-SET,IPProxyPools,IP池
   # IP&PROXY CHECK
   - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve

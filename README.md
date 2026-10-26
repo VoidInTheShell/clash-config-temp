@@ -21,10 +21,12 @@
 | ------------------------ | ------------------ |
 | `PROXY`、常规境外站点、CDN 和资源下载 | 自动选择所有机场节点中延迟最低的节点 |
 | `AI`、`Claude`            | 跟随 `PROXY`         |
-| `TikTok`                 | 跟随 `PROXY`         |
+| `TikTok`                 | 直连 `DIRECT`       |
+| `海淘购物`                  | 跟随 `PROXY`         |
 | `跨境金融`                   | 跟随 `PROXY`         |
 | `IPCheck`                | 跟随 `PROXY`         |
 | `IP池`                    | 跟随 `PROXY`         |
+| `STUN`（WebRTC/STUN 域名）   | 跟随 `PROXY`，可单独选出口 |
 
 
 ## SublinkPro
@@ -35,9 +37,9 @@
 4. 节点命名规则设置为 `$Name$LinkCountryName $LinkName`。开启请求时刷新用量，以及落地地区、住宅 IP、Claude、Gemini、OpenAI、Netflix 检测。
 5. 创建分享链接，下载时携带 `client=mihomo`，将渲染后的完整配置导入客户端。
 
-`filterNode` 根据来源识别自建节点，保留原名或备注，不附加国旗、能力标签或编号；`subMod` 将这些节点写入全部四个自建组，并从其他动态节点组排除。自建节点即使检测为家宽，也仍属于自建组。普通机场节点按落地地区、家宽和解锁能力生成名称；没有地区检测结果时才从原名提取地区。
+`filterNode` 根据来源识别自建节点，保留原名或备注，不附加国旗、能力标签或编号；`subMod` 将这些节点写入全部四个自建组，并从机场自动组排除。所有手选组允许直接选择自建节点。普通机场节点按落地地区、家宽和解锁能力生成名称；没有地区检测结果时才从原名提取地区。
 
-非自建家宽节点只直接进入 `家宽手选`，按地区与能力排序。`家宽手选` 同时提供三个自建出口组作为候选；它们是组引用，机场家宽节点不会因此混入自建组。其他机场节点进入地区和流媒体自动组。已移除 `AI优选`、`AI稳定`、`通用` 及按 Claude/Gemini/OpenAI 解锁能力自动筛选的节点组；节点名称中的能力标签继续保留。新的 `Claude` 是独立业务策略组，紧跟 `AI`，成员、类型和默认出口与 `AI` 相同。
+非自建家宽节点按地区与能力排序，在 `家宽手选` 中与自建节点一起作为具体节点列出，也可通过全部及地区手选组选择；它们不进入机场自动组。`家宽手选` 不再引用自建出口组，机场家宽节点不会混入四个自建专用组。其他机场节点进入地区自动组；`流媒体解锁` 从机场和自建节点中按名称关键词筛选。已移除 `AI优选`、`AI稳定`、`通用` 及按 Claude/Gemini/OpenAI 解锁能力自动筛选的节点组；节点名称中的能力标签继续保留。`Claude` 是独立业务策略组，紧跟 `AI`，成员、类型和默认出口与 `AI` 相同。
 
 ## PanelTemp：Xboard
 
@@ -57,8 +59,13 @@
 - `2.p2`、`3.p3`、`4.p4`：机场提供商。`u: &a1` 仅引用这些机场，供普通节点组和自动策略使用。
 - 不使用的机场栏位应连同 `u` 中对应引用一起删除；新增机场时同时添加 provider 与 `u` 引用。保留自建栏位并确保返回有效节点。
 - 固定自建出口使用 `自建选1/2/3`；AI 服务通过 `AI`、`Claude` 业务策略组选择出口，不再提供专用 AI 测速节点组。
+- 手动策略组以 `proxies` 首项作为初始默认出口：TikTok 默认直连；海淘购物默认跟随 `PROXY`，后续候选依次为 `DIRECT`、`自动选择`。
 
-订阅端点需返回 Mihomo 可解析的节点集合或完整 Clash/Mihomo YAML。内核通过 `use` 引入 provider，语义见 [Mihomo 代理组文档](https://wiki.metacubex.one/config/proxy-groups/)。`include-all` 保持关闭，避免绕过 `use` 把自建提供商混入机场组。
+订阅端点需返回 Mihomo 可解析的节点集合或完整 Clash/Mihomo YAML。机场自动组通过 `use: *a1` 引入机场，四个自建组通过 `use: *a2` 引入自建提供商，这些组保持 `include-all: false`。
+
+所有名称含 `手选` 的组仅提供具体节点，不包含其他策略组或内置直连/拒绝选项。`全部手选` 与 `地区手选` 使用 `include-all: true`，直接汇集全部机场、自建 provider 及顶层 `proxies` 节点；后者保留原名以兼容现有业务组引用。需要按地区筛选时使用 `手选-US/HK/SG/JP/其他`，筛选也覆盖自建节点，未匹配四个地区的节点进入“其他”。这些手选组不再写 `use` 或组引用，避免把 YAML 锚点名误当 provider 名。字段语义见 [Mihomo 代理组文档](https://wiki.metacubex.one/config/proxy-groups/)。Panel 方向由 Xboard 将当前用户可订阅的节点注入对应列表，节点范围由面板决定。
+
+`流媒体解锁` 使用 `type: select`，来源覆盖全部机场及自建节点，但仅列出名称匹配 `流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO` 的具体节点（忽略大小写），不包含其他策略组。Panel 方向通过正则占位符展开；SublinkPro 按脚本生成后的最终节点名筛选。
 
 填好 URL 后保存为本地配置运行；也可使用客户端的订阅或覆写机制管理。模板包含 TUN、DNS 和嗅探配置，客户端使用模板设置时应关闭重复接管；按设备需求调整监听端口、控制器密码和 LAN 权限。
 
@@ -89,6 +96,7 @@ dns:
 - 代理 DNS 使用 DoH；直连和节点域名解析保持独立路径。支持广告与 HTTPDNS 拦截、Google 分流、游戏平台下载、跨境金融与 IP 代理池规则。
 - IPPure 使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 交给 `IPCheck`。检测域名的 UDP/443 拒绝后回落 HTTPS/TCP，便于检查仅支持 TCP 的 SOCKS5 出口。
 - IPPure 主域规则为 `DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve`。
+- `VoidSTUN` 路由到独立的 `STUN` 组，默认跟随 `PROXY`；该规则位于通用 IP 检测及其他服务规则前。这里控制规则集覆盖的域名出口。
 - `IP池` 紧跟 `IPCheck`，第一候选为 `PROXY`，其余候选与各模板 `PROXY` 一致，默认跟随 `PROXY`。它使用自有 [void-rules](https://github.com/VoidInTheShell/void-rules) 的 `ip-proxy-pools` 规则，相关 DNS 也经该组解析。域名规则不覆盖服务商直接下发的裸 `IP:port`。
 - Loyalsoldier `.txt` 规则按 YAML payload 加载。
 
@@ -97,6 +105,7 @@ dns:
 ```sh
 node sublink/tools/test_selfbuilt_groups.mjs
 python3 tools/validate_templates.py
+python3 tools/test_manual_groups_runtime.py
 MIHOMO_BINARY=/path/to/mihomo python3 tools/test_dns_runtime.py
 python3 sublink/tools/validate_rendered.py /path/to/rendered.yaml
 python3 sublink/tools/runtime_validate.py /path/to/rendered.yaml

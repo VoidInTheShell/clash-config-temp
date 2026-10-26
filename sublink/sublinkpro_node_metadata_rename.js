@@ -428,12 +428,6 @@ function replaceManagedGroup(lines, proxyScalars, groupName, icon) {
     proxyScalars.forEach(function (scalar) {
         replacement.push(memberPrefix + '- ' + scalar);
     });
-    // Keep the independent self-built selectors when materializing home nodes.
-    if (groupName === '家宽手选') {
-        SELF_GROUPS.slice(1).forEach(function (name) {
-            replacement.push(memberPrefix + '- ' + name);
-        });
-    }
     replacement.push(fieldPrefix + 'icon: ' + icon);
 
     return lines.slice(0, targetStart).concat(replacement, lines.slice(targetEnd));
@@ -502,8 +496,8 @@ function excludeSelfNames(lines, scalars) {
     var exact = '^(?:' + scalars.map(function (scalar) {
         return regexLiteral(yamlScalar(scalar));
     }).join('|') + ')$';
-    // Rendered groups have no aliases. Add an exact-name exclusion to each
-    // dynamic group; parent selectors keep referring to the self-built group.
+    // Rendered groups have no aliases. Automatic groups keep their source
+    // boundary; manual selectors may choose individual nodes from every source.
     for (var index = section.end - 1; index > section.start; index -= 1) {
         var include = lines[index].match(/^(\s*)(-\s+)?include-all:\s*true\s*$/);
         if (!include) continue;
@@ -511,6 +505,15 @@ function excludeSelfNames(lines, scalars) {
         while (start > section.start && !/^\s*-\s+/.test(lines[start])) start -= 1;
         var end = index + 1;
         while (end < section.end && !/^\s*-\s+/.test(lines[end])) end += 1;
+        var manual = false;
+        for (var field = start; field < end; field += 1) {
+            var title = lines[field].match(/^\s*(?:-\s*)?name:\s*(.+?)\s*$/);
+            if (title && (yamlScalar(title[1]).indexOf('手选') !== -1 || yamlScalar(title[1]) === '流媒体解锁')) {
+                manual = true;
+                break;
+            }
+        }
+        if (manual) continue;
         var found = false;
         for (var cursor = start; cursor < end; cursor += 1) {
             var exclusion = lines[cursor].match(/^(\s*(?:-\s*)?)exclude-filter:\s*(.+)$/);
@@ -530,7 +533,7 @@ function excludeSelfNames(lines, scalars) {
 }
 
 // Preserve original self-built names and materialize their membership by source.
-// Airport residential nodes retain their sorted, exclusive manual selector.
+// Home selection contains residential airport nodes and individual self-built nodes.
 function subMod(input, clientType) {
     var hadTrailingNewline = /\r?\n$/.test(String(input || ''));
     var lines = String(input || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
@@ -540,7 +543,7 @@ function subMod(input, clientType) {
         lines = replaceManagedGroup(lines, selfScalars, groupName, 'https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png');
     });
     var homeScalars = extractHomeProxyScalars(lines, selfScalars);
-    lines = replaceManagedGroup(lines, homeScalars, '家宽手选', 'https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png');
+    lines = replaceManagedGroup(lines, homeScalars.concat(selfScalars), '家宽手选', 'https://gh-proxy.com/raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png');
     var output = excludeSelfNames(lines, selfScalars).join('\n');
     return hadTrailingNewline && !/\n$/.test(output) ? output + '\n' : output;
 }

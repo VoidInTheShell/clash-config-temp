@@ -100,7 +100,7 @@ def check(filename: str, upstream_port: int) -> None:
                     try:
                         query(port, "ready.example")
                         break
-                    except socket.timeout:
+                    except (socket.timeout, ConnectionResetError, ConnectionRefusedError):
                         pass
                 else:
                     raise AssertionError("Mihomo DNS listener did not become ready")

@@ -54,6 +54,17 @@ proxy-groups:
   - include-all: true
     name: 其他
     type: select
+  - include-all: true
+    name: 全部手选
+    type: select
+  - name: 手选-JP
+    type: select
+    include-all: true
+    filter: JP
+  - name: 流媒体解锁
+    type: select
+    include-all: true
+    filter: '(?i)(流媒体|解锁|Netflix)'
 rules:
   - MATCH,自建节点
 `;
@@ -61,16 +72,21 @@ rules:
 const renderContext = vm.createContext({});
 vm.runInContext(source, renderContext);
 const output = renderContext.subMod(input, 'mihomo');
-const config = JSON.parse(execFileSync('python3', ['-c', 'import sys,yaml,json; print(json.dumps(yaml.safe_load(sys.stdin.read())))'], { input: output, encoding: 'utf8' }));
+const config = JSON.parse(execFileSync(process.env.PYTHON_BINARY || (process.platform === 'win32' ? 'python' : 'python3'), ['-X', 'utf8', '-c', 'import sys,yaml,json; print(json.dumps(yaml.safe_load(sys.stdin.read())))'], { input: output, encoding: 'utf8' }));
 const groups = Object.fromEntries(config['proxy-groups'].map(group => [group.name, group]));
 assert.deepEqual(groups['自建节点'].proxies, [...originals, 'HK中转']);
 assert.equal(groups['自建节点']['include-all'], undefined);
-assert.equal(groups['家宽手选'].proxies.length, 4);
+assert.deepEqual(groups['家宽手选'].proxies, [config.proxies.at(-1).name, ...originals, 'HK中转']);
 for (const name of ['自建选1', '自建选2', '自建选3']) {
   assert.deepEqual(groups[name].proxies, [...originals, 'HK中转']);
   assert.equal(groups[name].type, 'select');
   assert.equal(groups[name]['include-all'], undefined);
-  assert.ok(groups['家宽手选'].proxies.includes(name));
+  assert.ok(!groups['家宽手选'].proxies.includes(name));
+}
+for (const name of ['全部手选', '手选-JP', '流媒体解锁']) {
+  assert.equal(groups[name]['include-all'], true);
+  assert.equal(groups[name]['exclude-filter'], undefined, name);
+  assert.equal(groups[name].proxies, undefined, name);
 }
 for (const group of [groups['自动选择'], groups['其他']]) {
   const filter = new RegExp(group['exclude-filter']);

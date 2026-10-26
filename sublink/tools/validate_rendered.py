@@ -95,6 +95,7 @@ def main() -> None:
     group_map = {str(group["name"]): group for group in groups}
 
     self_groups = {"自建节点", "自建选1", "自建选2", "自建选3"}
+    manual_groups = {group["name"] for group in groups if "手选" in group["name"] or group["name"] == "流媒体解锁"}
     self_slots = ["自建选1", "自建选2", "自建选3"]
     self_names = set(group_map.get("自建节点", {}).get("proxies") or [])
     airport_names = [name for name in names if name not in self_names]
@@ -160,7 +161,7 @@ def main() -> None:
     dynamic_groups_without_home_exclusion = [
         str(group.get("name", ""))
         for group in groups
-        if group.get("name") not in self_groups | {"家宽手选"}
+        if group.get("name") not in self_groups | manual_groups
         and group.get("include-all") is True
         and not excludes_token(group, "家宽")
     ]
@@ -169,20 +170,20 @@ def main() -> None:
             home_name_set.intersection(set(group.get("proxies") or []))
         )
         for group in groups
-        if group.get("name") != "家宽手选"
+        if group.get("name") not in manual_groups
         and home_name_set.intersection(set(group.get("proxies") or []))
     }
 
     self_group = group_map.get("自建节点", {})
     self_exclusion_violations = [
         group.get("name") for group in groups
-        if group.get("name") not in self_groups
+        if group.get("name") not in self_groups | manual_groups
         and group.get("include-all") is True
         and not all(re.search(str(group.get("exclude-filter") or r"(?!)"), name) for name in self_names)
     ]
     self_explicit_violations = [
         group.get("name") for group in groups
-        if group.get("name") not in self_groups
+        if group.get("name") not in self_groups | manual_groups
         and self_names.intersection(group.get("proxies") or [])
     ]
     checks = {
@@ -214,9 +215,18 @@ def main() -> None:
             [group["name"] for group in groups].index("自建节点") + 1:
             [group["name"] for group in groups].index("自建节点") + 4
         ] == self_slots,
-        "self_slots_in_all_manual_groups": all(
+        "self_slots_in_business_groups": all(
             all(name in (group.get("proxies") or []) for name in self_slots)
-            for group in groups if group.get("type") == "select" and group["name"] not in self_groups
+            for group in groups if group.get("type") == "select" and group["name"] not in self_groups | manual_groups
+        ),
+        "manual_groups_contain_nodes_only": all(
+            not group_map[name].get("proxies") or set(group_map[name]["proxies"]).issubset(names)
+            for name in manual_groups
+        ),
+        "all_manual_groups_include_every_source": all(
+            group_map[name].get("include-all") is True
+            and not any(group_map[name].get(key) for key in ("filter", "exclude-filter", "exclude-type", "use", "proxies"))
+            for name in ("全部手选", "地区手选")
         ),
         "old_self_group_removed": "自建手选" not in group_map,
         "proxy_group_count": len(groups) == len(candidate["proxy-groups"]),
@@ -224,9 +234,9 @@ def main() -> None:
         "no_unresolved_group_references": not unresolved,
         "home_group_is_select": home_group.get("type") == "select",
         "home_group_membership_mode": (
-            home_group.get("proxies") == home_names + self_slots
+            home_group.get("proxies") == home_names + list(self_group.get("proxies") or [])
             and "include-all" not in home_group and "filter" not in home_group
-        ) if home_names else (
+        ) if home_names or self_names else (
             home_group.get("include-all") is True
             and home_group.get("filter") == r"(?:^| )家宽(?: |#|$)"
             and all(re.search(str(home_group.get("exclude-filter") or r"(?!)"), name) for name in self_names)
@@ -237,7 +247,7 @@ def main() -> None:
         "home_after_self_in_parent_groups": len(parent_groups) == sum("自建节点" in (g.get("proxies") or []) for g in candidate["proxy-groups"])
         and all(
             group["proxies"].index("家宽手选")
-            == group["proxies"].index("自建节点") + 4
+            == max(group["proxies"].index(name) for name in self_groups) + 1
             for group in parent_groups
         ),
         "home_not_added_to_active_groups": all(
@@ -249,8 +259,11 @@ def main() -> None:
         "claude_is_service_selector": claude == next(g for g in candidate["proxy-groups"] if g["name"] == "Claude"),
         "claude_after_ai": list(group_map).index("Claude") == list(group_map).index("AI") + 1,
         "pool_follows_proxy": group_map["IP池"]["proxies"][0] == "PROXY"
-        and group_map["IP池"].get("default-selected") == "PROXY",
-        "media_unlock_is_url_test": media_unlock.get("type") == "url-test",
+        and group_map["IP池"].get("default-selected", group_map["IP池"]["proxies"][0]) == "PROXY",
+        "media_unlock_is_select": media_unlock.get("type") == "select",
+        "media_unlock_filters_all_sources": media_unlock.get("include-all") is True
+        and media_unlock.get("filter") == "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)"
+        and not any(media_unlock.get(key) for key in ("exclude-filter", "exclude-type", "use", "proxies")),
         "no_proxy_providers": "proxy-providers" not in rendered,
         "no_groups_with_use": all("use" not in group for group in groups),
         "preserved_core_sections": all(preserved_sections.values()),

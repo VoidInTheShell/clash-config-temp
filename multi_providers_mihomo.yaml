@@ -168,7 +168,7 @@ proxy-groups:
       - 故障转移-JP
       - 故障转移-其他
       - DIRECT
-    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/Manual_Test_Log.png"
 
 
 
@@ -178,12 +178,43 @@ proxy-groups:
     proxies:
       - PROXY
       - DIRECT
+      - 全部手选
       - 自建节点
       - 自建选1
       - 自建选2
       - 自建选3
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png"
+
+  # --- WebRTC&STUN ---
+  # 默认跟随PROXY，用于防止WebRTC泄露，与IP隐私高权重的服务使用同节点，或在需要时按需切换
+  - name: STUN
+    type: select
+    proxies:
+      - PROXY
+      - 自动选择
       - 全部手选
-    icon: "https://raw.githubusercontent.com/Mithcell-Ma/icon/refs/heads/main/home.png"
+      - 地区手选
+      - 自建节点
+      - 自建选1
+      - 自建选2
+      - 自建选3
+      - 负载均衡-US
+      - 负载均衡-HK
+      - 负载均衡-SG
+      - 负载均衡-JP
+      - 负载均衡-其他
+      - 自动测速-US
+      - 自动测速-HK
+      - 自动测速-SG
+      - 自动测速-JP
+      - 自动测速-其他
+      - 故障转移-US
+      - 故障转移-HK
+      - 故障转移-SG
+      - 故障转移-JP
+      - 故障转移-其他
+      - DIRECT
+    icon: "https://www.svgrepo.com/show/354551/webrtc.svg"
 
   # --- IP 代理池服务 ---
   # 首选跟随 PROXY，其余成员与 PROXY 一致；用于代理服务商官网、面板、API 和网关
@@ -369,7 +400,7 @@ proxy-groups:
       - 故障转移-SG
       - 故障转移-JP
       - 故障转移-其他
-    icon: "https://github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
+    icon: "https://gh-proxy.com/github.com/DustinWin/ruleset_geodata/releases/download/icons/ai.png"
 
   - name: Claude
     type: select
@@ -396,7 +427,7 @@ proxy-groups:
       - 故障转移-SG
       - 故障转移-JP
       - 故障转移-其他
-    icon: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png
+    icon: https://gh-proxy.com/raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png
 
   # --- Google ---
   # 默认跟随主代理组
@@ -438,6 +469,7 @@ proxy-groups:
   - name: 跨境金融
     type: select
     proxies:
+      - PROXY
       - 自动选择
       - 全部手选
       - 地区手选
@@ -495,13 +527,13 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Cloudflare.png"
 
   # --- 海淘购物 ---
-  # 默认跟随主代理组
+  # 同时包含亚马逊的CDN服务，会影响使用亚马逊CDN的游戏、站点等，如R6S，默认跟随主代理组
   - name: 海淘购物
     type: select
     proxies:
       - PROXY
-      - 自动选择
       - DIRECT
+      - 自动选择
       - 全部手选
       - 地区手选
       - 自建节点
@@ -600,7 +632,7 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png"
 
   # --- Apple ---
-  # 默认直连
+  # 包含所有Apple服务，包括Apple在大陆的资产清单，默认直连，选择代理时会把大陆合法的Apple服务如云上贵州等合法Apple服务全部走代理
   - name: Apple
     type: select
     proxies:
@@ -630,9 +662,8 @@ proxy-groups:
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png"
 
   # --- TikTok ---
-  # 默认自建选2，独立保存 TikTok 出口
+  # 默认直连，可手动切换其他出口
   - name: TikTok
-    default-selected: 自建选2
     type: select
     proxies:
       - DIRECT
@@ -668,88 +699,49 @@ proxy-groups:
     interval: 180
     lazy: false
     filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/urltest.png"
 
   # --- 1️⃣ 全部手选 ---
   - name: 全部手选
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)^((?!(DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png"
+    include-all: true
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Rocket.png
 
-  # --- 2️⃣ 地区手选 ---
+  # --- 2️⃣ 地区手选（直接选择节点；分区见下方手选-US/HK/SG/JP/其他）---
   - name: 地区手选
     type: select
-    proxies:
-      - 手选-US
-      - 手选-HK
-      - 手选-SG
-      - 手选-JP
-      - 手选-其他
-      - 自建选1
-      - 自建选2
-      - 自建选3
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/World_Map.png"
+    include-all: true
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/World_Map.png
 
   - name: 手选-US
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png"
+    include-all: true
+    filter: (?i)(🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York)
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/United_States.png
 
   - name: 手选-HK
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png"
+    include-all: true
+    filter: (?i)(🇭🇰|香港|HK|hong\s?kong)
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hong_Kong.png
 
   - name: 手选-SG
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png"
+    include-all: true
+    filter: (?i)(🇸🇬|新加坡|狮城|SG|Singapore)
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Singapore.png
 
   - name: 手选-JP
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png"
+    include-all: true
+    filter: (?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Japan.png
 
   - name: 手选-其他
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|到期|套餐|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png"
+    include-all: true
+    filter: (?i)^((?!((🇺🇸|美国|美國|US|united\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\s?York)|(🇭🇰|香港|HK|hong\s?kong)|(🇸🇬|新加坡|狮城|SG|Singapore)|(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka))).)*$
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bypass.png
 
   # --- 3️⃣ 自建节点 ---
   - name: 自建节点
@@ -781,91 +773,86 @@ proxy-groups:
   - name: 负载均衡-US
     <<: *rtt-lb
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-HK
     <<: *rtt-lb
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-SG
     <<: *rtt-lb
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-JP
     <<: *rtt-lb
     filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   - name: 负载均衡-其他
     <<: *rtt-lb
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|狮城|SG|Singapore|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/available.png"
 
   # --- 5️⃣ 自动测速（按地区分类）---
   - name: 自动测速-US
     <<: *auto-test
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-HK
     <<: *auto-test
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-SG
     <<: *auto-test
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-JP
     <<: *auto-test
     filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   - name: 自动测速-其他
     <<: *auto-test
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/release/icon/color/auto.png"
 
   # --- 6️⃣ 故障转移（按地区分类）---
   - name: 故障转移-US
     <<: *fallback
     filter: "(?i)(🇺🇸|美国|美國|US|united\\s?states|america|usa|洛杉矶|达拉斯|纽约|西雅图|New\\s?York)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-HK
     <<: *fallback
     filter: "(?i)(🇭🇰|香港|HK|hong\\s?kong)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-SG
     <<: *fallback
     filter: "(?i)(🇸🇬|新加坡|狮城|SG|Singapore)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-JP
     <<: *fallback
     filter: "(?i)(🇯🇵|日本|東京|东京|JP|japan|tokyo|osaka)"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
   - name: 故障转移-其他
     <<: *fallback
     filter: "(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$"
-    icon: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
+    icon: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/icon/color/asn.png"
 
 
   # --- 特殊策略：流媒体解锁 ---
   - name: 流媒体解锁
-    proxies:
-      - 自建选1
-      - 自建选2
-      - 自建选3
     type: select
-    use: *a1
-    include-all: false
-    filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Disney|HBO)"
+    include-all: true
+    filter: "(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)"
     icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
 #--------------------------------------------------------------------------------------#
 
@@ -1047,6 +1034,7 @@ rules:
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
   - RULE-SET,VoidCrossBorderFinance,跨境金融
   - RULE-SET,VoidClaude,Claude
+  - RULE-SET,VoidSTUN,STUN
   - RULE-SET,IPProxyPools,IP池
   # IP&PROXY CHECK
   - DOMAIN-SUFFIX,ping0.cc,REJECT,no-resolve
