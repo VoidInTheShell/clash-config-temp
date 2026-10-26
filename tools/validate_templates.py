@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SLOTS = ["自建选1", "自建选2", "自建选3"]
 SELF_GROUPS = ["自建节点", *SLOTS]
 PANEL_GROUPS = [f"自选{i}" for i in range(1, 5)]
+STUN_PREFIX = ["PROXY", "AI", "Claude", "Google", "跨境金融"]
 REMOVED_AI_GROUPS = {"AI优选", "AI稳定", "Gemini", "OpenAI", "通用"}
 FILES = [
     "multi_providers_mihomo.yaml",
@@ -55,7 +56,13 @@ def validate(filename):
         members = group.get("proxies") or []
         assert len(members) == len(set(members)), group["name"]
         manual = "手选" in group["name"] or group["name"] == "流媒体解锁"
-        if manual:
+        if panel and group["name"] == "流媒体解锁":
+            assert group["type"] == "select"
+            assert members == [
+                "/(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)/",
+                *PANEL_GROUPS,
+            ], "Panel media selector must retain exactly four self-selected fallbacks"
+        elif manual:
             assert group["type"] == "select"
             assert not set(group_map).intersection(members), (group["name"], "Manual selectors must contain nodes only")
             assert not set(members).intersection({"DIRECT", "REJECT", "COMPATIBLE"}), group["name"]
@@ -101,6 +108,7 @@ def validate(filename):
         assert group["proxies"][0] == target, (name, "Default must also work on older kernels")
     assert "default-selected" not in group_map["TikTok"]
     assert group_map["海淘购物"]["proxies"][:3] == ["PROXY", "DIRECT", "自动选择"]
+    assert group_map["STUN"]["proxies"][:len(STUN_PREFIX)] == STUN_PREFIX, "STUN service candidate order"
     assert config["rules"].count("RULE-SET,VoidSTUN,STUN") == 1
     assert config["rules"].index("RULE-SET,VoidSTUN,STUN") < config["rules"].index("DOMAIN-SUFFIX,browserleaks.com,IPCheck")
     assert names[names.index("AI") + 1] == "Claude"

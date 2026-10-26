@@ -42,6 +42,10 @@ proxy-groups:
   type: select
   proxies:
   - PROXY
+  - AI
+  - Claude
+  - Google
+  - 跨境金融
   - 自动选择
   - 全部手选
   - 地区手选
@@ -462,11 +466,15 @@ proxy-groups:
   - /(?i)^((?!(🇺🇸|美国|US|🇭🇰|香港|HK|🇸🇬|新加坡|SG|🇯🇵|日本|JP|DIRECTLY|DIRECT|Proxy|Traffic|Expire|Expired|过期|剩余|流量|官网|超时|失效|Invalid|Test|测速|本地|Local)).)*$/
   - 自选4
 
-# 流媒体解锁：从面板注入节点中按名称关键词筛选，只列出具体节点。
+# 流媒体解锁：按节点名筛选，并保留自选1～4，避免零匹配时被面板删除。
 - name: 流媒体解锁
   type: select
   proxies:
   - /(?i)(流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO)/
+  - 自选1
+  - 自选2
+  - 自选3
+  - 自选4
   icon: "https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Unlock.png"
 
 # Mihomo 客户端、DNS 与规则配置
@@ -730,6 +738,10 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
+  # Route Google static asset hosts through the Google proxy group.
+  - DOMAIN-SUFFIX,fonts.googleapis.com,Google,no-resolve
+  - DOMAIN-SUFFIX,fonts.gstatic.com,Google,no-resolve
+  - DOMAIN-SUFFIX,ssl.gstatic.com,Google,no-resolve
   - DOMAIN-SUFFIX,googleapis.com,Google,no-resolve
   - DOMAIN-SUFFIX,gstatic.com,Google,no-resolve
   - GEOSITE,GOOGLE-CN,REJECT,no-resolve

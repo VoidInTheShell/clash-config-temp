@@ -142,6 +142,10 @@ proxy-groups:
     type: select
     proxies:
       - PROXY
+      - AI
+      - Claude
+      - Google
+      - 跨境金融
       - 自动选择
       - 全部手选
       - 地区手选
@@ -1106,6 +1110,10 @@ rules:
   # BiliBili
   - RULE-SET,BiliBili,哔哩哔哩
   # Google
+  # Route Google static asset hosts through the Google proxy group.
+  - DOMAIN-SUFFIX,fonts.googleapis.com,Google,no-resolve
+  - DOMAIN-SUFFIX,fonts.gstatic.com,Google,no-resolve
+  - DOMAIN-SUFFIX,ssl.gstatic.com,Google,no-resolve
   - DOMAIN-SUFFIX,googleapis.com,Google,no-resolve
   - DOMAIN-SUFFIX,gstatic.com,Google,no-resolve
   - GEOSITE,GOOGLE-CN,REJECT,no-resolve

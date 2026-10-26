@@ -191,6 +191,10 @@ proxy-groups:
     type: select
     proxies:
       - PROXY
+      - AI
+      - Claude
+      - Google
+      - 跨境金融
       - 自动选择
       - 全部手选
       - 地区手选

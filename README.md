@@ -65,7 +65,7 @@
 
 所有名称含 `手选` 的组仅提供具体节点，不包含其他策略组或内置直连/拒绝选项。`全部手选` 与 `地区手选` 使用 `include-all: true`，直接汇集全部机场、自建 provider 及顶层 `proxies` 节点；后者保留原名以兼容现有业务组引用。需要按地区筛选时使用 `手选-US/HK/SG/JP/其他`，筛选也覆盖自建节点，未匹配四个地区的节点进入“其他”。这些手选组不再写 `use` 或组引用，避免把 YAML 锚点名误当 provider 名。字段语义见 [Mihomo 代理组文档](https://wiki.metacubex.one/config/proxy-groups/)。Panel 方向由 Xboard 将当前用户可订阅的节点注入对应列表，节点范围由面板决定。
 
-`流媒体解锁` 使用 `type: select`，来源覆盖全部机场及自建节点，但仅列出名称匹配 `流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO` 的具体节点（忽略大小写），不包含其他策略组。Panel 方向通过正则占位符展开；SublinkPro 按脚本生成后的最终节点名筛选。
+`流媒体解锁` 使用 `type: select`，按名称关键词 `流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO` 筛选（忽略大小写）。Providers 与 SublinkPro 方向仅列出匹配的具体节点；SublinkPro 按脚本生成后的最终节点名筛选。Panel 方向通过正则占位符展开，额外保留 `自选1/2/3/4` 四个组引用，避免零匹配时被 Xboard 删除而产生悬空引用。当前 Xboard 会把匹配节点追加到固定组引用之后，因此该组初始选择为 `自选1`；这是手动选择候选，不是自动故障转移。其他手选组仍只包含具体节点。
 
 填好 URL 后保存为本地配置运行；也可使用客户端的订阅或覆写机制管理。模板包含 TUN、DNS 和嗅探配置，客户端使用模板设置时应关闭重复接管；按设备需求调整监听端口、控制器密码和 LAN 权限。
 
@@ -96,7 +96,7 @@ dns:
 - 代理 DNS 使用 DoH；直连和节点域名解析保持独立路径。支持广告与 HTTPDNS 拦截、Google 分流、游戏平台下载、跨境金融与 IP 代理池规则。
 - IPPure 使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 交给 `IPCheck`。检测域名的 UDP/443 拒绝后回落 HTTPS/TCP，便于检查仅支持 TCP 的 SOCKS5 出口。
 - IPPure 主域规则为 `DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve`。
-- `VoidSTUN` 路由到独立的 `STUN` 组，默认跟随 `PROXY`；该规则位于通用 IP 检测及其他服务规则前。这里控制规则集覆盖的域名出口。
+- `VoidSTUN` 路由到独立的 `STUN` 组，默认跟随 `PROXY`；所有完整模板的该组候选前五项依次为 `PROXY`、`AI`、`Claude`、`Google`、`跨境金融`，之后保持原有候选顺序。该规则位于通用 IP 检测及其他服务规则前，这里控制规则集覆盖的域名出口。
 - `IP池` 紧跟 `IPCheck`，第一候选为 `PROXY`，其余候选与各模板 `PROXY` 一致，默认跟随 `PROXY`。它使用自有 [void-rules](https://github.com/VoidInTheShell/void-rules) 的 `ip-proxy-pools` 规则，相关 DNS 也经该组解析。域名规则不覆盖服务商直接下发的裸 `IP:port`。
 - Loyalsoldier `.txt` 规则按 YAML payload 加载。
 

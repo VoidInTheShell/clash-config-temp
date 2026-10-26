@@ -20,7 +20,7 @@ from urllib.request import urlopen
 
 import yaml
 
-from validate_templates import FILES, ROOT
+from validate_templates import FILES, PANEL_GROUPS, ROOT, STUN_PREFIX
 
 
 def fixtures():
@@ -45,10 +45,10 @@ def proxy(name):
     return {"name": name, "type": "socks5", "server": "127.0.0.1", "port": 9}
 
 
-def render(filename, directory):
+def render(filename, directory, records=None):
     config = yaml.safe_load((ROOT / filename).read_text(encoding="utf-8"))
     groups = deepcopy(config["proxy-groups"])
-    records = fixtures()
+    records = fixtures() if records is None else records
     providers = {}
     if filename.startswith("multi_"):
         self_names = config["u_s"]
@@ -68,15 +68,17 @@ def render(filename, directory):
         names = [record[0] for record in records]
         for group in groups:
             members = group.get("proxies") or []
-            expanded = []
-            if not members:
-                expanded = names[:]
-            for member in members:
-                if member.startswith("/") and member.endswith("/"):
-                    expanded.extend(name for name in names if re.search(member[1:-1], name))
-                else:
-                    expanded.append(member)
+            patterns = [member for member in members if member.startswith("/") and member.endswith("/")]
+            # Xboard removes regex placeholders, then appends matching nodes
+            # after any explicit group references. It also drops empty groups.
+            expanded = [member for member in members if member not in patterns]
+            if patterns:
+                for pattern in patterns:
+                    expanded.extend(name for name in names if re.search(pattern[1:-1], name))
+            else:
+                expanded.extend(names)
             group["proxies"] = list(dict.fromkeys(expanded))
+        groups = [group for group in groups if group["proxies"]]
         proxies = [proxy(name) for name in names]
     else:
         records = [record for record in records if record[2] != "standalone"]
@@ -115,10 +117,10 @@ def free_port():
         return sock.getsockname()[1]
 
 
-def check(filename):
+def check(filename, records=None, case="matching"):
     with TemporaryDirectory(prefix="mihomo-manual-groups-") as temp:
         directory = Path(temp)
-        config, records = render(filename, directory)
+        config, records = render(filename, directory, records)
         port = free_port()
         config["external-controller"] = f"127.0.0.1:{port}"
         path = directory / "config.yaml"
@@ -154,6 +156,10 @@ def check(filename):
                         expected = names
                     elif name == "流媒体解锁":
                         expected = {record[0] for record in records if re.search(r"流媒体|解锁|IEPL|专线|Premium|网飞|Netflix|Disney|HBO", record[0], re.IGNORECASE)}
+                        if filename.startswith("panel_"):
+                            expected |= set(PANEL_GROUPS)
+                            assert actual[:4] == PANEL_GROUPS, (filename, "Xboard expansion order")
+                            assert runtime[name]["now"] == PANEL_GROUPS[0], (filename, "media initial selection")
                     elif name == "家宽手选":
                         expected = self_names | {record[0] for record in records if record[3]}
                     else:
@@ -161,7 +167,8 @@ def check(filename):
                         expected = {record[0] for record in records if record[1] == region}
                     assert set(actual) == expected, (filename, name, "missing", expected - set(actual), "extra", set(actual) - expected)
                     assert len(actual) == len(set(actual)), (filename, name, "duplicate node")
-                    assert not group_names.intersection(actual), (filename, name, "group reference")
+                    allowed_refs = set(PANEL_GROUPS) if filename.startswith("panel_") and name == "流媒体解锁" else set()
+                    assert group_names.intersection(actual) == allowed_refs, (filename, name, "group reference")
                     assert runtime[name]["type"] == "Selector", (filename, name)
                 if filename.startswith("multi_"):
                     for name in ["自建节点", "自建选1", "自建选2", "自建选3"]:
@@ -176,6 +183,7 @@ def check(filename):
                 for name, target in {"AI": "PROXY", "Claude": "PROXY", "跨境金融": "PROXY", "IP池": "PROXY", "STUN": "PROXY", "TikTok": "DIRECT", "海淘购物": "PROXY"}.items():
                     assert runtime[name]["now"] == target, (filename, name, "initial selection")
                 assert runtime["海淘购物"]["all"][:3] == ["PROXY", "DIRECT", "自动选择"], filename
+                assert runtime["STUN"]["all"][:len(STUN_PREFIX)] == STUN_PREFIX, (filename, "STUN candidate order")
                 with urlopen(f"http://127.0.0.1:{port}/rules", timeout=1) as response:
                     rules = json.load(response)["rules"]
                 assert any(rule.get("proxy") == "STUN" and rule.get("payload") == "VoidSTUN" for rule in rules), filename
@@ -186,9 +194,10 @@ def check(filename):
                 except subprocess.TimeoutExpired:
                     process.kill()
                     process.wait(timeout=5)
-        print(f"PASS {filename}: {len(manual_names)} live node-only selectors, {len(names)} fixture nodes, STUN routing")
+        print(f"PASS {filename} ({case}): {len(manual_names)} live manual selectors, {len(names)} fixture nodes, STUN routing")
 
 
 if __name__ == "__main__":
     for filename in FILES:
         check(filename)
+    check("panel_mihomo_fakeip_rule.yaml", [("plain US exit", "US", "self", False)], case="zero media matches")
