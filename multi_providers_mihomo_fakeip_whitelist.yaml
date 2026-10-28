@@ -1071,10 +1071,11 @@ rules:
   - DOMAIN-KEYWORD,bambulab,DIRECT
   - DOMAIN-KEYWORD,makerworld,DIRECT
   - DOMAIN-SUFFIX,bambulab.cn,DIRECT
-  - DOMAIN-SUFFIX,uegov.org,DIRECT
-  - DOMAIN-SUFFIX,uegov.us.kg,DIRECT
-  - DOMAIN-SUFFIX,uegov.dpdns.org,DIRECT
-  - DOMAIN-SUFFIX,sacbridge.dpdns.org,DIRECT
+  - DOMAIN-SUFFIX,uegov.org,GlobalLegal
+  - DOMAIN-SUFFIX,uegov.us.kg,GlobalLegal
+  - DOMAIN-SUFFIX,uegov.dpdns.org,GlobalLegal
+  - DOMAIN-SUFFIX,sacbridge.dpdns.org,GlobalLegal
+  - DOMAIN-SUFFIX,kumiko-love.com,GlobalLegal
   - DOMAIN-KEYWORD,autocad,DIRECT
   - DOMAIN-KEYWORD,koishi,DIRECT
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
