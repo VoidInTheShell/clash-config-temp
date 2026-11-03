@@ -651,6 +651,20 @@ dns:
       - 'https://208.67.222.222/dns-query#哔哩哔哩'
 #--------------------------------------------------------------------------------------#
 rules:
+  # Block
+  - RULE-SET,CNHTTPDNS,REJECT,no-resolve
+  - RULE-SET,PCDN,REJECT,no-resolve
+  # MRS 不含关键词规则；vrdesktop 保留在下方 SpaceDesk 规则中。
+  - DOMAIN-KEYWORD,-ad.sm.cn,REJECT,no-resolve
+  - DOMAIN-KEYWORD,-ad.video.yximgs.com,REJECT,no-resolve
+  - DOMAIN-KEYWORD,-ad.wtzw.com,REJECT,no-resolve
+  - DOMAIN-KEYWORD,-be-pack-sign.pglstatp-toutiao.com,REJECT,no-resolve
+  - RULE-SET,VoidAds,REJECT,no-resolve
+  # ADBlock
+  - DOMAIN,youxi.xunlei.com,REJECT,no-resolve
+  # SpaceDesk
+  - DOMAIN-KEYWORD,vrdesktop,REJECT,no-resolve
+  #--------------------------------------------------------------------------------------#
   # 必须置顶：保证 DNS 原域名与 sniffer 得到的 Host/SNI/QUIC 域名使用同一分流
   - RULE-SET,VoidCrossBorderFinance,跨境金融
   - RULE-SET,VoidClaude,Claude
@@ -694,20 +708,6 @@ rules:
   - DOMAIN-KEYWORD,autocad,DIRECT
   - DOMAIN-KEYWORD,koishi,DIRECT
   - DOMAIN-SUFFIX,test-ipv6.com,DIRECT
-#--------------------------------------------------------------------------------------#
-  # Block
-  - RULE-SET,CNHTTPDNS,REJECT
-  - RULE-SET,PCDN,REJECT
-  # MRS 不含关键词规则；vrdesktop 保留在下方 SpaceDesk 规则中。
-  - DOMAIN-KEYWORD,-ad.sm.cn,REJECT
-  - DOMAIN-KEYWORD,-ad.video.yximgs.com,REJECT
-  - DOMAIN-KEYWORD,-ad.wtzw.com,REJECT
-  - DOMAIN-KEYWORD,-be-pack-sign.pglstatp-toutiao.com,REJECT
-  - RULE-SET,VoidAds,REJECT
-  # ADBlock
-  - DOMAIN,youxi.xunlei.com,REJECT
-  # SpaceDesk
-  - DOMAIN-KEYWORD,vrdesktop,REJECT
 #--------------------------------------------------------------------------------------#
   # Global Legal Services
   - DOMAIN-SUFFIX,asrock.com,GlobalLegal
