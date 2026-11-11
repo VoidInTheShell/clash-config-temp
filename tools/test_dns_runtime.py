@@ -53,7 +53,7 @@ def check(filename: str, upstream_port: int) -> None:
     dns = source["dns"]
     # Deliberate overlaps prove force-before-bypass and the final fallback.
     payloads = {
-        "VoidClaude": ["claude.example", "claude-stun.example"],
+        "VoidClaudeMRS": ["claude.example", "claude-stun.example"],
         "VoidSTUN": ["stun.example", "claude-stun.example"],
         "VoidFakeIPForce": ["force.example", "force-bypass.example"],
         "VoidFakeIPBypass": ["claude.example", "stun.example", "claude-stun.example", "bypass.example", "force-bypass.example"],

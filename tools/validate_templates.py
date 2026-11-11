@@ -137,7 +137,7 @@ def validate(filename):
     if config["dns"]["fake-ip-filter-mode"] == "rule":
         assert config["dns"]["fake-ip-filter-mode"] == "rule"
         assert config["dns"]["fake-ip-filter"] == [
-            "RULE-SET,VoidClaude,fake-ip",
+            "RULE-SET,VoidClaudeMRS,fake-ip",
             "RULE-SET,VoidSTUN,fake-ip",
             *(["RULE-SET,VoidFakeIPForce,fake-ip"] if "fakeip_rule" in filename else []),
             "RULE-SET,VoidFakeIPBypass,real-ip",
@@ -146,7 +146,7 @@ def validate(filename):
     else:
         assert config["dns"]["fake-ip-filter-mode"] == "whitelist"
         assert config["dns"]["fake-ip-filter"] == [
-            "rule-set:VoidClaude", "rule-set:VoidSTUN", "rule-set:VoidFakeIPForce",
+            "rule-set:VoidClaudeMRS", "rule-set:VoidSTUN", "rule-set:VoidFakeIPForce",
         ]
     referenced_filters = set()
     for entry in config["dns"]["fake-ip-filter"]:
@@ -154,21 +154,42 @@ def validate(filename):
             referenced_filters.add(entry.split(",")[1])
         elif entry.startswith("rule-set:"):
             referenced_filters.update(entry.removeprefix("rule-set:").split(","))
+    # classical providers are supported in fake-ip-filter too: mihomo keeps the
+    # domain rules and only ignores non-domain ones (PROCESS-NAME/IP-CIDR/...).
     for name in referenced_filters:
-        assert config["rule-providers"][name]["behavior"] == "domain"
+        assert config["rule-providers"][name]["behavior"] in {"domain", "classical"}
     for name, path in {
         "VoidAClaudeOverlap": "void-claude-ai-overlap",
-        "VoidClaude": "void-claude-rules",
         "VoidSTUN": "stun",
     }.items():
         provider = config["rule-providers"][name]
         assert provider["format"] == "mrs"
         assert provider["url"].endswith(f"/dist/{path}/mihomo-domain.mrs")
+    # VoidClaude ships PROCESS-NAME/IP-CIDR/IP-ASN rules, which the domain mrs cannot
+    # carry, so the routing provider must stay classical.
+    claude_provider = config["rule-providers"]["VoidClaude"]
+    assert claude_provider["behavior"] == "classical"
+    assert claude_provider["format"] == "yaml"
+    assert claude_provider["url"].endswith("/dist/void-claude-rules/mihomo-classical.yaml")
+    # VoidClaudeMRS is the domain-only subset used by DNS (fake-ip-filter/nameserver-policy).
+    claude_mrs = config["rule-providers"]["VoidClaudeMRS"]
+    assert claude_mrs["behavior"] == "domain"
+    assert claude_mrs["format"] == "mrs"
+    assert claude_mrs["url"].endswith("/dist/void-claude-rules/mihomo-domain.mrs")
+    # VoidGlobalLegal is a pure DOMAIN-SUFFIX list, so it ships as a domain mrs.
+    global_legal = config["rule-providers"]["VoidGlobalLegal"]
+    assert global_legal["behavior"] == "domain"
+    assert global_legal["format"] == "mrs"
+    assert global_legal["url"].endswith("/dist/global-legal/mihomo-domain.mrs")
+    # The PCDN list contains DOMAIN-REGEX entries, which require classical behavior.
+    pcdn = config["rule-providers"]["PCDN"]
+    assert pcdn["behavior"] == "classical"
+    assert pcdn["format"] == "yaml"
     policy = config["dns"]["nameserver-policy"]
-    assert policy["rule-set:VoidClaude"] == [s.replace("#AI", "#Claude") for s in policy["rule-set:VoidAI"]]
+    assert policy["rule-set:VoidClaudeMRS"] == [s.replace("#AI", "#Claude") for s in policy["rule-set:VoidAI"]]
     overlap_key = f"rule-set:{CLAUDE_DNS_OVERLAP_PROVIDER}"
     assert overlap_key in policy
-    assert policy[overlap_key] == policy["rule-set:VoidClaude"]
+    assert policy[overlap_key] == policy["rule-set:VoidClaudeMRS"]
     # Xboard/Sublink may sort mapping keys. The generated overlap rule must
     # still precede VoidAI after that transformation.
     sorted_policy_keys = sorted(policy)

@@ -935,7 +935,7 @@ dns:
   fake-ip-filter-mode: rule
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-      - RULE-SET,VoidClaude,fake-ip
+      - RULE-SET,VoidClaudeMRS,fake-ip
       - RULE-SET,VoidSTUN,fake-ip
       - RULE-SET,VoidFakeIPForce,fake-ip
       - RULE-SET,VoidFakeIPBypass,real-ip
@@ -987,7 +987,7 @@ dns:
       - 'https://1.1.1.1/dns-query#Claude'
       - 'https://9.9.9.9/dns-query#Claude'
       - 'https://208.67.222.222/dns-query#Claude'
-    'rule-set:VoidClaude':
+    'rule-set:VoidClaudeMRS':
       - 'https://8.8.8.8/dns-query#Claude'
       - 'https://1.1.1.1/dns-query#Claude'
       - 'https://9.9.9.9/dns-query#Claude'
@@ -1219,7 +1219,8 @@ rule-anchor:
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
   class_yaml: &class_yaml {type: http, interval: 86400, behavior: classical, format: yaml}
 rule-providers:
-  VoidClaude: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-rules/mihomo-domain.mrs" }
+  VoidClaude: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-rules/mihomo-classical.yaml" }
+  VoidClaudeMRS: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-rules/mihomo-domain.mrs" }
   VoidAClaudeOverlap: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/void-claude-ai-overlap/mihomo-domain.mrs" }
   VoidSTUN: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/stun/mihomo-domain.mrs" }
   VoidCrossBorderFinance: { <<: *class_yaml, path: ./RuleSet/VoidCrossBorderFinance.yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/cross-border-finance/mihomo-classical.yaml" }
@@ -1229,7 +1230,7 @@ rule-providers:
   VoidFakeIPForce: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-force/mihomo-domain.mrs" }
   VoidFakeIPBypass: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/fake-ip-bypass/mihomo-domain.mrs" }
   VoidAds: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ads/mihomo-domain.mrs" }
-  VoidGlobalLegal: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-classical.yaml" }
+  VoidGlobalLegal: { <<: *domain, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/global-legal/mihomo-domain.mrs" }
   VoidAI: { <<: *class_yaml, url: "https://gh-proxy.org/https://raw.githubusercontent.com/VoidInTheShell/void-rules/main/dist/ai/mihomo-classical.yaml" }
   blackmatrix7_direct: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml" }
   cf_ip: { <<: *ip, url: "https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cloudflare.mrs" }
@@ -1247,7 +1248,7 @@ rule-providers:
   CNHTTPDNS: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/BlockHttpDNS/BlockHttpDNS.yaml" }
   eBay: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/eBay/eBay.yaml" }
   Gemini: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Gemini/Gemini.yaml" }
-  PCDN: { <<: *domain_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml" }
+  PCDN: { <<: *class_yaml, url: "https://gh-proxy.com/raw.githubusercontent.com/VoidInTheShell/pcdn-block-list/refs/heads/master/pcdn_block_clash.yaml" }
   GFW: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt" }
   geolocation-!cn: { <<: *domain, url: "https://gh-proxy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs" }
   Greatfire: { <<: *domain_text, format: yaml, url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt" }

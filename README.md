@@ -85,15 +85,25 @@ dns:
     - MATCH,fake-ip
 ```
 
-四个 rule-provider 均为 `behavior: domain`，分别使用自有 `void-rules` 的 `void-claude-rules`、`stun`、`fake-ip-force` 与 `fake-ip-bypass` 集合。同一域名命中强制集与 Bypass 时返回 Fake-IP；仅命中 Bypass 时返回真实 IP；未命中任何集合时仍返回 Fake-IP。黑名单兼容版不添加 Force 条目，其余顺序一致。这里仅决定 DNS 是否下发 Fake-IP，出口由顶层 `rules` 决定。客户端需要支持 `fake-ip-filter-mode: rule` 的 Mihomo。
+三个规则集均为 `behavior: domain`（`stun`、`fake-ip-force`、`fake-ip-bypass`），Claude 相关使用自有 `void-rules` 的 `void-claude-rules` 集合。同一域名命中强制集与 Bypass 时返回 Fake-IP；仅命中 Bypass 时返回真实 IP；未命中任何集合时仍返回 Fake-IP。黑名单兼容版不添加 Force 条目，其余顺序一致。这里仅决定 DNS 是否下发 Fake-IP，出口由顶层 `rules` 决定。客户端需要支持 `fake-ip-filter-mode: rule` 的 Mihomo。
 
-`RULE-SET,VoidClaude,Claude` 紧跟跨境金融规则，位于通用 AI 规则之前。`nameserver-policy` 中的 `'rule-set:VoidClaude'` 也先于 `'rule-set:VoidAI'`，DNS 服务器列表与 AI 相同，但所有 `#` 出口标签均为 `Claude`。
+Claude 拆成两个 provider：
+
+| provider | behavior / format | 上游 | 用途 |
+| --- | --- | --- | --- |
+| `VoidClaude` | `classical` / yaml | `void-claude-rules/mihomo-classical.yaml` | 顶层 `rules` 出口分流 |
+| `VoidClaudeMRS` | `domain` / mrs | `void-claude-rules/mihomo-domain.mrs` | 仅 DNS：`fake-ip-filter` 与 `nameserver-policy` |
+
+拆开的原因：上游 `void-claude-rules` 含 `DOMAIN-KEYWORD`、`PROCESS-NAME`、`IP-CIDR`/`IP-CIDR6`、`IP-ASN`，`behavior: domain` 的 mrs 无法承载这些类型，而 DNS 上下文只关心域名，用 classical 会触发内核 warning（`only matching domain rules in fake-ip-filter`）并丢弃非域名规则。因此路由用 classical 全量集，DNS 用上游同时发布的纯域名 mrs（实测覆盖全部 `DOMAIN`/`DOMAIN-SUFFIX` 条目，仅缺 3 条 `DOMAIN-KEYWORD`，对 Fake-IP 判定无影响，且无 warning）。
+
+`RULE-SET,VoidClaude,Claude` 紧跟跨境金融规则，位于通用 AI 规则之前。`nameserver-policy` 中的 `'rule-set:VoidClaudeMRS'` 也先于 `'rule-set:VoidAI'`，DNS 服务器列表与 AI 相同，但所有 `#` 出口标签均为 `Claude`。
 
 旧的 `sublinkpro_mihomo_fakeip_whitelist.yaml` 和 `panel_mihomo_fakeip_whitelist.yaml` 已分别改名为 `sublinkpro_mihomo_fakeip_rule.yaml`、`panel_mihomo_fakeip_rule.yaml`；引用原始文件 URL 的使用者需要更新路径。
 
 ## DNS、IP 检测与公共规则
 
 - 代理 DNS 使用 DoH；直连和节点域名解析保持独立路径。支持广告与 HTTPDNS 拦截、Google 分流、游戏平台下载、跨境金融与 IP 代理池规则。
+- 规则集声明必须匹配上游内容：`VoidClaude` 与 `PCDN` 用 `class_yaml`（`behavior: classical`），因为前者含 `PROCESS-NAME`/`IP-CIDR`/`IP-ASN`、后者含 `DOMAIN-REGEX`，这些类型 `behavior: domain` 无法承载；`VoidGlobalLegal` 是纯 `DOMAIN-SUFFIX` 列表，用 `domain`（`format: mrs`）的 `global-legal/mihomo-domain.mrs`。`tools/validate_templates.py` 会断言这三处声明。
 - IPPure 使用的 `icanhazip.com`（含 IPv4/IPv6 子域）、`api.123169.xyz`、`cf.999831.xyz`，以及 `ipify.org`、`ipapi.co` 交给 `IPCheck`。检测域名的 UDP/443 拒绝后回落 HTTPS/TCP，便于检查仅支持 TCP 的 SOCKS5 出口。
 - IPPure 主域规则为 `DOMAIN-SUFFIX,ippure.com,IPCheck,no-resolve`。
 - `VoidSTUN` 路由到独立的 `STUN` 组，默认跟随 `PROXY`；所有完整模板的该组候选前五项依次为 `PROXY`、`AI`、`Claude`、`Google`、`跨境金融`，之后保持原有候选顺序。该规则位于通用 IP 检测及其他服务规则前，这里控制规则集覆盖的域名出口。
